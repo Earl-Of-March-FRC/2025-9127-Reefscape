@@ -1,6 +1,6 @@
 # 9127 Robot code for Reefscape (2025)
 
-This repository contains the code of team 9127 for the 2025 FRC seasion
+This repository contains the code of team 9127 for the 2025 FRC season
 
 ## Branches
 `main` - Tested and verified working robot code
@@ -9,8 +9,8 @@ This repository contains the code of team 9127 for the 2025 FRC seasion
 These branches contain potentially incomplete, in-development code
 
 `Drivetrain` - Mecanum drivetrain  
-`Elevator` - Elevator subsystem
+`Elevator` - Elevator subsystem  
 `Intake` - Intake/Shooter subsystem  
-`Algae-Removal` - Algae Removal Subsystem
-`Vision` - Vision code 
+`Algae-Removal` - Algae Removal Subsystem  
+`Vision` - Vision code  
 `Auto` - Autonomous/semi-auto driving code  
