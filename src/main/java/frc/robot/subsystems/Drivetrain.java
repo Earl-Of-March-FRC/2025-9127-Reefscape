@@ -15,9 +15,13 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
   private MecanumDrive mecanumDrive;
@@ -33,7 +37,8 @@ public class Drivetrain extends SubsystemBase {
   private RelativeEncoder topRightEncoder;
   private RelativeEncoder bottomRightEncoder;
 
-  private MecanumDriveOdometry drivePose;
+  private MecanumDriveOdometry driveOdometry;
+  private Pose2d drivePose;
 
   /** Creates a new MecanumDrive. */
   public Drivetrain() {
@@ -47,18 +52,22 @@ public class Drivetrain extends SubsystemBase {
     topRightEncoder = topRight.getEncoder();
     bottomRightEncoder = bottomRight.getEncoder();
 
+    topLeftEncoder.setPosition(0);
+    bottomLeftEncoder.setPosition(0);
+    topRightEncoder.setPosition(0);
+    bottomRightEncoder.setPosition(0);
+
     SparkMaxConfig configTopLeft = new SparkMaxConfig();
     SparkMaxConfig configBottomLeft = new SparkMaxConfig();
     SparkMaxConfig configTopRight = new SparkMaxConfig();
     SparkMaxConfig configBottomRight = new SparkMaxConfig();
 
-    //Encoder config factors are arbitrary placeholders and should be changed
     configTopLeft
     .inverted(false)
     .idleMode(IdleMode.kBrake);
     configTopLeft.encoder
-    .positionConversionFactor(1000)
-    .velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    //.velocityConversionFactor(1000);
     configTopLeft.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
@@ -67,8 +76,8 @@ public class Drivetrain extends SubsystemBase {
     .inverted(true)
     .idleMode(IdleMode.kBrake);
     configBottomLeft.encoder
-    .positionConversionFactor(1000)
-    .velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    //.velocityConversionFactor(1000);
     configBottomLeft.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
@@ -77,8 +86,8 @@ public class Drivetrain extends SubsystemBase {
     .inverted(true)
     .idleMode(IdleMode.kBrake);
     configTopRight.encoder
-    .positionConversionFactor(1000)
-    .velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    //.velocityConversionFactor(1000);
     configTopRight.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
@@ -87,8 +96,8 @@ public class Drivetrain extends SubsystemBase {
     .inverted(false)
     .idleMode(IdleMode.kBrake);
     configBottomRight.encoder
-    .positionConversionFactor(1000)
-    .velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    //.velocityConversionFactor(1000);
     configBottomRight.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
@@ -97,10 +106,28 @@ public class Drivetrain extends SubsystemBase {
     bottomLeft.configure(configBottomLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     topRight.configure(configTopRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     bottomRight.configure(configBottomRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    gyro = new AHRS(NavXComType.kMXP_SPI);
     
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
+    
+    gyro = new AHRS(NavXComType.kMXP_SPI);
+
+    MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
+      Constants.DrivetrainConstants.TOP_LEFT_POS,
+      Constants.DrivetrainConstants.TOP_RIGHT_POS,
+      Constants.DrivetrainConstants.BOTTOM_LEFT_POS,
+      Constants.DrivetrainConstants.BOTTOM_RIGHT_POS
+    );
+    
+    driveOdometry = new MecanumDriveOdometry(
+      kinematics,
+      gyro.getRotation2d(),
+      new MecanumDriveWheelPositions(
+        topLeftEncoder.getPosition(), 
+        topRightEncoder.getPosition(),
+        bottomLeftEncoder.getPosition(),
+        bottomRightEncoder.getPosition()
+        )
+      );
   }
 
   public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
@@ -110,12 +137,24 @@ public class Drivetrain extends SubsystemBase {
     else{
       mecanumDrive.driveCartesian(xSpeed, ySpeed, zRotation);
     }
+  }
 
-
+  public Pose2d getDrivePose() {
+      return drivePose;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    drivePose = 
+    driveOdometry.update(gyro.getRotation2d(), 
+      new MecanumDriveWheelPositions(
+        topLeftEncoder.getPosition(), 
+        topRightEncoder.getPosition(),
+        bottomLeftEncoder.getPosition(),
+        bottomRightEncoder.getPosition()
+      )
+    );
   }
+
 }

@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.ProtobufPublisher;
+import edu.wpi.first.units.Unit;
+import frc.robot.commands.Drive;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -15,5 +20,20 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+
+  public static class DrivetrainConstants {
+    //to be mesured
+    public static final Translation2d TOP_LEFT_POS = new Translation2d();
+    public static final Translation2d BOTTOM_LEFT_POS = new Translation2d();
+    public static final Translation2d TOP_RIGHT_POS = new Translation2d();
+    public static final Translation2d BOTTOM_RIGHT_POS = new Translation2d();
+
+    public static final double GEAR_RATIO = 10.71; 
+    public static final int COUNTS_PER_REV = 42;
+    public static final double WHEEL_DIAMETER_INCHES = 6;
+
+    public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/COUNTS_PER_REV/GEAR_RATIO;
+    public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
   }
 }
