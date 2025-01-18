@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
+import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -34,7 +35,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    drivetrain.setDefaultCommand(new Drive(
+    drivetrain.setDefaultCommand(new DriveFieldOriented(
       drivetrain,
       () -> (xboxController.getLeftX()), 
       () -> (xboxController.getLeftY()), 

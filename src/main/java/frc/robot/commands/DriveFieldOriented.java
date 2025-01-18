@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Drive extends Command {
+public class DriveFieldOriented extends Command {
   private Drivetrain drivetrain;
   private DoubleSupplier xSpeed;
   private DoubleSupplier ySpeed;
   private DoubleSupplier zRotation;
 
   /** Creates a new Drive. */
-  public Drive(Drivetrain drivetrain, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
+  public DriveFieldOriented(Drivetrain drivetrain, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
     this.drivetrain = drivetrain;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
@@ -34,7 +34,7 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.drive(xSpeed.getAsDouble(), ySpeed.getAsDouble(), zRotation.getAsDouble(), false);
+    drivetrain.drive(xSpeed.getAsDouble(), ySpeed.getAsDouble(), zRotation.getAsDouble(), true);
   }
 
   // Called once the command ends or is interrupted.
