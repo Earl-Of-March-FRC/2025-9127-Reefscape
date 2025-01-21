@@ -110,6 +110,7 @@ public class Drivetrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
     
     gyro = new AHRS(NavXComType.kMXP_SPI);
+    gyro.reset();
 
     MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
       Constants.DrivetrainConstants.TOP_LEFT_POS,
