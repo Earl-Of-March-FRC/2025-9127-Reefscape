@@ -16,4 +16,20 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  public static class ElevatorConstants{
+    public static final int kElevatorMotorPort = 0;
+
+    public static final int kElevatorPIDSlot = 0;
+    public static final double kElevatorP = 0;
+    public static final double kElevatorI = 0;
+    public static final double kElevatorD = 0;
+    public static final double kElevatorF = 0;
+
+    public static final double intakePosition = 0;
+    public static final double L1Position = 0;
+    public static final double L2Position = 0;
+    public static final double L3Position = 0;
+    public static final double L4Position = 0;
+
+  }
 }
