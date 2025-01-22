@@ -15,13 +15,15 @@ public class DriveFieldOriented extends Command {
   private DoubleSupplier xSpeed;
   private DoubleSupplier ySpeed;
   private DoubleSupplier zRotation;
+  private boolean fieldOriented;
 
   /** Creates a new Drive. */
-  public DriveFieldOriented(Drivetrain drivetrain, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
+  public DriveFieldOriented(Drivetrain drivetrain, boolean fieldOriented, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
     this.drivetrain = drivetrain;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
     this.zRotation = zRotation;
+    this.fieldOriented = fieldOriented;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -34,7 +36,7 @@ public class DriveFieldOriented extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.drive(xSpeed.getAsDouble(), ySpeed.getAsDouble(), zRotation.getAsDouble(), true);
+    drivetrain.drive(xSpeed.getAsDouble(), ySpeed.getAsDouble(), zRotation.getAsDouble(), fieldOriented);
   }
 
   // Called once the command ends or is interrupted.

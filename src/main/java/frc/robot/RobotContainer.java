@@ -6,7 +6,6 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.Drive;
 import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
@@ -36,7 +35,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(
-      drivetrain,
+      drivetrain, xboxController.getLeftBumperButtonPressed(),
       () -> (xboxController.getLeftX()), 
       () -> (xboxController.getLeftY()), 
       () -> (xboxController.getRightX())
