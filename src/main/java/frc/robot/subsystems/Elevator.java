@@ -46,8 +46,8 @@ public class Elevator extends SubsystemBase {
   }
 
 
-  public void setSpeed(Supplier<Double> speed) {
-    elevatorMotor.set(speed.get());
+  public void setSpeed(double speed) {
+    elevatorMotor.set(speed);
   }
 
   public void setPosition(double position){
