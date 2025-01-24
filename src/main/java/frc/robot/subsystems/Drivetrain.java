@@ -41,10 +41,10 @@ public class Drivetrain extends SubsystemBase {
 
   /** Creates a new MecanumDrive. */
   public Drivetrain() {
-    topLeft = new SparkMax(0, MotorType.kBrushless);
-    bottomLeft = new SparkMax(1, MotorType.kBrushless);
-    topRight = new SparkMax(2, MotorType.kBrushless);
-    bottomRight = new SparkMax(3, MotorType.kBrushless);
+    topLeft = new SparkMax(Constants.DrivetrainConstants.TOP_LEFT_ID, MotorType.kBrushless);
+    bottomLeft = new SparkMax(Constants.DrivetrainConstants.BOTTOM_LEFT_ID, MotorType.kBrushless);
+    topRight = new SparkMax(Constants.DrivetrainConstants.TOP_RIGHT_ID, MotorType.kBrushless);
+    bottomRight = new SparkMax(Constants.DrivetrainConstants.BOTTOM_RIGHT_ID, MotorType.kBrushless);
 
     topLeftEncoder = topLeft.getEncoder();
     bottomLeftEncoder = bottomLeft.getEncoder();
@@ -82,7 +82,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configTopRight
-    .inverted(true)
+    .inverted(false)
     .idleMode(IdleMode.kBrake);
     configTopRight.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
@@ -92,8 +92,8 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configBottomRight
-    .inverted(false)
-    .idleMode(IdleMode.kBrake);
+    .inverted(true)
+     .idleMode(IdleMode.kBrake);
     configBottomRight.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
     //.velocityConversionFactor(1000);
@@ -131,12 +131,12 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
-    if (fieldOriented) {
-      mecanumDrive.driveCartesian(xSpeed, ySpeed, zRotation, gyro.getRotation2d());
-    }
-    else{
-      mecanumDrive.driveCartesian(xSpeed, ySpeed, zRotation);
-    }
+    // if (fieldOriented) {
+    //   mecanumDrive.driveCartesian(xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, zRotation, gyro.getRotation2D());
+    // }
+    // else{
+      mecanumDrive.driveCartesian(xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER);
+    //}
   }
 
   public Pose2d getDrivePose() {

@@ -37,8 +37,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new DriveFieldOriented(
       drivetrain, xboxController.getLeftBumperButtonPressed(),
       () -> (xboxController.getLeftX()), 
-      () -> (xboxController.getLeftY()), 
-      () -> (xboxController.getRightX())
+      () -> -(xboxController.getLeftY()), 
+      () -> (xboxController.getRightY())
       ));
 
     configureBindings();
