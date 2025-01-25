@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,9 +19,15 @@ public class IntakeSubsystem extends SubsystemBase {
   private final TalonSRX motor2 = new WPI_TalonSRX(Constants.IntakeConstants.moto1pin);
   private final TalonSRX motor1 = new WPI_TalonSRX(Constants.IntakeConstants.moto2pin);
 
+  private final DigitalInput limit =  new DigitalInput(0);
+
   public void intake(double speed){
     motor1.set(TalonSRXControlMode.PercentOutput, speed);
     motor2.set(TalonSRXControlMode.PercentOutput, -speed);
+  }
+
+  public boolean getLimit(){
+    return limit.get();
   }
 
   @Override
