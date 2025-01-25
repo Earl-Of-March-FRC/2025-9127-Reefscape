@@ -38,7 +38,7 @@ public class RobotContainer {
       drivetrain, xboxController.getLeftBumperButtonPressed(),
       () -> (xboxController.getLeftX()), 
       () -> -(xboxController.getLeftY()), 
-      () -> (xboxController.getRightY())
+      () -> (xboxController.getRightX())
       ));
 
     configureBindings();

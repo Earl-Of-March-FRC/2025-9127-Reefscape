@@ -20,11 +20,11 @@ public final class Constants {
   }
 
   public static class DrivetrainConstants {
-    //TODO Measure on the bot - used only for odemetry
-    public static final Translation2d TOP_LEFT_POS = new Translation2d();
-    public static final Translation2d BOTTOM_LEFT_POS = new Translation2d();
-    public static final Translation2d TOP_RIGHT_POS = new Translation2d();
-    public static final Translation2d BOTTOM_RIGHT_POS = new Translation2d();
+    //Relative to the centre in metres
+    public static final Translation2d TOP_LEFT_POS = new Translation2d(0.26, 0.279);
+    public static final Translation2d BOTTOM_LEFT_POS = new Translation2d(0.26, -0.279);
+    public static final Translation2d TOP_RIGHT_POS = new Translation2d(-0.26, 0.279);
+    public static final Translation2d BOTTOM_RIGHT_POS = new Translation2d(-0.26, -0.279);
 
     public static final double GEAR_RATIO = 10.71; 
     public static final int COUNTS_PER_REV = 4096;
@@ -39,6 +39,6 @@ public final class Constants {
     public static final int TOP_RIGHT_ID = 13;
     public static final int BOTTOM_RIGHT_ID = 11;
 
-    public static final double SPEED_MULTIPLIER = 0.6 ;
+    public static final double SPEED_MULTIPLIER = 0.2;
   }
 }
