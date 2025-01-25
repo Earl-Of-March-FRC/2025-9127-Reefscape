@@ -19,7 +19,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private final TalonSRX motor2 = new WPI_TalonSRX(Constants.IntakeConstants.moto1pin);
   private final TalonSRX motor1 = new WPI_TalonSRX(Constants.IntakeConstants.moto2pin);
 
-  private final DigitalInput limit =  new DigitalInput(0);
+  private final DigitalInput limit =  new DigitalInput(Constants.IntakeConstants.limitSwitchChannel);     // Channel TBD
 
   public void intake(double speed){
     motor1.set(TalonSRXControlMode.PercentOutput, speed);

@@ -20,5 +20,6 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int moto1pin = 0;
     public static final int moto2pin = 1;
+    public static final int limitSwitchChannel = 0;
   }
 }
