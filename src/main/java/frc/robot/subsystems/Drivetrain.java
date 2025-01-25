@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -14,17 +15,25 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+
+import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Drivetrain extends SubsystemBase {
   private MecanumDrive mecanumDrive;
-  private AHRS gyro;
 
   private SparkMax topLeft;
   private SparkMax bottomLeft;
@@ -36,11 +45,22 @@ public class Drivetrain extends SubsystemBase {
   private RelativeEncoder topRightEncoder;
   private RelativeEncoder bottomRightEncoder;
 
+  private SparkRelativeEncoderSim topLeftEncoderSim;
+  private SparkRelativeEncoderSim bottomLeftEncoderSim;
+  private SparkRelativeEncoderSim topRightEncoderSim;
+  private SparkRelativeEncoderSim bottomRightEncoderSim;
+
+  private AHRS gyro;
+
   private MecanumDriveOdometry driveOdometry;
   private Pose2d drivePose;
+  private Field2d field;
 
   /** Creates a new MecanumDrive. */
   public Drivetrain() {
+    field = new Field2d();
+    SmartDashboard.putData("Field", field);
+
     topLeft = new SparkMax(Constants.DrivetrainConstants.TOP_LEFT_ID, MotorType.kBrushless);
     bottomLeft = new SparkMax(Constants.DrivetrainConstants.BOTTOM_LEFT_ID, MotorType.kBrushless);
     topRight = new SparkMax(Constants.DrivetrainConstants.TOP_RIGHT_ID, MotorType.kBrushless);
@@ -50,6 +70,16 @@ public class Drivetrain extends SubsystemBase {
     bottomLeftEncoder = bottomLeft.getEncoder();
     topRightEncoder = topRight.getEncoder();
     bottomRightEncoder = bottomRight.getEncoder();
+
+    //Simulation
+    topLeftEncoderSim = new SparkRelativeEncoderSim(topLeft);
+    topLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    bottomLeftEncoderSim = new SparkRelativeEncoderSim(bottomLeft);
+    bottomLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    topRightEncoderSim = new SparkRelativeEncoderSim(topRight);
+    topRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    bottomRightEncoderSim = new SparkRelativeEncoderSim(bottomRight);
+    bottomRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
 
     topLeftEncoder.setPosition(0);
     bottomLeftEncoder.setPosition(0);
@@ -110,24 +140,22 @@ public class Drivetrain extends SubsystemBase {
     
     gyro = new AHRS(NavXComType.kMXP_SPI);
     gyro.reset();
-
-    MecanumDriveKinematics kinematics = new MecanumDriveKinematics(
-      Constants.DrivetrainConstants.TOP_LEFT_POS,
-      Constants.DrivetrainConstants.TOP_RIGHT_POS,
-      Constants.DrivetrainConstants.BOTTOM_LEFT_POS,
-      Constants.DrivetrainConstants.BOTTOM_RIGHT_POS
-    );
     
     driveOdometry = new MecanumDriveOdometry(
-      kinematics,
+      new MecanumDriveKinematics(
+        Constants.DrivetrainConstants.TOP_LEFT_POS,
+        Constants.DrivetrainConstants.TOP_RIGHT_POS,
+        Constants.DrivetrainConstants.BOTTOM_LEFT_POS,
+        Constants.DrivetrainConstants.BOTTOM_RIGHT_POS
+      ),
       gyro.getRotation2d(),
       new MecanumDriveWheelPositions(
         topLeftEncoder.getPosition(), 
         topRightEncoder.getPosition(),
         bottomLeftEncoder.getPosition(),
         bottomRightEncoder.getPosition()
-        )
-      );
+      )
+    );
   }
 
   public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
@@ -155,5 +183,29 @@ public class Drivetrain extends SubsystemBase {
         bottomRightEncoder.getPosition()
       )
     );
+
+    field.setRobotPose(drivePose);
+    SmartDashboard.putData("Field", field);
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    drivePose = 
+    driveOdometry.update(gyro.getRotation2d(), 
+      new MecanumDriveWheelPositions(
+        topLeftEncoderSim.getPosition(), 
+        topRightEncoderSim.getPosition(),
+        bottomLeftEncoderSim.getPosition(),
+        bottomRightEncoderSim.getPosition()
+      )
+    );
+
+    topLeftEncoderSim.iterate(topLeft.get()*Constants.DrivetrainConstants.SIM_MAX_VELOCITY, 0.02);
+    bottomLeftEncoderSim.iterate(bottomLeft.get()*Constants.DrivetrainConstants.SIM_MAX_VELOCITY, 0.02);
+    topRightEncoderSim.iterate(topRight.get()*Constants.DrivetrainConstants.SIM_MAX_VELOCITY, 0.02);
+    bottomRightEncoderSim.iterate(bottomRight.get()*Constants.DrivetrainConstants.SIM_MAX_VELOCITY, 0.02);
+
+    field.setRobotPose(drivePose);
+    SmartDashboard.putData("Field", field);
   }
 }
