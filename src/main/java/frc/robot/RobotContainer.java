@@ -6,11 +6,13 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ManualElevator;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -25,6 +27,8 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   private final Elevator elevator = new Elevator();
+  private final ElevatorPID[] elevatorCommands;
+  private int elevatorPositionIndex;
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -35,6 +39,15 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    elevatorPositionIndex = 0;
+    elevatorCommands = new ElevatorPID[]{
+      new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
+      new ElevatorPID(elevator, Constants.ElevatorConstants.L1_POSITION),
+      new ElevatorPID(elevator, Constants.ElevatorConstants.L2_POSITION),
+      new ElevatorPID(elevator, Constants.ElevatorConstants.L3_POSITION),
+      new ElevatorPID(elevator, Constants.ElevatorConstants.L4_POSITION)
+    };
+
     // Configure the trigger bindings
     configureBindings();
     elevator.setDefaultCommand(new ManualElevator(elevator, ()-> -m_operatorController.getRightTriggerAxis() + m_operatorController.getLeftTriggerAxis()));
@@ -57,6 +70,16 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    m_driverController.leftBumper().onTrue(new InstantCommand(()->{
+      elevatorPositionIndex = (elevatorPositionIndex + 1) % elevatorCommands.length;
+      elevatorCommands[elevatorPositionIndex].schedule();
+    }));
+    
+    m_driverController.rightBumper().onTrue(new InstantCommand(()->{
+      elevatorPositionIndex = (elevatorPositionIndex - 1 + elevatorCommands.length) % elevatorCommands.length;
+      elevatorCommands[elevatorPositionIndex].schedule();
+    }));
+  
   }
 
   /**

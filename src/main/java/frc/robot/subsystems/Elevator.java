@@ -4,12 +4,9 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -24,17 +21,17 @@ public class Elevator extends SubsystemBase {
   /** Creates a new Elevator. */
   
   public Elevator() {
-    elevatorMotor = new WPI_TalonSRX(Constants.ElevatorConstants.kElevatorMotorPort); // Assuming motor ID is 0
+
+    elevatorMotor = new WPI_TalonSRX(Constants.ElevatorConstants.MOTOR_PORT);
 
     // Configure the encoder
-    elevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.ElevatorConstants.kElevatorPIDSlot, 10);
-    elevatorMotor.setSensorPhase(true);
-
+    elevatorMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.ElevatorConstants.PID_SLOT, 10);
+    elevatorMotor.configSelectedFeedbackCoefficient(Constants.ElevatorConstants.COUNTS_TO_INCHES_CONVERSION, Constants.ElevatorConstants.PID_SLOT, 10);
     // Configure PID coefficients
-    elevatorMotor.config_kP(Constants.ElevatorConstants.kElevatorPIDSlot, Constants.ElevatorConstants.kElevatorP, 10);
-    elevatorMotor.config_kI(Constants.ElevatorConstants.kElevatorPIDSlot, Constants.ElevatorConstants.kElevatorI, 10);
-    elevatorMotor.config_kD(Constants.ElevatorConstants.kElevatorPIDSlot, Constants.ElevatorConstants.kElevatorD, 10);
-    elevatorMotor.config_kF(Constants.ElevatorConstants.kElevatorPIDSlot, Constants.ElevatorConstants.kElevatorF, 10);
+    elevatorMotor.config_kP(Constants.ElevatorConstants.PID_SLOT, Constants.ElevatorConstants.P, 10);
+    elevatorMotor.config_kI(Constants.ElevatorConstants.PID_SLOT, Constants.ElevatorConstants.I, 10);
+    elevatorMotor.config_kD(Constants.ElevatorConstants.PID_SLOT, Constants.ElevatorConstants.D, 10);
+    elevatorMotor.config_kF(Constants.ElevatorConstants.PID_SLOT, Constants.ElevatorConstants.F, 10);
 
     // Set neutral mode
     elevatorMotor.setNeutralMode(NeutralMode.Brake);
