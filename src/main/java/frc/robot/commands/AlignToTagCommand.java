@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drivetrain;
@@ -67,25 +68,30 @@ public class AlignToTagCommand extends Command {
         double ySpeed = yController.calculate(yOffset, targetYOffset);
         double turnSpeed = angleController.calculate(angleOffset, targetAngleOffset);
 
-        SmartDashboard.putNumber("Vision Error X", xOffset - targetXOffset);
-        SmartDashboard.putNumber("Vision Error Y", yOffset - targetYOffset);
-        SmartDashboard.putNumber("Vision Error Angle", angleOffset - targetAngleOffset);
+        SmartDashboard.putNumber("Vision Error X", xController.getError());
+        SmartDashboard.putNumber("Vision Error Y", yController.getError());
+        SmartDashboard.putNumber("Vision Error Angle", angleController.getError());
 
       // Use the output of the PID controllers to set the robot's speed using mecanum drive
       //Adjust these 
       double maxSpeed = 1;
       double maxTurnSpeed = 0.5;
 
+      //limit xSpeed and ySpeed to 1 without changing the ratio between the two
+      double speedScaleDownFactor = 1;
+      speedScaleDownFactor = Math.min(speedScaleDownFactor, maxSpeed/xSpeed);
+      speedScaleDownFactor = Math.min(speedScaleDownFactor, maxSpeed/ySpeed);
 
-        xSpeed = Math.min(maxSpeed, Math.max(-maxSpeed, xSpeed));
-        ySpeed = Math.min(maxSpeed, Math.max(-maxSpeed, ySpeed));
-        turnSpeed = Math.min(maxTurnSpeed, Math.max(-maxTurnSpeed, turnSpeed));
-        driveSubsystem.drive(xSpeed, ySpeed, turnSpeed, false);
+      xSpeed = xSpeed*speedScaleDownFactor;
+      ySpeed = ySpeed*speedScaleDownFactor;
+
+      turnSpeed = MathUtil.clamp(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+      driveSubsystem.drive(xSpeed, ySpeed, turnSpeed, false);
   }
     @Override
     public boolean isFinished() {
-
-      return  xController.atSetpoint() && yController.atSetpoint() && angleController.atSetpoint();
+      return xController.atSetpoint() && yController.atSetpoint() && angleController.atSetpoint();
     }
 
     @Override

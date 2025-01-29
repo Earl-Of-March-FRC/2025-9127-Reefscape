@@ -197,6 +197,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    //TODO simulate gyro
     drivePose = 
     driveOdometry.update(gyro.getRotation2d(), 
       new MecanumDriveWheelPositions(

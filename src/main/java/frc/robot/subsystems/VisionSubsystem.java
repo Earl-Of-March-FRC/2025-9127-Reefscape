@@ -72,11 +72,12 @@ public class VisionSubsystem extends SubsystemBase {
     public double getLongSide(){
         return tlong.getDouble(0);
     }
+
     public double getDistanceToTag() {
         if (!hasTarget()){
             return -1;
         }
-        return (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle + getVerticalOffset()));
+        return (targetHeight - cameraHeight) * 1/Math.tan(Math.toRadians(cameraAngle + getVerticalOffset()));
 
     }
 
@@ -87,6 +88,7 @@ public class VisionSubsystem extends SubsystemBase {
         double distanceToTag = getDistanceToTag();
         return distanceToTag*Math.tan(Math.toRadians(getHorizontalOffset()));
     }
+    
   @Override
   public void periodic() {
       SmartDashboard.putBoolean("Vision Has Target", hasTarget());
