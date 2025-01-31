@@ -102,7 +102,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configBottomLeft
-    .inverted(true)
+    .inverted(false)
     .idleMode(IdleMode.kBrake);
     configBottomLeft.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
@@ -112,7 +112,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configTopRight
-    .inverted(false)
+    .inverted(true)
     .idleMode(IdleMode.kBrake);
     configTopRight.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
@@ -123,10 +123,11 @@ public class Drivetrain extends SubsystemBase {
     
     configBottomRight
     .inverted(true)
-     .idleMode(IdleMode.kBrake);
+    .idleMode(IdleMode.kBrake);
     configBottomRight.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
     //.velocityConversionFactor(1000);
+
     configBottomRight.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
@@ -139,7 +140,7 @@ public class Drivetrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
     
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    gyro.reset();
+    gyro.setAngleAdjustment(180);
     
     driveOdometry = new MecanumDriveOdometry(
       new MecanumDriveKinematics(
@@ -158,13 +159,24 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
+
+  // X and Y have been swapped as params due to Mechanum Drive class conceptions
   public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
-    // if (fieldOriented) {
-    //   mecanumDrive.driveCartesian(xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, zRotation, gyro.getRotation2D());
-    // }
-    // else{
-      mecanumDrive.driveCartesian(xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER);
-    //}
+   if (fieldOriented) {
+      mecanumDrive.driveCartesian(
+        ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        gyro.getRotation2d()
+      );
+    }
+    else{
+      mecanumDrive.driveCartesian(
+        ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER
+      );
+    }
   }
 
   public Pose2d getDrivePose() {

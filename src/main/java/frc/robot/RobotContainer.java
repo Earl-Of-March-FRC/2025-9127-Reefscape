@@ -35,7 +35,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(
-      drivetrain, xboxController.getLeftBumperButtonPressed(),
+      drivetrain, false,//xboxController.getLeftBumperButtonPressed(),
       () -> (xboxController.getLeftX()), 
       () -> -(xboxController.getLeftY()), 
       () -> (xboxController.getRightX())
