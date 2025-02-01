@@ -27,14 +27,14 @@ public class AlignToTagCommand extends Command {
   private double targetAngleOffset;
 
   public AlignToTagCommand(VisionSubsystem visionSubsystem, Drivetrain driveSubsystem, int targetTagId) {
-      this.targetTagId = targetTagId;
+    this.targetTagId = targetTagId;
     this.visionSubsystem = visionSubsystem;
     this.driveSubsystem = driveSubsystem;
-      addRequirements(driveSubsystem, visionSubsystem);
+    addRequirements(driveSubsystem, visionSubsystem);
 
     // Configure PID controllers tuning will be critical here
-      xController.setTolerance(xTolerance);
-      yController.setTolerance(yTolerance);
+    xController.setTolerance(xTolerance);
+    yController.setTolerance(yTolerance);
     angleController.setTolerance(angleTolerance);
     angleController.enableContinuousInput(-180, 180);
   }

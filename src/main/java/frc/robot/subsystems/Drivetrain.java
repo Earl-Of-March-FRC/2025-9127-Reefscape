@@ -15,12 +15,17 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -96,7 +101,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configBottomLeft
-    .inverted(true)
+    .inverted(false)
     .idleMode(IdleMode.kBrake);
     configBottomLeft.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
@@ -106,7 +111,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configTopRight
-    .inverted(false)
+    .inverted(true)
     .idleMode(IdleMode.kBrake);
     configTopRight.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
@@ -117,10 +122,11 @@ public class Drivetrain extends SubsystemBase {
     
     configBottomRight
     .inverted(true)
-     .idleMode(IdleMode.kBrake);
+    .idleMode(IdleMode.kBrake);
     configBottomRight.encoder
     .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
     //.velocityConversionFactor(1000);
+
     configBottomRight.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
@@ -133,7 +139,7 @@ public class Drivetrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
     
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    gyro.reset();
+    gyro.setAngleAdjustment(0);
     
     driveOdometry = new MecanumDriveOdometry(
       new MecanumDriveKinematics(
@@ -152,27 +158,25 @@ public class Drivetrain extends SubsystemBase {
     );
   }
 
-  public void driveWithVision(ChassisSpeeds speeds) {
-    mecanumDrive.driveCartesian(
-      speeds.vxMetersPerSecond*Constants.DrivetrainConstants.SPEED_MULTIPLIER, 
-      speeds.vyMetersPerSecond*Constants.DrivetrainConstants.SPEED_MULTIPLIER, 
-      speeds.omegaRadiansPerSecond*Constants.DrivetrainConstants.SPEED_MULTIPLIER
-      );
-  }
 
+  // X and Y have been swapped as params due to Mechanum Drive class conceptions
   public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
-    // if (fieldOriented) {
-    //   mecanumDrive.driveCartesian(xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, zRotation, gyro.getRotation2D());
-    // }
-    // else{
-      mecanumDrive.driveCartesian(xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER, zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER);
-    //}
+   if (fieldOriented) {
+      mecanumDrive.driveCartesian(
+        ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        gyro.getRotation2d().unaryMinus()
+      );
+    }
+    else{
+      mecanumDrive.driveCartesian(
+        ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+        zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER
+      );
+    }
   }
-  
-  public void stop(){
-    mecanumDrive.driveCartesian(0, 0, 0);
-  }
-
 
   public Pose2d getDrivePose() {
       return drivePose;
@@ -197,7 +201,6 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    //TODO simulate gyro
     drivePose = 
     driveOdometry.update(gyro.getRotation2d(), 
       new MecanumDriveWheelPositions(

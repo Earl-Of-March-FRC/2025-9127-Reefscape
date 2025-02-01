@@ -39,7 +39,7 @@ public final class Constants {
     public static final int TOP_RIGHT_ID = 13;
     public static final int BOTTOM_RIGHT_ID = 11;
 
-    public static final double SPEED_MULTIPLIER = 0.2;
+    public static final double SPEED_MULTIPLIER = 0.3;
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
@@ -47,13 +47,13 @@ public final class Constants {
 
   public static class VisionConstants {
     //These are just some starting values, should tune these
-    public static double kPX = 0.05;
+    public static double kPX = 0.0005;
     public static double kIX = 0;
     public static double kDX = 0;
-    public static double kPY = 0.05;
+    public static double kPY = 0.0;
     public static double kIY = 0;
     public static double kDY = 0;
-    public static double kPA = 0.05;
+    public static double kPA = 0.0;
     public static double kIA = 0;
     public static double kDA = 0;
 

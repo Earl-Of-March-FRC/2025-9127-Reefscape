@@ -11,6 +11,7 @@ import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -24,16 +25,18 @@ public class RobotContainer {
   private final double cameraAngle = 0.0; //replace
   private final double targetHeight = 0.0; //replace
 
+  private boolean fieldOriented;
+
   private final Drivetrain drivetrain = new Drivetrain();
   private final XboxController xboxController = new XboxController(0);
   private final VisionSubsystem vision = new VisionSubsystem(cameraHeight, cameraAngle, targetHeight);
-  private final AlignToTagCommand alignToTag = new AlignToTagCommand(vision, drivetrain, 123); //Actual tag ID should be passed here
+  private final AlignToTagCommand alignToTag = new AlignToTagCommand(vision, drivetrain, 7); //Actual tag ID should be passed here
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(
-      drivetrain, xboxController.getLeftBumperButtonPressed(),
+      drivetrain, false,//xboxController.getLeftBumperButtonPressed(),
       () -> (xboxController.getLeftX()), 
       () -> -(xboxController.getLeftY()), 
       () -> (xboxController.getRightX())
@@ -47,6 +50,14 @@ public class RobotContainer {
     // Configure your button bindings here
     new JoystickButton(xboxController, XboxController.Button.kA.value)
             .onTrue(alignToTag);
+    
+    // new Trigger(xboxController::getLeftBumperButtonPressed).onTrue(new Command() {
+    //   @Override
+    //   public void execute() {
+    //       // TODO Auto-generated method stub
+    //       fieldOriented = !fieldOriented;
+    //   }
+    // });
   }
 
   public Command getAutonomousCommand() {
