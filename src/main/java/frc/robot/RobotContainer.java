@@ -48,9 +48,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-
     NamedCommands.registerCommand("Example", new PathPlannerAuto("Example"));
-
 
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(

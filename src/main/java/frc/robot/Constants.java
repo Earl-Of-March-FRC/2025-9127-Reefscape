@@ -33,6 +33,16 @@ public final class Constants {
     public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/COUNTS_PER_REV/GEAR_RATIO;
     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
 
+    //PID CONSTANTS
+    public static final double TRANSLATE_P = 0.1;
+    public static final double TRANSLATE_I = 0.0;
+    public static final double TRANSLATE_D = 0.0;
+
+    public static final double ROTATE_P = 0.1;
+    public static final double ROTATE_I = 0.0;
+    public static final double ROTATE_D = 0.0;
+
+
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 14;
     public static final int BOTTOM_LEFT_ID = 12;

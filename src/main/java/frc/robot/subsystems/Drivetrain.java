@@ -4,6 +4,14 @@
 
 package frc.robot.subsystems;
 
+import java.io.IOException;
+
+import org.json.simple.parser.ParseException;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -18,10 +26,13 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
@@ -53,8 +64,12 @@ public class Drivetrain extends SubsystemBase {
   private AHRS gyro;
 
   private MecanumDriveOdometry driveOdometry;
+  private MecanumDriveKinematics driveKinematics;
+  private MecanumDriveWheelPositions drivePositions;
   private Pose2d drivePose;
   private Field2d field;
+
+  private RobotConfig robotConfig;
 
   /** Creates a new MecanumDrive. */
   public Drivetrain() {
@@ -142,21 +157,50 @@ public class Drivetrain extends SubsystemBase {
     gyro = new AHRS(NavXComType.kMXP_SPI);
     gyro.setAngleAdjustment(180);
     
-    driveOdometry = new MecanumDriveOdometry(
-      new MecanumDriveKinematics(
-        Constants.DrivetrainConstants.TOP_LEFT_POS,
-        Constants.DrivetrainConstants.TOP_RIGHT_POS,
-        Constants.DrivetrainConstants.BOTTOM_LEFT_POS,
-        Constants.DrivetrainConstants.BOTTOM_RIGHT_POS
-      ),
-      gyro.getRotation2d(),
-      new MecanumDriveWheelPositions(
-        topLeftEncoder.getPosition(), 
-        topRightEncoder.getPosition(),
-        bottomLeftEncoder.getPosition(),
-        bottomRightEncoder.getPosition()
-      )
+    driveKinematics = new MecanumDriveKinematics(
+      Constants.DrivetrainConstants.TOP_LEFT_POS,
+      Constants.DrivetrainConstants.TOP_RIGHT_POS,
+      Constants.DrivetrainConstants.BOTTOM_LEFT_POS,
+      Constants.DrivetrainConstants.BOTTOM_RIGHT_POS
     );
+
+    drivePositions = new MecanumDriveWheelPositions(
+      topLeftEncoder.getPosition(), 
+      topRightEncoder.getPosition(),
+      bottomLeftEncoder.getPosition(),
+      bottomRightEncoder.getPosition()
+    );
+
+    driveOdometry = new MecanumDriveOdometry(
+      driveKinematics,
+      gyro.getRotation2d(),
+      drivePositions
+    );
+
+    try {
+      robotConfig = RobotConfig.fromGUISettings();
+    } catch (IOException | ParseException e) {
+      e.printStackTrace();
+    }
+
+    AutoBuilder.configure(
+      ()->getDrivePose(), 
+      pose->resetDrivePose(pose),
+      ()->getChassisSpeeds(),
+      (speeds,feedforwards)->drive(speeds),
+      new PPHolonomicDriveController(
+        new PIDConstants(Constants.DrivetrainConstants.TRANSLATE_P, Constants.DrivetrainConstants.TRANSLATE_I, Constants.DrivetrainConstants.TRANSLATE_D),
+        new PIDConstants(Constants.DrivetrainConstants.ROTATE_P, Constants.DrivetrainConstants.ROTATE_I, Constants.DrivetrainConstants.ROTATE_D)),
+      robotConfig, 
+      ()->{
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()){
+          return alliance.get()==DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+    this);
+
   }
 
 
@@ -178,9 +222,30 @@ public class Drivetrain extends SubsystemBase {
       );
     }
   }
+  
+  // Robot-relative drive using chassis speeds
+  public void drive(ChassisSpeeds speeds) {
+    mecanumDrive.driveCartesian(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+  }
 
   public Pose2d getDrivePose() {
       return drivePose;
+  }
+
+  public void resetDrivePose(Pose2d pose) {
+    driveOdometry.resetPosition(gyro.getRotation2d(), drivePositions, pose); 
+  }
+
+  // Getting robot-relative chassis speeds
+  public ChassisSpeeds getChassisSpeeds() {
+    return driveKinematics.toChassisSpeeds(
+      new MecanumDriveWheelSpeeds(
+        topLeftEncoder.getVelocity(), 
+        topRightEncoder.getVelocity(),
+        bottomLeftEncoder.getVelocity(),
+        bottomRightEncoder.getVelocity()
+      )
+    );
   }
 
   @Override
