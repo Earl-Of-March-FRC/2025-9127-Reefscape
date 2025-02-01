@@ -15,18 +15,11 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
-
-import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -140,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
     
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    gyro.setAngleAdjustment(180);
+    gyro.setAngleAdjustment(0);
     
     driveOdometry = new MecanumDriveOdometry(
       new MecanumDriveKinematics(
@@ -167,7 +160,7 @@ public class Drivetrain extends SubsystemBase {
         ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
         xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
         zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
-        gyro.getRotation2d()
+        gyro.getRotation2d().unaryMinus()
       );
     }
     else{
