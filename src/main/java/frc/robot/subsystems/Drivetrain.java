@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.sim.NoiseGenerator;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
@@ -48,6 +49,8 @@ public class Drivetrain extends SubsystemBase {
   private MecanumDriveOdometry driveOdometry;
   private Pose2d drivePose;
   private Field2d field;
+
+  private boolean fieldOriented = true;
 
   /** Creates a new MecanumDrive. */
   public Drivetrain() {
@@ -133,8 +136,9 @@ public class Drivetrain extends SubsystemBase {
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
     
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    gyro.setAngleAdjustment(0);
-    
+    //angle adjustement relative to the front of the bot, + the angle of the bot relative to the field
+    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET);
+
     driveOdometry = new MecanumDriveOdometry(
       new MecanumDriveKinematics(
         Constants.DrivetrainConstants.TOP_LEFT_POS,
@@ -154,12 +158,14 @@ public class Drivetrain extends SubsystemBase {
 
 
   // X and Y have been swapped as params due to Mechanum Drive class conceptions
-  public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
+  public void drive(double xSpeed, double ySpeed, double zRotation) {
    if (fieldOriented) {
       mecanumDrive.driveCartesian(
         ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
         xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
         zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+
+        //The unary minus arises from the swapping of x and y
         gyro.getRotation2d().unaryMinus()
       );
     }
@@ -174,6 +180,19 @@ public class Drivetrain extends SubsystemBase {
 
   public Pose2d getDrivePose() {
       return drivePose;
+  }
+
+  public void resetGyro(){
+    gyro.reset();
+  }
+
+  //Set the angle of the bot relative to the field, where 0 points forward, and angles are mesured "CCW" (NOT CONFIRMED)
+  public void setBotAngleAdjustment(double botAngleAdjustment) {
+    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + botAngleAdjustment);
+  }
+
+  public void changeDriveMode() {
+    fieldOriented = !fieldOriented;
   }
 
   @Override

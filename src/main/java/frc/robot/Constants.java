@@ -43,5 +43,8 @@ public final class Constants {
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
+
+    //Angle of the gyro's "zero yaw" position relative to the front of the bot
+    public static final double GYRO_ANGLE_OFFSET = 0;
   }
 }
