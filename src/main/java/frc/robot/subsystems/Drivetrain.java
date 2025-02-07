@@ -50,6 +50,7 @@ public class Drivetrain extends SubsystemBase {
   private Pose2d drivePose;
   private Field2d field;
 
+  //Field oriented drive on by default
   private boolean fieldOriented = true;
 
   /** Creates a new MecanumDrive. */
@@ -82,48 +83,54 @@ public class Drivetrain extends SubsystemBase {
     topRightEncoder.setPosition(0);
     bottomRightEncoder.setPosition(0);
 
+    //new Spark Max config syntax, each SparkMaxConfig object represents a configuration of controller, encoder and PID
+    //that is applied to the controller using the .configure() method
+
     SparkMaxConfig configTopLeft = new SparkMaxConfig();
     SparkMaxConfig configBottomLeft = new SparkMaxConfig();
     SparkMaxConfig configTopRight = new SparkMaxConfig();
     SparkMaxConfig configBottomRight = new SparkMaxConfig();
 
     configTopLeft
+    .smartCurrentLimit(40)
     .inverted(false)
     .idleMode(IdleMode.kBrake);
     configTopLeft.encoder
-    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    //.velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION)
+    .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configTopLeft.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
     
     configBottomLeft
+    .smartCurrentLimit(40)
     .inverted(false)
     .idleMode(IdleMode.kBrake);
     configBottomLeft.encoder
-    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    //.velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION)
+    .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configBottomLeft.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
     
     configTopRight
+    .smartCurrentLimit(40)
     .inverted(true)
     .idleMode(IdleMode.kBrake);
     configTopRight.encoder
-    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    //.velocityConversionFactor(1000);
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION)
+    .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configTopRight.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);
     
     configBottomRight
+    .smartCurrentLimit(40)
     .inverted(true)
     .idleMode(IdleMode.kBrake);
     configBottomRight.encoder
-    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    //.velocityConversionFactor(1000);
-
+    .positionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION)
+    .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configBottomRight.closedLoop
     .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
     .pid(0.0, 0.0, 0.0);

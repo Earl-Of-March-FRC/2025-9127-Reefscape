@@ -28,10 +28,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(
-      drivetrain, false,//xboxController.getLeftBumperButtonPressed(),
-      () -> (driveController.getLeftX()), 
-      () -> -(driveController.getLeftY()), 
-      () -> (driveController.getRightX())
+      drivetrain,
+      () -> (driveController.getLeftX()), //X translation
+      () -> -(driveController.getLeftY()), //Y translation
+      () -> (driveController.getRightX()) //Z rotation
       ));
     configureBindings();
   }
@@ -39,7 +39,11 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Configure your button bindings here
+
+    //Reset the gryo angle to 0 when A is pressed on the operator controller
     new Trigger(operatorController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
+    
+    //Toggle the drive mode (field or robot oriented) when B is pressed on the operator controller
     new Trigger(operatorController::getBButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
   }
 

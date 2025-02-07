@@ -17,7 +17,7 @@ public class DriveFieldOriented extends Command {
   private DoubleSupplier zRotation;
 
   /** Creates a new Drive. */
-  public DriveFieldOriented(Drivetrain drivetrain, boolean fieldOriented, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
+  public DriveFieldOriented(Drivetrain drivetrain, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
     this.drivetrain = drivetrain;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
