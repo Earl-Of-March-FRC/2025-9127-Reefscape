@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -30,11 +31,13 @@ public class IntakeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //System.out.println(intakeWheels.getLimit());
     if (intakeWheels.getLimit()){
       intakeWheels.intake(0);
     } else{    
-      intakeWheels.intake(speed.getAsDouble());
-    }
+    intakeWheels.intake(speed.getAsDouble());
+  }
+    SmartDashboard.putBoolean("Limit switch: ", intakeWheels.getLimit());
   }
 
   // Called once the command ends or is interrupted.
