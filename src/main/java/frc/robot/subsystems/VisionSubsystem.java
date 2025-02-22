@@ -25,7 +25,7 @@ public class VisionSubsystem extends SubsystemBase {
   private final double targetHeight;  // April tag height (meters)
 
   private double[] defaultTranslation = {0, 0, 0};
-    private static final double tagWidth = 0.1524;
+  private static final double tagWidth = 0.1524;
 
   //Constructor
   public VisionSubsystem(double cameraHeight, double cameraAngle, double targetHeight) {
@@ -33,6 +33,7 @@ public class VisionSubsystem extends SubsystemBase {
       this.cameraAngle = cameraAngle;
       this.targetHeight = targetHeight;
     limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+    limelightTable.getEntry("pipeline").setNumber(0);
     tv = limelightTable.getEntry("tv");
     tx = limelightTable.getEntry("tx");
     ty = limelightTable.getEntry("ty");
@@ -89,14 +90,16 @@ public class VisionSubsystem extends SubsystemBase {
         return distanceToTag*Math.tan(Math.toRadians(getHorizontalOffset()));
     }
     
-  @Override
-  public void periodic() {
-      SmartDashboard.putBoolean("Vision Has Target", hasTarget());
-      SmartDashboard.putNumber("Vision Horizontal Offset", getHorizontalOffset());
-      SmartDashboard.putNumber("Vision Vertical Offset", getVerticalOffset());
-      SmartDashboard.putNumber("Vision Target Area", getTargetArea());
-      SmartDashboard.putNumber("Distance to Tag", getDistanceToTag());
-      SmartDashboard.putNumber("Vision Tag ID", getTargetID());
-      SmartDashboard.putNumber("X Offset", getXOffset());
+    @Override
+    public void periodic() {
+        double tvValue = tv.getDouble(0);
+        SmartDashboard.putBoolean("Vision Has Target", tvValue == 1);
+        SmartDashboard.putNumber("Raw tv Value", tvValue);  // Debugging output
+        SmartDashboard.putNumber("Vision Horizontal Offset", getHorizontalOffset());
+        SmartDashboard.putNumber("Vision Vertical Offset", getVerticalOffset());
+        SmartDashboard.putNumber("Vision Target Area", getTargetArea());
+        SmartDashboard.putNumber("Distance to Tag", getDistanceToTag());
+        SmartDashboard.putNumber("Vision Tag ID", getTargetID());
+        SmartDashboard.putNumber("X Offset", getXOffset());
+    }
   }
-}

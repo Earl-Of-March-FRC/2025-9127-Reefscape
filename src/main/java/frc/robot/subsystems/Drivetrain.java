@@ -91,6 +91,7 @@ public class Drivetrain extends SubsystemBase {
     SparkMaxConfig configBottomRight = new SparkMaxConfig();
 
     configTopLeft
+    .smartCurrentLimit(39)
     .inverted(false)
     .idleMode(IdleMode.kBrake);
     configTopLeft.encoder
@@ -101,6 +102,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configBottomLeft
+    .smartCurrentLimit(39)
     .inverted(false)
     .idleMode(IdleMode.kBrake);
     configBottomLeft.encoder
@@ -111,6 +113,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configTopRight
+    .smartCurrentLimit(39)
     .inverted(true)
     .idleMode(IdleMode.kBrake);
     configTopRight.encoder
@@ -121,6 +124,7 @@ public class Drivetrain extends SubsystemBase {
     .pid(0.0, 0.0, 0.0);
     
     configBottomRight
+    .smartCurrentLimit(39)
     .inverted(true)
     .idleMode(IdleMode.kBrake);
     configBottomRight.encoder

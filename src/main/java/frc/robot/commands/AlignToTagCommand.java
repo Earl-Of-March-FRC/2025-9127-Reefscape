@@ -53,14 +53,20 @@ public class AlignToTagCommand extends Command {
 
     @Override
     public void execute() {
+      
         if (!visionSubsystem.hasTarget()){
             driveSubsystem.drive(0,0,0, false);
             return;
         }
-        if(visionSubsystem.getTargetID() != targetTagId){
-            driveSubsystem.drive(0,0,0, false);
+        double detectedTagId = visionSubsystem.getTargetID();
+        SmartDashboard.putNumber("Detected AprilTag ID", detectedTagId);
+
+        if (detectedTagId != targetTagId) {
+            SmartDashboard.putString("Vision Debug", "Wrong Tag ID Detected!");
+            driveSubsystem.drive(0, 0, 0, false);
             return;
-        }
+      }
+      
         double xOffset = visionSubsystem.getXOffset();
         double yOffset = visionSubsystem.getDistanceToTag();
         double angleOffset = visionSubsystem.getHorizontalOffset();
