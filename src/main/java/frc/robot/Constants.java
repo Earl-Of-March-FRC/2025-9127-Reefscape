@@ -21,5 +21,6 @@ public final class Constants {
     public static final int moto1pin = 10;
     public static final int moto2pin = 10;
     public static final int limitSwitchChannel = 0;
+    public static final double intakeStopDelay = 0.5; // TBD Change after testing
   }
 }
