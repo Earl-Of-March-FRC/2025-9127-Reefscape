@@ -40,7 +40,7 @@ public class RobotContainer {
   private void configureBindings() {
     // Configure your button bindings here
 
-    //Reset the gryo angle to 0 when A is pressed on the operator controller
+    //Reset the gyro angle to 0 when A is pressed on the operator controller
     new Trigger(operatorController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
     
     //Toggle the drive mode (field or robot oriented) when B is pressed on the operator controller
