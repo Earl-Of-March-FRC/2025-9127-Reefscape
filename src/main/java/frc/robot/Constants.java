@@ -49,7 +49,10 @@ public final class Constants {
     public static final int BOTTOM_RIGHT_ID = 11;
 
     //limits the max motor speed
-    public static final double SPEED_MULTIPLIER = 0.2;
+    public static final double SPEED_MULTIPLIER = 0.4;
+
+    //Controller deadband
+    public static final double DRIVE_DEADBAND = 0.1;
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
