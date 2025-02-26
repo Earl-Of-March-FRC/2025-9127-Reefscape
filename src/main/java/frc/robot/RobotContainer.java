@@ -4,26 +4,30 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ReverseCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
-  private final XboxController xboxController = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController xboxController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+public RobotContainer() {
     intakeSub.setDefaultCommand(
-      new IntakeCommand(
-        intakeSub,
-        () -> xboxController.getLeftTriggerAxis()
-      )
+        new ShootCommand(
+            intakeSub,
+            () -> xboxController.getLeftTriggerAxis()
+        )
     );
+
 
     // Configure the trigger bindings
     configureBindings();
@@ -32,6 +36,12 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Configure controller bindings here...
+    xboxController.a().whileTrue(new IntakeCommand(intakeSub));
+    new Trigger(() -> xboxController.getRightTriggerAxis() > 0.1)
+        .whileTrue(new ReverseCommand(
+            intakeSub,
+            () -> xboxController.getRightTriggerAxis()
+        ));
   }
 
   public Command getAutonomousCommand() {
