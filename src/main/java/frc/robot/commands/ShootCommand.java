@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -15,8 +14,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ShootCommand extends Command {
   private IntakeSubsystem intakeWheels;
   private DoubleSupplier speed;
-  Timer timer = new Timer();    
-  private boolean timerStarted = false;
 
   /** Creates a new Intake. */
   public ShootCommand(IntakeSubsystem intakeWheels, DoubleSupplier speed) {

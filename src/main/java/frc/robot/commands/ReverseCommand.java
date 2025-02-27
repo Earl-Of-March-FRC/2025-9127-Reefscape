@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -15,8 +14,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class ReverseCommand extends Command {
   private IntakeSubsystem intakeWheels;
   private DoubleSupplier speed;
-  Timer timer = new Timer();    
-  private boolean timerStarted = false;
 
   /** Creates a new Intake. */
   public ReverseCommand(IntakeSubsystem intakeWheels, DoubleSupplier speed) {

@@ -40,7 +40,7 @@ public class IntakeCommand extends Command {
             timerStarted = true;
         }
 
-        if (timer.get() >= Constants.IntakeConstants.intakeStopDelay) { // variable to change wait time
+        if (timer.get() >= Constants.IntakeConstants.INTAKE_STOP_DELAY) { // variable to change wait time
             intakeWheels.intake(0);
         } else {
             intakeWheels.intake(intakeSpeed);

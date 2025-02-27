@@ -16,7 +16,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private final WPI_VictorSPX motor1 = new WPI_VictorSPX(Constants.IntakeConstants.moto1pin);
   private final WPI_VictorSPX motor2 = new WPI_VictorSPX(Constants.IntakeConstants.moto2pin);
 
-  private final DigitalInput limit =  new DigitalInput(Constants.IntakeConstants.limitSwitchChannel);
+  private final DigitalInput limit =  new DigitalInput(Constants.IntakeConstants.LIMIT_SWITCH_CHANNEL);
 
   public void intake(double speed){
     motor1.set(VictorSPXControlMode.PercentOutput, speed);
