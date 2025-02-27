@@ -18,10 +18,11 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  
 
   public static class DrivetrainConstants {
 
-    //Relative to the centre in metres, used for kinematics and odometry
+    //Relative to the centre in metres, used for kinematics and odometry0,\
     public static final Translation2d TOP_LEFT_POS = new Translation2d(0.26, 0.279);
     public static final Translation2d BOTTOM_LEFT_POS = new Translation2d(0.26, -0.279);
     public static final Translation2d TOP_RIGHT_POS = new Translation2d(-0.26, 0.279);
@@ -41,15 +42,14 @@ public final class Constants {
     public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
     public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
 
-
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 14;
     public static final int BOTTOM_LEFT_ID = 12;
     public static final int TOP_RIGHT_ID = 13;
-    public static final int BOTTOM_RIGHT_ID = 11;
+    public static final int BOTTOM_RIGHT_ID =11;
 
     //limits the max motor speed
-    public static final double SPEED_MULTIPLIER = 0.4;
+    public static final double SPEED_MULTIPLIER = 1;
 
     //Controller deadband
     public static final double DRIVE_DEADBAND = 0.1;

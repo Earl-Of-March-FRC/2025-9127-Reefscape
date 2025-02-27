@@ -4,12 +4,12 @@
 
 package frc.robot;
 
-import frc.robot.commands.DriveFieldOriented;
-import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveFieldOriented;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,11 +40,11 @@ public class RobotContainer {
   private void configureBindings() {
     // Configure your button bindings here
 
-    //Reset the gyro angle to 0 when A is pressed on the operator controller
-    new Trigger(operatorController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
+    //Reset the gyro angle to 0 when A is pressed on the driver controller
+    new Trigger(driveController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
     
-    //Toggle the drive mode (field or robot oriented) when B is pressed on the operator controller
-    new Trigger(operatorController::getBButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
+    //Toggle the drive mode (field or robot oriented) when B is pressed on the driver controller
+    new Trigger(driveController::getBButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
   }
 
   public Command getAutonomousCommand() {
