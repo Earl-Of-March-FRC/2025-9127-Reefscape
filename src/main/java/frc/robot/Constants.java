@@ -18,8 +18,16 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
-  
 
+  public static class IntakeConstants {
+    public static final int moto1pin = 0;
+    public static final int moto2pin = 1;
+    public static final int LIMIT_SWITCH_CHANNEL = 0;
+    public static final double INTAKE_STOP_DELAY = 0.0; // TBD Change after testing
+    public static final double SHOOT_MULTIPLIER = 0.5;
+  }
+
+  
   public static class DrivetrainConstants {
 
     //Relative to the centre in metres, used for kinematics and odometry0,\
