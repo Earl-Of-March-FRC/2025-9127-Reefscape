@@ -19,6 +19,14 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class IntakeConstants {
+    public static final int moto1pin = 0;
+    public static final int moto2pin = 1;
+    public static final int LIMIT_SWITCH_CHANNEL = 0;
+    public static final double INTAKE_STOP_DELAY = 0.0; // TBD Change after testing
+    public static final double SHOOT_MULTIPLIER = 0.5;
+  }
+
   public static class DrivetrainConstants {
     //Relative to the centre in metres
     public static final Translation2d TOP_LEFT_POS = new Translation2d(0.26, 0.279);
@@ -29,9 +37,6 @@ public final class Constants {
     public static final double GEAR_RATIO = 10.71; 
     public static final int COUNTS_PER_REV = 4096;
     public static final double WHEEL_DIAMETER_INCHES = 6;
-
-    public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/COUNTS_PER_REV/GEAR_RATIO;
-    public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
 
     //PID CONSTANTS
     public static final double TRANSLATE_P = 0.1;
@@ -53,5 +58,19 @@ public final class Constants {
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
+ 
+     //Conversion from native encoder units to wheel distance travelled (m)
+     public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/COUNTS_PER_REV/GEAR_RATIO;
+     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
+ 
+     //Conversion from encoder RPM to wheel m/s
+     public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
+     public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
+ 
+     //Controller deadband
+     public static final double DRIVE_DEADBAND = 0.1;
+ 
+     //Angle of the gyro's "zero yaw" position relative to the front of the bot
+     public static final double GYRO_ANGLE_OFFSET = 0;
   }
 }
