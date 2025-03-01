@@ -37,7 +37,6 @@ public class RobotContainer {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
-    SmartDashboard.putData("Autonomous Routine", autoChooser);
 
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(
