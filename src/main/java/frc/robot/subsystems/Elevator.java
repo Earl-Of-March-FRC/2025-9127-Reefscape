@@ -39,8 +39,19 @@ public class Elevator extends SubsystemBase {
     elevatorLeader = new SparkMax(ElevatorConstants.LEADER_PORT, MotorType.kBrushless);
     elevatorFollower = new SparkMax(ElevatorConstants.FOLLOWER_PORT, MotorType.kBrushless);
 
-    lowLimitSwitch = new DigitalInput(ElevatorConstants.LOW_LIMIT_CHANNEL);
-    highLimitSwitch = new DigitalInput(ElevatorConstants.HIGH_LIMIT_CHANNEL);
+    lowLimitSwitch = new DigitalInput(ElevatorConstants.LOW_LIMIT_CHANNEL){
+      @Override
+      public boolean get(){
+        return !super.get();
+      }
+    };
+    
+    highLimitSwitch = new DigitalInput(ElevatorConstants.HIGH_LIMIT_CHANNEL){
+      @Override
+      public boolean get(){
+        return !super.get();
+      }
+    };
 
     encoder = elevatorLeader.getAbsoluteEncoder();
 
