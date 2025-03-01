@@ -51,10 +51,10 @@ public final class Constants {
     public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
 
     //MOTOR ID'S
-    public static final int TOP_LEFT_ID = 14;
-    public static final int BOTTOM_LEFT_ID = 12;
-    public static final int TOP_RIGHT_ID = 13;
-    public static final int BOTTOM_RIGHT_ID =11;
+    public static final int TOP_LEFT_ID = 4;
+    public static final int BOTTOM_LEFT_ID = 2;
+    public static final int TOP_RIGHT_ID = 3;
+    public static final int BOTTOM_RIGHT_ID = 1;
 
     //limits the max motor speed
     public static final double SPEED_MULTIPLIER = 1;
