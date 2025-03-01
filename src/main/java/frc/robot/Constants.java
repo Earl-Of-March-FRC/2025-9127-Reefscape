@@ -24,8 +24,8 @@ public final class Constants {
     //TODO verify gear ratio
     public static final double GEAR_RATIO = 10;
 
-    //TODO confirm counts per rev, this may need tobe changed to pulses per rev 
-    public static final int COUNTS_PER_REV = 8192;
+    //TODO confirm counts per rev, this may need to be changed to pulses per rev 
+    public static final int COUNTS_PER_REV = 1;
 
     //TODO confirm that this is the correct sprocket diameter
     public static final double SPROCKET_DIAMETER_INCHES = 3.98; //NEEDS TESTING SINCE ITS NOT A WHEEL
@@ -33,8 +33,8 @@ public final class Constants {
     public static final double COUNTS_TO_INCHES_CONVERSION = SPROCKET_DIAMETER_INCHES * Math.PI / COUNTS_PER_REV / GEAR_RATIO;
     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
 
-    public static final int LEADER_PORT = 0;
-    public static final int FOLLOWER_PORT = 1;
+    public static final int LEADER_PORT = 6;
+    public static final int FOLLOWER_PORT = 5;
 
     public static final double P_DOWN = 0;
     public static final double I_DOWN = 0;

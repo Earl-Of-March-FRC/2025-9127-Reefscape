@@ -5,10 +5,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
-
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -27,7 +28,7 @@ public class Elevator extends SubsystemBase {
   private final SparkMax elevatorLeader;
   private final SparkMax elevatorFollower;
 
-  private final RelativeEncoder encoder;
+  private final SparkAbsoluteEncoder encoder;
 
   private final DigitalInput lowLimitSwitch;
   private final DigitalInput highLimitSwitch;
@@ -41,8 +42,7 @@ public class Elevator extends SubsystemBase {
     lowLimitSwitch = new DigitalInput(ElevatorConstants.LOW_LIMIT_CHANNEL);
     highLimitSwitch = new DigitalInput(ElevatorConstants.HIGH_LIMIT_CHANNEL);
 
-    encoder = elevatorLeader.getAlternateEncoder();
-    encoder.setPosition(0);
+    encoder = elevatorLeader.getAbsoluteEncoder();
 
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
     SparkMaxConfig followerConfig = new SparkMaxConfig();
@@ -54,7 +54,7 @@ public class Elevator extends SubsystemBase {
     leaderConfig.encoder
         .positionConversionFactor(ElevatorConstants.COUNTS_TO_METERS_CONVERSION);
     leaderConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder)
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .pidf(ElevatorConstants.P_UP, ElevatorConstants.I_UP, ElevatorConstants.D_UP, ElevatorConstants.F_UP, ElevatorConstants.PID_SLOT_UP)
         .pidf(ElevatorConstants.P_DOWN, ElevatorConstants.I_DOWN, ElevatorConstants.D_DOWN, ElevatorConstants.F_DOWN, ElevatorConstants.PID_SLOT_DOWN)
         .outputRange(-1, 1, ElevatorConstants.PID_SLOT_UP)
@@ -77,13 +77,17 @@ public class Elevator extends SubsystemBase {
       setSpeed(0);
     }
 
-    if (lowLimitSwitch.get()) {
-      encoder.setPosition(0);
-    }
+    SmartDashboard.putBoolean("Low Limit", lowLimitSwitch.get());
+    SmartDashboard.putBoolean("High Limit", highLimitSwitch.get());
+    SmartDashboard.putNumber("Encoder Position", encoder.getPosition());
 
-    if (highLimitSwitch.get()) {
-      encoder.setPosition(ElevatorConstants.MAX_POSITION);
-    }
+    // if (lowLimitSwitch.get()) {
+    //   encoder.setPosition(0);
+    // }
+
+    // if (highLimitSwitch.get()) {
+    //   encoder.setPosition(ElevatorConstants.MAX_POSITION);
+    // }
   }
 
   public void setSpeed(double speed) {
@@ -106,8 +110,8 @@ public class Elevator extends SubsystemBase {
     return encoder.getPosition();
   }
 
-  public void setEncoderPosition(double position){
-    encoder.setPosition(position);
-  }
+  // public void setEncoderPosition(double position){
+  //   encoder.setPosition(position);
+  // }
 
 }
