@@ -45,7 +45,7 @@ public class Elevator extends SubsystemBase {
         return !super.get();
       }
     };
-    
+
     highLimitSwitch = new DigitalInput(ElevatorConstants.HIGH_LIMIT_CHANNEL){
       @Override
       public boolean get(){
@@ -102,7 +102,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    elevatorLeader.set(speed);
+    elevatorLeader.set(speed*ElevatorConstants.MANUAL_SPEED_MULTIPLIER);
   }
 
   public void setPosition(double position){
