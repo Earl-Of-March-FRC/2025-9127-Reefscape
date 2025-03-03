@@ -4,41 +4,49 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.ElevatorPID;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.ManualElevator;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DriveFieldOriented;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ReverseCommand;
+import frc.robot.commands.ShootCommand;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.IntakeSubsystem;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
+
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final XboxController driveController = new XboxController(0);
+  private final CommandXboxController operatorController = new CommandXboxController(1);
 
   private final Elevator elevator = new Elevator();
   private final ElevatorPID[] elevatorCommands;
   private int elevatorPositionIndex;
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
+public RobotContainer() {
+    intakeSub.setDefaultCommand(
+        new ShootCommand(
+            intakeSub,
+            () -> operatorController.getLeftTriggerAxis()
+        )
+    );
+
+
     elevatorPositionIndex = 0;
     elevatorCommands = new ElevatorPID[]{
       new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
@@ -49,47 +57,49 @@ public class RobotContainer {
     };
 
     // Configure the trigger bindings
+    drivetrain.setDefaultCommand(new DriveFieldOriented(
+      drivetrain,
+      () -> (driveController.getLeftX()), //X translation
+      () -> -(driveController.getLeftY()), //Y translation
+      () -> (driveController.getRightX()) //Z rotation
+      ));
     configureBindings();
     elevator.setDefaultCommand(new ManualElevator(elevator, ()-> -m_operatorController.getRightTriggerAxis() + m_operatorController.getLeftTriggerAxis()));
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
+
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    //new Trigger(m_exampleSubsystem::exampleCondition)
-    //    .onTrue(new ExampleCommand(m_exampleSubsystem));
+    // Configure your button bindings here
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    //m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    //Reset the gyro angle to 0 when A is pressed on the driver controller
+    new Trigger(driveController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
+    
+    //Toggle the drive mode (field or robot oriented) when B is pressed on the driver controller
+    new Trigger(driveController::getBButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
 
-    m_operatorController.leftBumper().onTrue(new InstantCommand(()->{
+    //automatically intake with beam break sensor using button a
+    operatorController.a().whileTrue(new IntakeCommand(intakeSub));
+
+    //reverse direction for intake with right trigger
+    new Trigger(() -> operatorController.getRightTriggerAxis() > 0.1)
+        .whileTrue(new ReverseCommand(
+            intakeSub,
+            () -> operatorController.getRightTriggerAxis()
+        ));
+
+    operatorController.leftBumper().onTrue(new InstantCommand(()->{
       elevatorPositionIndex = (elevatorPositionIndex + 1) % elevatorCommands.length;
       elevatorCommands[elevatorPositionIndex].schedule();
     }));
     
-    m_operatorController.rightBumper().onTrue(new InstantCommand(()->{
+    operatorController.rightBumper().onTrue(new InstantCommand(()->{
       elevatorPositionIndex = (elevatorPositionIndex - 1 + elevatorCommands.length) % elevatorCommands.length;
       elevatorCommands[elevatorPositionIndex].schedule();
     }));
-  
-  }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
+  }
+  
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return null;
   }
 }
