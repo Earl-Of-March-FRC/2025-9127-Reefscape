@@ -39,7 +39,7 @@ public final class Constants {
     //Gearbox ratio
     public static final double GEAR_RATIO = 10.71; 
 
-    public static final int COUNTS_PER_REV = 4096;
+    public static final int COUNTS_PER_REV = 42;
     public static final double WHEEL_DIAMETER_INCHES = 6;
 
     //Conversion from native encoder units to wheel distance travelled (m)
@@ -60,7 +60,8 @@ public final class Constants {
     public static final double SPEED_MULTIPLIER = 1;
 
     //Controller deadband
-    public static final double DRIVE_DEADBAND = 0.1;
+    public static final double DRIVE_DEADBAND = 0.2;
+    public static final double TURN_DEADBAND = 0.1;
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;

@@ -171,16 +171,19 @@ public class Drivetrain extends SubsystemBase {
           Math.signum(ySpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
               Math.sqrt(
                   Math.abs(
-                      MathUtil.applyDeadband(ySpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND))),
+                      MathUtil.applyDeadband(ySpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
+                      )),
           Math.signum(xSpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
               Math.sqrt(
                   Math.abs(
-                      MathUtil.applyDeadband(xSpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND))),
-          zRotation * Constants.DrivetrainConstants.SPEED_MULTIPLIER,
+                      MathUtil.applyDeadband(xSpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
+                      )),
+          MathUtil.applyDeadband(zRotation, Constants.DrivetrainConstants.TURN_DEADBAND) * Constants.DrivetrainConstants.SPEED_MULTIPLIER,
 
           // The unary minus arises from the swapping of x and y
           gyro.getRotation2d().unaryMinus());
-    } else {
+    } 
+    else {
       mecanumDrive.driveCartesian(
           MathUtil.applyDeadband(
               Math.signum(ySpeed) * Math.sqrt(Math.abs(ySpeed * Constants.DrivetrainConstants.SPEED_MULTIPLIER)),
@@ -188,7 +191,7 @@ public class Drivetrain extends SubsystemBase {
           MathUtil.applyDeadband(
               Math.signum(xSpeed) * Math.sqrt(Math.abs(xSpeed * Constants.DrivetrainConstants.SPEED_MULTIPLIER)),
               Constants.DrivetrainConstants.DRIVE_DEADBAND),
-          zRotation * Constants.DrivetrainConstants.SPEED_MULTIPLIER);
+            MathUtil.applyDeadband(zRotation, Constants.DrivetrainConstants.TURN_DEADBAND) * Constants.DrivetrainConstants.SPEED_MULTIPLIER);
     }
   }
 
