@@ -88,12 +88,14 @@ public RobotContainer() {
     operatorController.leftBumper().onTrue(new InstantCommand(()->{
       elevatorPositionIndex = (elevatorPositionIndex + 1) % elevatorCommands.length;
       elevatorCommands[elevatorPositionIndex].schedule();
-    }));
+    }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
+    );
     
     operatorController.rightBumper().onTrue(new InstantCommand(()->{
       elevatorPositionIndex = (elevatorPositionIndex - 1 + elevatorCommands.length) % elevatorCommands.length;
       elevatorCommands[elevatorPositionIndex].schedule();
-    }));
+    }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
+    );
 
   }
 

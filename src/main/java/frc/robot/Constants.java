@@ -31,20 +31,22 @@ public final class Constants {
     public static final int COUNTS_PER_REV = 42;
 
     //TODO confirm that this is the correct sprocket diameter
-    public static final double SPROCKET_DIAMETER_INCHES = 3.98; //NEEDS TESTING SINCE ITS NOT A WHEEL
+    public static final double SPROCKET_TEETH = 15;
+    public static final double CHAIN_PITCH = 3.0/8.0;
 
-    public static final double COUNTS_TO_INCHES_CONVERSION = SPROCKET_DIAMETER_INCHES * Math.PI / COUNTS_PER_REV / GEAR_RATIO;
+
+    public static final double COUNTS_TO_INCHES_CONVERSION = CHAIN_PITCH*SPROCKET_TEETH / COUNTS_PER_REV / GEAR_RATIO;
     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
 
     public static final int LEADER_PORT = 6;
     public static final int FOLLOWER_PORT = 5;
 
-    public static final double P_DOWN = 0.001;
+    public static final double P_DOWN = 1;
     public static final double I_DOWN = 0;
     public static final double D_DOWN = 0;
     public static final double F_DOWN = 0;
     
-    public static final double P_UP = 0.001;
+    public static final double P_UP = 1;
     public static final double I_UP = 0;
     public static final double D_UP = 0;
     public static final double F_UP = 0;
@@ -53,7 +55,7 @@ public final class Constants {
     public static final ClosedLoopSlot PID_SLOT_UP = ClosedLoopSlot.kSlot1;
 
     public static final double INTAKE_POSITION = 0;
-    public static final double L1_POSITION = 0.013124887831509;
+    public static final double L1_POSITION = 0;
     public static final double L2_POSITION = 0;
     public static final double L3_POSITION = 0;
     public static final double L4_POSITION = 0;

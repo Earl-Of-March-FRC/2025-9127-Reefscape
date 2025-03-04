@@ -32,6 +32,7 @@ public class Elevator extends SubsystemBase {
 
   private final DigitalInput lowLimitSwitch;
   private final DigitalInput highLimitSwitch;
+  private final SparkClosedLoopController controller;
 
   /** Creates a new Elevator. */
   
@@ -64,7 +65,7 @@ public class Elevator extends SubsystemBase {
         .inverted(true)
         .idleMode(IdleMode.kBrake);
     leaderConfig.encoder
-        .positionConversionFactor(ElevatorConstants.COUNTS_TO_METERS_CONVERSION);
+        .positionConversionFactor(ElevatorConstants.COUNTS_TO_INCHES_CONVERSION);
     leaderConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(ElevatorConstants.P_UP, ElevatorConstants.I_UP, ElevatorConstants.D_UP, ElevatorConstants.F_UP, ElevatorConstants.PID_SLOT_UP)
@@ -80,6 +81,9 @@ public class Elevator extends SubsystemBase {
 
     elevatorLeader.configure(leaderConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     elevatorFollower.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    
+    controller = elevatorLeader.getClosedLoopController();
   }
 
   @Override
@@ -96,7 +100,6 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Leader output", elevatorLeader.get());
     SmartDashboard.putNumber("Follower output", elevatorFollower.get());
 
-
     if (lowLimitSwitch.get()) {
       encoder.setPosition(0);
     }
@@ -112,7 +115,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPosition(double position){
-    SparkClosedLoopController controller = elevatorLeader.getClosedLoopController();
 
     //Use the appropriate controller based on direction (up or down)
     if (getPosition() <= position) {
