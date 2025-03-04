@@ -46,7 +46,6 @@ public RobotContainer() {
         )
     );
 
-
     elevatorPositionIndex = 0;
     elevatorCommands = new ElevatorPID[]{
       new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
@@ -98,7 +97,7 @@ public RobotContainer() {
     }));
 
   }
-  
+
   public Command getAutonomousCommand() {
     return null;
   }
