@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.revrobotics.spark.ClosedLoopSlot;
+
 import edu.wpi.first.math.geometry.Translation2d;
 
 /**
@@ -27,7 +28,7 @@ public final class Constants {
     //TODO verify gear ratio
     public static final double GEAR_RATIO = 10;
 
-    //TODO confirm counts per rev, this may need to be changed to pulses per rev 
+    //Motor controller automatically converts to revolutions
     public static final int COUNTS_PER_REV = 42;
 
     //TODO confirm that this is the correct sprocket diameter
@@ -35,7 +36,7 @@ public final class Constants {
     public static final double CHAIN_PITCH = 3.0/8.0;
 
 
-    public static final double COUNTS_TO_INCHES_CONVERSION = CHAIN_PITCH*SPROCKET_TEETH / COUNTS_PER_REV / GEAR_RATIO;
+    public static final double COUNTS_TO_INCHES_CONVERSION = CHAIN_PITCH*SPROCKET_TEETH / GEAR_RATIO;
     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
 
     public static final int LEADER_PORT = 6;
