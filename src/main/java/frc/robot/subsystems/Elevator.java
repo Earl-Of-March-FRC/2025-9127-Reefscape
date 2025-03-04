@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
   private final SparkMax elevatorLeader;
   private final SparkMax elevatorFollower;
 
-  private final SparkAbsoluteEncoder encoder;
+  private final RelativeEncoder encoder;
 
   private final DigitalInput lowLimitSwitch;
   private final DigitalInput highLimitSwitch;
@@ -53,19 +53,20 @@ public class Elevator extends SubsystemBase {
       }
     };
 
-    encoder = elevatorLeader.getAbsoluteEncoder();
+    encoder = elevatorLeader.getEncoder();
+    encoder.setPosition(0);
 
     SparkMaxConfig leaderConfig = new SparkMaxConfig();
     SparkMaxConfig followerConfig = new SparkMaxConfig();
 
     leaderConfig
         .smartCurrentLimit(40)
-        .inverted(false)
+        .inverted(true)
         .idleMode(IdleMode.kBrake);
     leaderConfig.encoder
         .positionConversionFactor(ElevatorConstants.COUNTS_TO_METERS_CONVERSION);
     leaderConfig.closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(ElevatorConstants.P_UP, ElevatorConstants.I_UP, ElevatorConstants.D_UP, ElevatorConstants.F_UP, ElevatorConstants.PID_SLOT_UP)
         .pidf(ElevatorConstants.P_DOWN, ElevatorConstants.I_DOWN, ElevatorConstants.D_DOWN, ElevatorConstants.F_DOWN, ElevatorConstants.PID_SLOT_DOWN)
         .outputRange(-1, 1, ElevatorConstants.PID_SLOT_UP)
@@ -84,21 +85,26 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
     if (lowLimitSwitch.get() || highLimitSwitch.get()) {
       setSpeed(0);
     }
 
     SmartDashboard.putBoolean("Low Limit", lowLimitSwitch.get());
     SmartDashboard.putBoolean("High Limit", highLimitSwitch.get());
-    SmartDashboard.putNumber("Encoder Position", encoder.getPosition());
+    SmartDashboard.putNumber("Encoder Position", getPosition());
+    SmartDashboard.putNumber("Leader output", elevatorLeader.get());
+    SmartDashboard.putNumber("Follower output", elevatorFollower.get());
 
-    // if (lowLimitSwitch.get()) {
-    //   encoder.setPosition(0);
-    // }
 
-    // if (highLimitSwitch.get()) {
-    //   encoder.setPosition(ElevatorConstants.MAX_POSITION);
-    // }
+    if (lowLimitSwitch.get()) {
+      encoder.setPosition(0);
+    }
+
+    if (highLimitSwitch.get()) {
+      encoder.setPosition(ElevatorConstants.MAX_POSITION);
+    }
+
   }
 
   public void setSpeed(double speed) {
@@ -118,11 +124,12 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getPosition(){
-    return encoder.getPosition();
+    //Encoder inversion
+    return -encoder.getPosition();
   }
 
-  // public void setEncoderPosition(double position){
-  //   encoder.setPosition(position);
-  // }
+  public void setEncoderPosition(double position){
+    encoder.setPosition(position);
+  }
 
 }

@@ -66,7 +66,6 @@ public RobotContainer() {
     elevator.setDefaultCommand(new ManualElevator(elevator, ()-> -m_operatorController.getRightTriggerAxis() + m_operatorController.getLeftTriggerAxis()));
   }
 
-
   private void configureBindings() {
     // Configure your button bindings here
 

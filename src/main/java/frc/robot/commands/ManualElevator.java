@@ -33,9 +33,7 @@ public class ManualElevator extends Command {
   public void execute() {
     double motorSpeed = MathUtil.applyDeadband(speed.get(), 0.1);
 
-    if (motorSpeed != 0){
-      elevator.setSpeed(motorSpeed);
-    }
+    elevator.setSpeed(motorSpeed);
   }
 
   // Called once the command ends or is interrupted.
