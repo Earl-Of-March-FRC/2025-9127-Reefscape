@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
@@ -31,9 +30,9 @@ public class ManualElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double motorSpeed = MathUtil.applyDeadband(speed.get(), 0.1);
+    //double motorSpeed = MathUtil.applyDeadband(speed.get(), 0.1);
 
-    elevator.setSpeed(motorSpeed);
+    elevator.setSpeed(speed.get());
   }
 
   // Called once the command ends or is interrupted.

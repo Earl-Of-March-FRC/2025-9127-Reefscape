@@ -4,22 +4,21 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
-
-import com.revrobotics.spark.SparkAbsoluteEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 
 
@@ -65,8 +64,8 @@ public class Elevator extends SubsystemBase {
         .inverted(true)
         .idleMode(IdleMode.kBrake);
     leaderConfig.encoder
-        .positionConversionFactor(ElevatorConstants.COUNTS_TO_INCHES_CONVERSION)
-        .inverted(true);
+        .positionConversionFactor(ElevatorConstants.COUNTS_TO_INCHES_CONVERSION);
+       // .inverted(true);
     leaderConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(ElevatorConstants.P_UP, ElevatorConstants.I_UP, ElevatorConstants.D_UP, ElevatorConstants.F_UP, ElevatorConstants.PID_SLOT_UP)
@@ -133,6 +132,10 @@ public class Elevator extends SubsystemBase {
 
   public void setEncoderPosition(double position){
     encoder.setPosition(position);
+  }
+
+  public void resetEncoder(){
+    encoder.setPosition(0);
   }
 
 }

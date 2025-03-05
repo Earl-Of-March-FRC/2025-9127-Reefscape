@@ -5,20 +5,20 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.ElevatorPID;
-import frc.robot.commands.ManualElevator;
-import frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveFieldOriented;
+import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ManualElevator;
 import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
 
 

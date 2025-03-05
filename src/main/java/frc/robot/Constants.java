@@ -23,7 +23,7 @@ public final class Constants {
   }
   public static class ElevatorConstants{
 
-    public static final double MANUAL_SPEED_MULTIPLIER = 0.2;
+    public static final double MANUAL_SPEED_MULTIPLIER = 0.8;
 
     //TODO verify gear ratio
     public static final double GEAR_RATIO = 10;
@@ -42,12 +42,12 @@ public final class Constants {
     public static final int LEADER_PORT = 6;
     public static final int FOLLOWER_PORT = 5;
 
-    public static final double P_DOWN = 0.005;
+    public static final double P_DOWN = 0.05;
     public static final double I_DOWN = 0;
     public static final double D_DOWN = 0;
     public static final double F_DOWN = 0;
     
-    public static final double P_UP = 0.005;
+    public static final double P_UP = 0.05;
     public static final double I_UP = 0;
     public static final double D_UP = 0;
     public static final double F_UP = 0;
@@ -56,9 +56,9 @@ public final class Constants {
     public static final ClosedLoopSlot PID_SLOT_UP = ClosedLoopSlot.kSlot1;
 
     public static final double INTAKE_POSITION = 0;
-    public static final double L1_POSITION = 0;
+    public static final double L1_POSITION = -10;
     public static final double L2_POSITION = 0;
-    public static final double L3_POSITION = 0;
+    public static final double L3_POSITION = -14;
     public static final double L4_POSITION = 0;
 
     public static final int ENCODER_PORT_1 = 0;
