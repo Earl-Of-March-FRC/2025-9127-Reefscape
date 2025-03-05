@@ -65,7 +65,8 @@ public class Elevator extends SubsystemBase {
         .inverted(true)
         .idleMode(IdleMode.kBrake);
     leaderConfig.encoder
-        .positionConversionFactor(ElevatorConstants.COUNTS_TO_INCHES_CONVERSION);
+        .positionConversionFactor(ElevatorConstants.COUNTS_TO_INCHES_CONVERSION)
+        .inverted(true);
     leaderConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
         .pidf(ElevatorConstants.P_UP, ElevatorConstants.I_UP, ElevatorConstants.D_UP, ElevatorConstants.F_UP, ElevatorConstants.PID_SLOT_UP)
@@ -100,13 +101,13 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Leader output", elevatorLeader.get());
     SmartDashboard.putNumber("Follower output", elevatorFollower.get());
 
-    if (lowLimitSwitch.get()) {
-      encoder.setPosition(0);
-    }
+    // if (lowLimitSwitch.get()) {
+    //   encoder.setPosition(0);
+    // }
 
-    if (highLimitSwitch.get()) {
-      encoder.setPosition(ElevatorConstants.MAX_POSITION);
-    }
+    // if (highLimitSwitch.get()) {
+    //   encoder.setPosition(ElevatorConstants.MAX_POSITION);
+    // }
 
   }
 
@@ -127,7 +128,7 @@ public class Elevator extends SubsystemBase {
 
   public double getPosition(){
     //Encoder inversion
-    return -encoder.getPosition();
+    return encoder.getPosition();
   }
 
   public void setEncoderPosition(double position){
