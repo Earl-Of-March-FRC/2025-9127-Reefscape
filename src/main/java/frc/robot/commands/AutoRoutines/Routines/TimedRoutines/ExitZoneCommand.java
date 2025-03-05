@@ -4,6 +4,7 @@
 
 package frc.robot.commands.AutoRoutines.Routines.TimedRoutines;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
@@ -28,12 +29,13 @@ public class ExitZoneCommand extends Command {
 
     @Override
     public void execute() {
-        drivetrain.drive(0, speed, 0, false);
+        //TODO confirm directions
+        drivetrain.drive(new ChassisSpeeds(speed, 0, 0));
     }
 
     @Override
     public void end(boolean interrupted) {
-        drivetrain.drive(0, 0, 0, false);
+        drivetrain.drive(new ChassisSpeeds(0, 0, 0));
     }
 
     @Override
