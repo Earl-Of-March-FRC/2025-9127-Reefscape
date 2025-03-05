@@ -29,7 +29,7 @@ public class RobotContainer {
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
   private final Elevator elevator = new Elevator();
-  private final ElevatorPID[] elevatorCommands;
+  private ElevatorPID[] elevatorCommands;
   private int elevatorPositionIndex;
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
@@ -46,14 +46,14 @@ public RobotContainer() {
         )
     );
 
-    elevatorPositionIndex = 0;
-    elevatorCommands = new ElevatorPID[]{
-      new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
-      new ElevatorPID(elevator, Constants.ElevatorConstants.L1_POSITION),
-      new ElevatorPID(elevator, Constants.ElevatorConstants.L2_POSITION),
-      new ElevatorPID(elevator, Constants.ElevatorConstants.L3_POSITION),
-      new ElevatorPID(elevator, Constants.ElevatorConstants.L4_POSITION)
-    };
+    // elevatorPositionIndex = 0;
+    // elevatorCommands = new ElevatorPID[]{
+    //   new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
+    //   new ElevatorPID(elevator, Constants.ElevatorConstants.L1_POSITION),
+    //   new ElevatorPID(elevator, Constants.ElevatorConstants.L2_POSITION),
+    //   new ElevatorPID(elevator, Constants.ElevatorConstants.L3_POSITION),
+    //   new ElevatorPID(elevator, Constants.ElevatorConstants.L4_POSITION)
+    // };
 
     // Configure the trigger bindings
     drivetrain.setDefaultCommand(new DriveFieldOriented(
@@ -68,7 +68,7 @@ public RobotContainer() {
 
   private void configureBindings() {
     // Configure your button bindings here
-
+  
     //Reset the gyro angle to 0 when A is pressed on the driver controller
     new Trigger(driveController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
     
@@ -85,18 +85,20 @@ public RobotContainer() {
             () -> operatorController.getRightTriggerAxis()
         ));
 
-    operatorController.leftBumper().onTrue(new InstantCommand(()->{
-      elevatorPositionIndex = (elevatorPositionIndex + 1) % elevatorCommands.length;
-      elevatorCommands[elevatorPositionIndex].schedule();
-    }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
-    );
+    // operatorController.leftBumper().onTrue(new InstantCommand(()->{
+    //   elevatorPositionIndex = (elevatorPositionIndex + 1) % elevatorCommands.length;
+    //   elevatorCommands[elevatorPositionIndex].schedule();
+    // }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
+    // );
     
-    operatorController.rightBumper().onTrue(new InstantCommand(()->{
-      elevatorPositionIndex = (elevatorPositionIndex - 1 + elevatorCommands.length) % elevatorCommands.length;
-      elevatorCommands[elevatorPositionIndex].schedule();
-    }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
-    );
+    // operatorController.rightBumper().onTrue(new InstantCommand(()->{
+    //   elevatorPositionIndex = (elevatorPositionIndex - 1 + elevatorCommands.length) % elevatorCommands.length;
+    //   elevatorCommands[elevatorPositionIndex].schedule();
+    // }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
+    // );
 
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPrevSetpoint()).schedule(), elevator));
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getNextSetpoint()).schedule(), elevator));
   }
 
   public Command getAutonomousCommand() {

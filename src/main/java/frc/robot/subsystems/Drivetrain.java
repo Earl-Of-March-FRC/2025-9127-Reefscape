@@ -133,14 +133,14 @@ public class Drivetrain extends SubsystemBase {
     bottomRight.configure(configBottomRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     // Simulation
-    // topLeftEncoderSim = new SparkRelativeEncoderSim(topLeft);
-    // topLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    // bottomLeftEncoderSim = new SparkRelativeEncoderSim(bottomLeft);
-    // bottomLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    // topRightEncoderSim = new SparkRelativeEncoderSim(topRight);
-    // topRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
-    // bottomRightEncoderSim = new SparkRelativeEncoderSim(bottomRight);
-    // bottomRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    topLeftEncoderSim = new SparkRelativeEncoderSim(topLeft);
+    topLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    bottomLeftEncoderSim = new SparkRelativeEncoderSim(bottomLeft);
+    bottomLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    topRightEncoderSim = new SparkRelativeEncoderSim(topRight);
+    topRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
+    bottomRightEncoderSim = new SparkRelativeEncoderSim(bottomRight);
+    bottomRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
 
     mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
 

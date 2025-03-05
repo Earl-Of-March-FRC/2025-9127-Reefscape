@@ -27,7 +27,7 @@ public class ElevatorPID extends Command {
   @Override
   public void execute() {
     //encoder inversion
-    elevator.setPosition(setpoint);
+    elevator.setPosition(-setpoint);
   }
 
   // Called once the command ends or is interrupted.
