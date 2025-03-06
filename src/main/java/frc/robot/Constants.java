@@ -24,6 +24,7 @@ public final class Constants {
   public static class ElevatorConstants{
 
     public static final double MANUAL_SPEED_MULTIPLIER = 0.3;
+    public static final double MANUAL_OFFSET = 0.5;
 
     //TODO verify gear ratio
     public static final double GEAR_RATIO = 10;

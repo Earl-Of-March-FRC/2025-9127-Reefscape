@@ -4,10 +4,7 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -18,7 +15,7 @@ public class ShootL1Command extends Command {
   /** Creates a new Intake. */
   public ShootL1Command(IntakeSubsystem intakeWheels) {
     this.intakeWheels = intakeWheels;
-    this.speed = 0.4;
+    this.speed = 0.15;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeWheels);

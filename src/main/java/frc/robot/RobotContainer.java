@@ -17,7 +17,6 @@ import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ManualElevator;
 import frc.robot.commands.ReverseCommand;
-import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootL1Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -103,8 +102,9 @@ public RobotContainer() {
     operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
     operatorController.x().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator));
 
-    // operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getNextSetpoint()).schedule(), elevator));
-    // operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPrevSetpoint()).schedule(), elevator));
+    
+    operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
+    operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
   }
 
   public Command getAutonomousCommand() {
