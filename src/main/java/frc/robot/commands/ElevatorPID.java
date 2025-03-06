@@ -4,15 +4,17 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorPID extends Command {
   private final Elevator elevator;
-  private double setpoint;
+  private DoubleSupplier setpoint;
   /** Creates a new ElevatorPID. */
-  public ElevatorPID(Elevator elevator, double setpoint) {
+  public ElevatorPID(Elevator elevator, DoubleSupplier setpoint) {
     this.elevator = elevator;
     this.setpoint = setpoint;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,7 +29,7 @@ public class ElevatorPID extends Command {
   @Override
   public void execute() {
     //encoder inversion
-    elevator.setPosition(-setpoint);
+    elevator.setPosition(-setpoint.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.

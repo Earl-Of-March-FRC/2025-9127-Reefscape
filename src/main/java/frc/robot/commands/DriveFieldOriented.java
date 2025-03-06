@@ -9,7 +9,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class DriveFieldOriented extends Command {
   private Drivetrain drivetrain;
   private DoubleSupplier xSpeed;
@@ -23,7 +22,6 @@ public class DriveFieldOriented extends Command {
     this.ySpeed = ySpeed;
     this.zRotation = zRotation;
 
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
 

@@ -25,6 +25,8 @@ public final class Constants {
 
     public static final double MANUAL_SPEED_MULTIPLIER = 0.3;
 
+    public static final double OFFSET = 0.5;
+
     //TODO verify gear ratio
     public static final double GEAR_RATIO = 10;
 
@@ -43,7 +45,7 @@ public final class Constants {
     public static final int FOLLOWER_PORT = 5;
 
     public static final double P_DOWN = 0.02;
-    public static final double I_DOWN = 0.0;
+    public static final double I_DOWN = 0.0001;
     public static final double D_DOWN = 0;
     public static final double F_DOWN = 0;
     
@@ -76,7 +78,7 @@ public final class Constants {
     public static final int moto1pin = 7;
     public static final int moto2pin = 8;
     public static final int LIMIT_SWITCH_CHANNEL = 0;
-    public static final double INTAKE_STOP_DELAY = 0.0; // TBD Change after testing
+    public static final double INTAKE_STOP_DELAY = 0.05; // TBD Change after testing
     public static final double SHOOT_MULTIPLIER = 0.5;
   }
 
