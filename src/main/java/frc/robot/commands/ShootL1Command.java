@@ -11,14 +11,14 @@ import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class ShootCommand extends Command {
+public class ShootL1Command extends Command {
   private IntakeSubsystem intakeWheels;
-  private DoubleSupplier speed;
+  private double speed;
 
   /** Creates a new Intake. */
-  public ShootCommand(IntakeSubsystem intakeWheels, DoubleSupplier speed) {
+  public ShootL1Command(IntakeSubsystem intakeWheels) {
     this.intakeWheels = intakeWheels;
-    this.speed = speed;
+    this.speed = 0.4;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeWheels);
@@ -31,7 +31,7 @@ public class ShootCommand extends Command {
   @Override
   public void execute() {
     System.out.println(intakeWheels.getLimit());
-    intakeWheels.intake(speed.getAsDouble()*Constants.IntakeConstants.SHOOT_MULTIPLIER);
+    intakeWheels.shootL1(speed);
   }
 
   // Called once the command ends or is interrupted.

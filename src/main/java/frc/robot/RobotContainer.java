@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ElevatorPID;
@@ -17,6 +18,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ManualElevator;
 import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.ShootL1Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -39,12 +41,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 public RobotContainer() {
-    intakeSub.setDefaultCommand(
-        new ShootCommand(
-            intakeSub,
-            () -> operatorController.getLeftTriggerAxis()
-        )
-    );
 
     // elevatorPositionIndex = 0;
     // elevatorCommands = new ElevatorPID[]{
@@ -78,11 +74,15 @@ public RobotContainer() {
     //automatically intake with beam break sensor using button a
     operatorController.a().whileTrue(new IntakeCommand(intakeSub));
 
+    operatorController.b().onTrue(Commands.runOnce(() -> elevator.setEncoderPosition(0), elevator));
+    
+    operatorController.y().whileTrue(new ShootL1Command(intakeSub));
+
     //reverse direction for intake with right trigger
-    new Trigger(() -> operatorController.getRightTriggerAxis() > 0.1)
+    new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
         .whileTrue(new ReverseCommand(
             intakeSub,
-            () -> operatorController.getRightTriggerAxis()
+            () -> operatorController.getRightY()
         ));
 
     // operatorController.leftBumper().onTrue(new InstantCommand(()->{
@@ -97,8 +97,14 @@ public RobotContainer() {
     // }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
     // );
 
-    operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPrevSetpoint()).schedule(), elevator));
-    operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getNextSetpoint()).schedule(), elevator));
+    operatorController.povDown().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_POSITION).schedule(), elevator));
+    operatorController.povUp().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L4_POSITION).schedule(), elevator));
+    operatorController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
+    operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
+    operatorController.x().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator));
+
+    // operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getNextSetpoint()).schedule(), elevator));
+    // operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPrevSetpoint()).schedule(), elevator));
   }
 
   public Command getAutonomousCommand() {

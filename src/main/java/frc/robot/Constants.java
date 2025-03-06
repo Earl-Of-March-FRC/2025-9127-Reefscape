@@ -47,8 +47,8 @@ public final class Constants {
     public static final double D_DOWN = 0;
     public static final double F_DOWN = 0;
     
-    public static final double P_UP = 0.07;
-    public static final double I_UP = 0.0001 ;
+    public static final double P_UP = 0.11;
+    public static final double I_UP = 0.002;
     public static final double D_UP = 0;
     public static final double F_UP = 0;
 
@@ -58,12 +58,13 @@ public final class Constants {
     public static final double MAX_PID_OUTPUT_UP = 0.5;
     public static final double MAX_PID_OUTPUT_DOWN = 0.5;
 
+    public static final double SETPOINT_OFFSET = 4;
     public static final double MANIPULATOR_BASE_OFF_GROUND_INCHES = 12.5;
     public static final double INTAKE_POSITION = 0;
-    public static final double L1_POSITION = (18 - MANIPULATOR_BASE_OFF_GROUND_INCHES);
-    public static final double L2_POSITION = (31.875 - MANIPULATOR_BASE_OFF_GROUND_INCHES);
-    public static final double L3_POSITION = (47.625 - MANIPULATOR_BASE_OFF_GROUND_INCHES);
-    public static final double L4_POSITION = (72 - MANIPULATOR_BASE_OFF_GROUND_INCHES);
+    public static final double L1_POSITION = (28 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
+    public static final double L2_POSITION = (31.875 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
+    public static final double L3_POSITION = (47.625 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
+    public static final double L4_POSITION = (72 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
 
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
@@ -73,10 +74,10 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int moto1pin = 0;
-    public static final int moto2pin = 1;
+    public static final int moto1pin = 7;
+    public static final int moto2pin = 8;
     public static final int LIMIT_SWITCH_CHANNEL = 0;
-    public static final double INTAKE_STOP_DELAY = 0.0; // TBD Change after testing
+    public static final double INTAKE_STOP_DELAY = 0.05; // TBD Change after testing
     public static final double SHOOT_MULTIPLIER = 0.5;
   }
 

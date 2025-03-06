@@ -115,12 +115,12 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putBoolean("Low Limit", lowLimitSwitch.get());
     SmartDashboard.putBoolean("High Limit", highLimitSwitch.get());
     SmartDashboard.putNumber("Encoder Position", getPosition());
-    SmartDashboard.putNumber("Leader output", elevatorLeader.get());
-    SmartDashboard.putNumber("Follower output", elevatorFollower.get());
+    SmartDashboard.putNumber("Leader output", elevatorLeader.getOutputCurrent());
+    SmartDashboard.putNumber("Follower output", elevatorFollower.getOutputCurrent());
     SmartDashboard.putString("Current Elevator Settpoint", getCurrSetpoint());
 
     // if (lowLimitSwitch.get()) {
-    //   encoder.setPosition(0);
+    //   encoder.setPosition(ElevatorConstants.MANIPULATOR_BASE_OFF_GROUND_INCHES);
     // }
 
     // if (highLimitSwitch.get()) {
@@ -151,6 +151,10 @@ public class Elevator extends SubsystemBase {
 
   public void setEncoderPosition(double position){
     encoder.setPosition(position);
+  }
+
+  public void resetIAccum() {
+    controller.setIAccum(0);
   }
 
   public void resetEncoder(){
