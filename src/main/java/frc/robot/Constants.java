@@ -81,7 +81,6 @@ public final class Constants {
     public static final double INTAKE_STOP_DELAY = 0.05; // TBD Change after testing
     public static final double SHOOT_MULTIPLIER = 0.5;
   }
-
   
   public static class DrivetrainConstants {
 
@@ -101,10 +100,15 @@ public final class Constants {
     //Conversion from native encoder units to wheel distance travelled (m)
     public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/GEAR_RATIO;
     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
+    //PID CONSTANTS
+    public static final double TRANSLATE_P = 0.1;
+    public static final double TRANSLATE_I = 0.0;
+    public static final double TRANSLATE_D = 0.0;
 
-    //Conversion from encoder RPM to wheel m/s
-    public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
-    public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
+    public static final double ROTATE_P = 0.1;
+    public static final double ROTATE_I = 0.0;
+    public static final double ROTATE_D = 0.0;
+
 
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 4;
@@ -121,8 +125,16 @@ public final class Constants {
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
-
-    //Angle of the gyro's "zero yaw" position relative to the front of the bot
-    public static final double GYRO_ANGLE_OFFSET = 0;
+ 
+     //Conversion from native encoder units to wheel distance travelled (m)
+     public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/GEAR_RATIO;
+     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
+ 
+     //Conversion from encoder RPM to wheel m/s
+     public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
+     public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
+ 
+     //Angle of the gyro's "zero yaw" position relative to the front of the bot
+     public static final double GYRO_ANGLE_OFFSET = 0;
   }
 }

@@ -31,4 +31,3 @@ public class IntakeSubsystem extends SubsystemBase {
     return limit.get();
   }
 }
-
