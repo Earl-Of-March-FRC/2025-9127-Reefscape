@@ -125,10 +125,7 @@ public final class Constants {
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
- 
-     //Conversion from native encoder units to wheel distance travelled (m)
-     public static final double COUNTS_TO_INCHES_CONVERSION = WHEEL_DIAMETER_INCHES*Math.PI/GEAR_RATIO;
-     public static final double COUNTS_TO_METERS_CONVERSION = COUNTS_TO_INCHES_CONVERSION/39.37;
+
  
      //Conversion from encoder RPM to wheel m/s
      public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;

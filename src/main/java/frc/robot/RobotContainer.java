@@ -90,9 +90,11 @@ public RobotContainer() {
     autoChooser.addOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 1, 2));
     
     SmartDashboard.putData("Autonomous Routine", autoChooser);
+
+    //elevator.setDefaultCommand(new ManualElevator(elevator, ()-> -m_operatorController.getRightTriggerAxis() + m_operatorController.getLeftTriggerAxis()));
   }
-    elevator.setDefaultCommand(new ManualElevator(elevator, ()-> -m_operatorController.getRightTriggerAxis() + m_operatorController.getLeftTriggerAxis()));
-  }
+    
+  
 
   private void configureBindings() {
     // Configure your button bindings here
@@ -133,6 +135,7 @@ public RobotContainer() {
     operatorController.povUp().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L4_POSITION).schedule(), elevator));
     operatorController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
     operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
+    
     operatorController.x().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator));
 
     
