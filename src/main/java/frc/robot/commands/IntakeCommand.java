@@ -53,6 +53,7 @@ public class IntakeCommand extends Command {
     }
 
     SmartDashboard.putBoolean("Limit switch: ", limitSwitchTriggered);
+    System.out.println(limitSwitchTriggered);
   }
 
   // Called once the command ends or is interrupted.

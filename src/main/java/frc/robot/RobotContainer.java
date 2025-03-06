@@ -42,7 +42,7 @@ public RobotContainer() {
     intakeSub.setDefaultCommand(
         new ShootCommand(
             intakeSub,
-            () -> operatorController.getLeftTriggerAxis()
+            () -> operatorController.getLeftY()
         )
     );
 
@@ -79,7 +79,7 @@ public RobotContainer() {
     operatorController.a().whileTrue(new IntakeCommand(intakeSub));
 
     //reverse direction for intake with right trigger
-    new Trigger(() -> operatorController.getRightTriggerAxis() > 0.1)
+    new Trigger(() -> operatorController.getRightY() > 0.1)
         .whileTrue(new ReverseCommand(
             intakeSub,
             () -> operatorController.getRightTriggerAxis()
