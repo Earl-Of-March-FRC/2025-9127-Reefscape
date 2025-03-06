@@ -135,7 +135,7 @@ public class Elevator extends SubsystemBase {
 
   public void setPosition(double position){
 
-    position = MathUtil.clamp(position, ElevatorConstants.INTAKE_POSITION, ElevatorConstants.L4_POSITION);
+    //position = MathUtil.clamp(position, ElevatorConstants.INTAKE_POSITION, ElevatorConstants.L4_POSITION);
 
     //Use the appropriate controller based on direction (up or down)
     if (getPosition() <= position) {

@@ -62,7 +62,7 @@ public final class Constants {
     public static final double SETPOINT_OFFSET = 4;
     public static final double MANIPULATOR_BASE_OFF_GROUND_INCHES = 12.5;
     public static final double INTAKE_POSITION = 0;
-    public static final double L1_POSITION = (28 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
+    public static final double L1_POSITION = (26 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
     public static final double L2_POSITION = (31.875 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
     public static final double L3_POSITION = (47.625 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
     public static final double L4_POSITION = (72 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;

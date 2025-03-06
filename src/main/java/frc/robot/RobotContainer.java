@@ -108,7 +108,7 @@ public RobotContainer() {
     //automatically intake with beam break sensor using button a
     operatorController.a().whileTrue(new IntakeCommand(intakeSub));
 
-    operatorController.b().onTrue(Commands.runOnce(() -> elevator.setEncoderPosition(0), elevator));
+    //operatorController.b().onTrue(Commands.runOnce(() -> elevator.setEncoderPosition(0), elevator));
     
     operatorController.y().whileTrue(new ShootL1Command(intakeSub));
 
