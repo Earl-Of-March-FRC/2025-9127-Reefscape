@@ -17,10 +17,12 @@ import edu.wpi.first.math.geometry.Translation2d;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
   }
+
   public static class ElevatorConstants{
 
     public static final double MANUAL_SPEED_MULTIPLIER = 0.3;
@@ -130,5 +132,9 @@ public final class Constants {
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
     public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
+
+    //Angle of the gyro's "zero yaw" position relative to the front of the bot
+    public static final double GYRO_ANGLE_OFFSET = 0;
+
   }
 }

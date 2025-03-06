@@ -28,12 +28,12 @@ public class ExitZoneCommand extends Command {
 
     @Override
     public void execute() {
-        drivetrain.drive(0, speed, 0, false);
+        drivetrain.drive(0, speed, 0);
     }
 
     @Override
     public void end(boolean interrupted) {
-        drivetrain.drive(0, 0, 0, false);
+        drivetrain.drive(0, 0, 0);
     }
 
     @Override

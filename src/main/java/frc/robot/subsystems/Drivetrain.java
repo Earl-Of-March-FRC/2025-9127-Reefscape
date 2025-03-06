@@ -31,9 +31,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -256,11 +254,6 @@ public class Drivetrain extends SubsystemBase {
               Constants.DrivetrainConstants.DRIVE_DEADBAND),
             MathUtil.applyDeadband(zRotation, Constants.DrivetrainConstants.TURN_DEADBAND) * Constants.DrivetrainConstants.SPEED_MULTIPLIER);
     }
-  }
-  
-  // Robot-relative drive using chassis speeds
-  public void drive(ChassisSpeeds speeds) {
-    mecanumDrive.driveCartesian(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
   }
   
   // Robot-relative drive using chassis speeds
