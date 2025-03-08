@@ -15,7 +15,7 @@ public class ShootL1Command extends Command {
   /** Creates a new Intake. */
   public ShootL1Command(IntakeSubsystem intakeWheels) {
     this.intakeWheels = intakeWheels;
-    this.speed = 0.3;
+    this.speed = 0.5;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intakeWheels);

@@ -306,6 +306,8 @@ public class Drivetrain extends SubsystemBase {
 
     field.setRobotPose(drivePose);
     SmartDashboard.putData("Field", field);
+
+    SmartDashboard.putBoolean("Field Oriented", fieldOriented);
   }
 
   @Override

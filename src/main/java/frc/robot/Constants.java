@@ -132,6 +132,6 @@ public final class Constants {
      public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
  
      //Angle of the gyro's "zero yaw" position relative to the front of the bot
-     public static final double GYRO_ANGLE_OFFSET = 0;
+     public static final double GYRO_ANGLE_OFFSET = 180;
   }
 }

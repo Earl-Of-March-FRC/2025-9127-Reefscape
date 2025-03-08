@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -18,6 +19,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  UsbCamera camera1;
+  UsbCamera camera2;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -29,7 +32,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     //Opens live camera feed in SmartDashboard
     //Use Ctrl + E to resize feed window
-    CameraServer.startAutomaticCapture().setResolution(1280, 720);
+    camera1 = CameraServer.startAutomaticCapture();
+    camera2 = CameraServer.startAutomaticCapture();
   }
 
   /**

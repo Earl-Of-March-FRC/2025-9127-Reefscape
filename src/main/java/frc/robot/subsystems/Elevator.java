@@ -114,7 +114,7 @@ public class Elevator extends SubsystemBase {
 
     SmartDashboard.putBoolean("Low Limit", lowLimitSwitch.get());
     SmartDashboard.putBoolean("High Limit", highLimitSwitch.get());
-    SmartDashboard.putNumber("Encoder Position", getPosition());
+    SmartDashboard.putNumber("Encoder Position", getPosition() + ElevatorConstants.MANIPULATOR_BASE_OFF_GROUND_INCHES);
     SmartDashboard.putNumber("Leader output", elevatorLeader.getOutputCurrent());
     SmartDashboard.putNumber("Follower output", elevatorFollower.getOutputCurrent());
     SmartDashboard.putString("Current Elevator Settpoint", getCurrSetpoint());
