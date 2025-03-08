@@ -74,7 +74,7 @@ public class Drivetrain extends SubsystemBase {
   /** Creates a new MecanumDrive. */
   public Drivetrain() {
     field = new Field2d();
-    SmartDashboard.putData("Field", field);
+    // SmartDashboard.putData("Field", field);
 
     topLeft = new SparkMax(Constants.DrivetrainConstants.TOP_LEFT_ID, MotorType.kBrushless);
     bottomLeft = new SparkMax(Constants.DrivetrainConstants.BOTTOM_LEFT_ID, MotorType.kBrushless);
@@ -305,7 +305,7 @@ public class Drivetrain extends SubsystemBase {
             bottomRightEncoder.getPosition()));
 
     field.setRobotPose(drivePose);
-    SmartDashboard.putData("Field", field);
+    // SmartDashboard.putData("Field", field);
 
     SmartDashboard.putBoolean("Field Oriented", fieldOriented);
   }
@@ -325,6 +325,6 @@ public class Drivetrain extends SubsystemBase {
     bottomRightEncoderSim.iterate(bottomRight.get() * Constants.DrivetrainConstants.SIM_MAX_VELOCITY, 0.02);
 
     field.setRobotPose(drivePose);
-    SmartDashboard.putData("Field", field);
+    // SmartDashboard.putData("Field", field);
   }
 }
