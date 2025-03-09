@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "To reef from right"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Reef, then intake"
+            "pathName": "Intake from left"
           }
         }
       ]

@@ -10,11 +10,12 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
 
 
-public class Score extends SequentialCommandGroup {
-  public Score(IntakeSubsystem intake, String pathName, Elevator elevator, double setpoint) {
+public class ScoreandStation extends SequentialCommandGroup {
+  public ScoreandStation(IntakeSubsystem intake, String pathName, Elevator elevator, double setpoint, String secondPath) {
     addCommands(
         new PathPlannerAuto(pathName), // Drive to the scoring location
-        new RaiseAndShootCommand(intake, elevator, setpoint) // Shoot for 2 seconds
+        new RaiseAndShootCommand(intake, elevator, setpoint), // Shoot for 2 seconds
+        new PathPlannerAuto(secondPath) // Drive to the scoring location
     );
   }
 }

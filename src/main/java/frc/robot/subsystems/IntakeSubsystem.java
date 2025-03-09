@@ -35,5 +35,6 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Beam Break", limit.get());
+    //SmartDashboard.putNumber("Intake Speeed", motor1.get());
   }
 }
