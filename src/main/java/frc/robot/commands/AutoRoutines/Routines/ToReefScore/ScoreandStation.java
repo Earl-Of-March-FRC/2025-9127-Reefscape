@@ -1,4 +1,3 @@
-
 package frc.robot.commands.AutoRoutines.Routines.ToReefScore;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -8,7 +7,6 @@ import frc.robot.commands.AutoRoutines.Routines.AutoCommands.RaiseAndShootComman
 import frc.robot.commands.ElevatorPID;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
-
 
 public class ScoreandStation extends SequentialCommandGroup {
   public ScoreandStation(IntakeSubsystem intake, String pathName, Elevator elevator, double setpoint, String secondPath) {

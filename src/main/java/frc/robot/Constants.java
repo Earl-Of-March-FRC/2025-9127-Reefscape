@@ -78,7 +78,7 @@ public final class Constants {
     public static final int moto1pin = 7;
     public static final int moto2pin = 8;
     public static final int LIMIT_SWITCH_CHANNEL = 0;
-    public static final double INTAKE_STOP_DELAY = 0.082; // TBD Change after testing
+    public static final double INTAKE_STOP_DELAY = 0.082  ; // TBD Change after testing
     public static final double SHOOT_MULTIPLIER = 0.5;
   }
   
