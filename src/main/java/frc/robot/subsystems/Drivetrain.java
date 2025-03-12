@@ -31,9 +31,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -228,7 +226,7 @@ public class Drivetrain extends SubsystemBase {
 
   // X and Y have been swapped as params due to Mechanum Drive class conceptions
   // Uses a square root curve rather than linear
-  public void drive(double xSpeed, double ySpeed, double zRotation) {
+  public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
     if (fieldOriented) {
       mecanumDrive.driveCartesian(
           Math.signum(ySpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *

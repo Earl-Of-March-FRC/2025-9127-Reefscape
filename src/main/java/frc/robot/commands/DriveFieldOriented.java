@@ -34,13 +34,13 @@ public class DriveFieldOriented extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.drive(xSpeed.getAsDouble(), ySpeed.getAsDouble(), zRotation.getAsDouble());
+    drivetrain.drive(xSpeed.getAsDouble(), ySpeed.getAsDouble(), zRotation.getAsDouble(), true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0, 0, 0);
+    drivetrain.drive(0, 0, 0, true);
   }
 
   // Returns true when the command should end.

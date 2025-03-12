@@ -7,6 +7,7 @@ package frc.robot;
 import com.revrobotics.spark.ClosedLoopSlot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -17,6 +18,54 @@ import edu.wpi.first.math.geometry.Translation2d;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static class VisionConstant {
+    public static final double X_REEF_ALIGNMENT_P = 3.3;
+    public static final double Y_REEF_ALIGNMENT_P = 3.3;
+    public static final double Z_REEF_ALIGNMENT_P = 0.058;
+
+    public static final double Z_SETPOINT_REEF_ALIGNMENT = 0;  // Rotation
+    public static final double Z_TOLERANCE_REEF_ALIGNMENT = 1;
+    public static final double X_SETPOINT_REEF_ALIGNMENT = -0.34;  // Vertical pose
+    public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.02;
+    public static final double Y_SETPOINT_REEF_ALIGNMENT = 0.16;  // Horizontal pose
+    public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.02;
+
+    public static final double DONT_SEE_TAG_WAIT_TIME = 1;
+    public static final double POSE_VALIDATION_TIME = 0.3;
+  }
+  
+  public static class VisionConstants {
+    // Limelight pipeline indices
+    public static final int APRILTAG_PIPELINE = 0;  // Pipeline configured for AprilTag detection
+    public static final int DRIVER_PIPELINE = 1;    // Pipeline configured for driver camera
+    
+    // Camera mounting position (THESE NEED TO BE CALIBRATED)
+    public static final double CAMERA_HEIGHT_METERS = 0.5;  // Height of camera from floor
+    public static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(15.0);  // Camera angle from horizontal
+    
+    // Target properties
+    public static final double TARGET_HEIGHT_METERS = 0.6;  // Height of AprilTag center from floor
+    
+    // PID constants for alignment
+    // These will need tuning on your actual robot
+    public static final double ALIGN_P_X = 0.8;
+    public static final double ALIGN_I_X = 0.0;
+    public static final double ALIGN_D_X = 0.05;
+    
+    public static final double ALIGN_P_Y = 0.8;
+    public static final double ALIGN_I_Y = 0.0;
+    public static final double ALIGN_D_Y = 0.05;
+    
+    public static final double ALIGN_P_ROT = 0.03;
+    public static final double ALIGN_I_ROT = 0.0;
+    public static final double ALIGN_D_ROT = 0.002;
+    
+    // Default offsets for reef alignment (adjust based on game piece handling)
+    public static final double DEFAULT_X_OFFSET = 0.75;  // 75cm from the reef (adjust as needed)
+    public static final double DEFAULT_Y_OFFSET = 0.0;  // Centered laterally
+  }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
