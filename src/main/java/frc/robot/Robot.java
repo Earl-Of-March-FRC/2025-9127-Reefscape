@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,6 +35,8 @@ public class Robot extends TimedRobot {
     //Use Ctrl + E to resize feed window
     camera1 = CameraServer.startAutomaticCapture();
     camera2 = CameraServer.startAutomaticCapture();
+    HttpCamera httpCamera = new HttpCamera("limelight", "http://10.91.27.200:5800");
+    CameraServer.addCamera(httpCamera);
   }
 
   /**

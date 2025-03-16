@@ -27,6 +27,7 @@ import frc.robot.commands.ShootL1Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 
 
 public class RobotContainer {
@@ -34,6 +35,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
+  private final LimelightSubsystem limelight = new LimelightSubsystem();
   private final XboxController driveController = new XboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
 
