@@ -19,10 +19,12 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.Score;
+import frc.robot.commands.AutoRoutines.Routines.ToReefScore.ScoreandStation;
 import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ReverseCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootL1Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -79,9 +81,9 @@ public RobotContainer() {
     /////Score Commands/////
 
     //Score L1
-    autoChooser.addOption("SCORE L1 FROM RIGHT", new Score(intakeSub, "To reef from right", elevator, ElevatorConstants.L1_POSITION));
-    autoChooser.addOption("SCORE L1 FROM LEFT", new Score(intakeSub, "To reef from left", elevator, ElevatorConstants.L1_POSITION));
-    autoChooser.addOption("SCORE L1 FROM CENTRE", new Score(intakeSub, "To reef from centre", elevator, ElevatorConstants.L1_POSITION));
+    //autoChooser.addOption("SCORE L1 FROM RIGHT", new Score(intakeSub, "To reef from right", elevator, ElevatorConstants.L1_POSITION));
+    //autoChooser.addOption("SCORE L1 FROM LEFT", new Score(intakeSub, "To reef from left", elevator, ElevatorConstants.L1_POSITION));
+    //autoChooser.addOption("SCORE L1 FROM CENTRE", new Score(intakeSub, "To reef from centre", elevator, ElevatorConstants.L1_POSITION));
 
     //Score L2
     autoChooser.addOption("SCORE L2 FROM RIGHT", new Score(intakeSub, "To reef from right", elevator, ElevatorConstants.L2_POSITION));
@@ -93,13 +95,26 @@ public RobotContainer() {
     autoChooser.addOption("SCORE L3 FROM LEFT", new Score(intakeSub, "To reef from left", elevator, ElevatorConstants.L3_POSITION));
     autoChooser.addOption("SCORE L3 FROM CENTRE", new Score(intakeSub, "To reef from centre", elevator, ElevatorConstants.L3_POSITION));
     
-    //Score L4
-    autoChooser.addOption("SCORE L4 FROM RIGHT", new Score(intakeSub, "To reef from right", elevator, ElevatorConstants.L4_POSITION));
-    autoChooser.addOption("SCORE L4 FROM LEFT", new Score(intakeSub, "To reef from left", elevator, ElevatorConstants.L4_POSITION));
-    autoChooser.addOption("SCORE L4 FROM CENTRE", new Score(intakeSub, "To reef from centre", elevator, ElevatorConstants.L4_POSITION));
+
+    // //Score L4
+    // autoChooser.addOption("SCORE L4 FROM RIGHT", new Score(intakeSub, "To reef from right", elevator, ElevatorConstants.L4_POSITION));
+    // autoChooser.addOption("SCORE L4 FROM LEFT", new Score(intakeSub, "To reef from left", elevator, ElevatorConstants.L4_POSITION));
+    // autoChooser.addOption("SCORE L4 FROM CENTRE", new Score(intakeSub, "To reef from centre", elevator, ElevatorConstants.L4_POSITION));
     
+    //Score L2 
+    autoChooser.addOption("SCORE L2 FROM RIGHT AND INTAKE", new ScoreandStation(intakeSub, "To reef from right", elevator, ElevatorConstants.L2_POSITION, "Intake from right"));
+    autoChooser.addOption("SCORE L2 FROM LEFT AND INTAKE", new ScoreandStation(intakeSub, "To reef from left", elevator, ElevatorConstants.L2_POSITION, "Intake from left"));
+    autoChooser.addOption("SCORE L2 FROM CENTRE AND INTAKE", new ScoreandStation(intakeSub, "To reef from centre", elevator, ElevatorConstants.L2_POSITION,"Intake from centre"));
+
+    //Score L3
+    autoChooser.addOption("SCORE L3 FROM RIGHT AND INTAKE", new ScoreandStation(intakeSub, "To reef from right", elevator, ElevatorConstants.L3_POSITION, "Intake from right"));
+    autoChooser.addOption("SCORE L3 FROM LEFT AND INTAKE", new ScoreandStation(intakeSub, "To reef from left", elevator, ElevatorConstants.L3_POSITION, "Intake from left"));
+    autoChooser.addOption("SCORE L3 FROM CENTRE AND INTAKE", new ScoreandStation(intakeSub, "To reef from centre", elevator, ElevatorConstants.L3_POSITION, "Intake from centre"));
+
     //Exit Zone timed
-    autoChooser.addOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 1, 2));
+    //autoChooser.addOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.5, 1));
+
+    autoChooser.setDefaultOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.5, 1));
     
     SmartDashboard.putData("Autonomous Routine", autoChooser);
 
@@ -120,7 +135,7 @@ public RobotContainer() {
     //automatically intake with beam break sensor using button a
     operatorController.a().whileTrue(new IntakeCommand(intakeSub));
 
-    //operatorController.b().onTrue(Commands.runOnce(() -> elevator.setEncoderPosition(0), elevator));
+    operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.4));
     
     operatorController.y().whileTrue(new ShootL1Command(intakeSub));
 
