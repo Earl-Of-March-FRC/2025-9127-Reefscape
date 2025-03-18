@@ -226,7 +226,7 @@ public class Drivetrain extends SubsystemBase {
 
   // X and Y have been swapped as params due to Mechanum Drive class conceptions
   // Uses a square root curve rather than linear
-  public void drive(double xSpeed, double ySpeed, double zRotation, boolean fieldOriented) {
+  public void drive(double xSpeed, double ySpeed, double zRotation) {
     if (fieldOriented) {
       mecanumDrive.driveCartesian(
           Math.signum(ySpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
@@ -246,11 +246,27 @@ public class Drivetrain extends SubsystemBase {
     } 
     else {
       mecanumDrive.driveCartesian(
+        Math.signum(ySpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
+          Math.sqrt(
+              Math.abs(
+                  MathUtil.applyDeadband(ySpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
+                  )),
+        Math.signum(xSpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
+            Math.sqrt(
+                Math.abs(
+                    MathUtil.applyDeadband(xSpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
+                    )),
+        MathUtil.applyDeadband(zRotation, Constants.DrivetrainConstants.TURN_DEADBAND) * Constants.DrivetrainConstants.SPEED_MULTIPLIER
+      );
+    }
+  }
+
+  public void driveRobotOriented(double xSpeed, double ySpeed, double zRotation) {
+    mecanumDrive.driveCartesian(
         ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
         xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
         zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER
       );
-    }
   }
 
   // Robot-relative drive using chassis speeds

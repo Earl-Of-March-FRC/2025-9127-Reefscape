@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,7 +19,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private NetworkTableEntry m_tx;   // Horizontal offset from crosshair to target (-27 to 27 degrees)
     private NetworkTableEntry m_ty;   // Vertical offset from crosshair to target (-20.5 to 20.5 degrees)
     private NetworkTableEntry m_ta;   // Target area (0% to 100% of image)
-    private NetworkTableEntry m_botpose; // Robot pose in field coordinates (when using AprilTags)
+    private NetworkTableEntry m_botpose; // Target pose in robot coordinates (when using AprilTags)
     private NetworkTableEntry m_pipeline; // Current pipeline
     private NetworkTableEntry m_tid;    // AprilTag ID
 
@@ -26,6 +27,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private double m_lastTx = 0.0;
     private double m_lastTy = 0.0;
     private double m_lastTargetArea = 0.0;
+    private double[] m_lastBotPose = new double[] {0.0, 0.0, 0.0};
     
     public LimelightSubsystem() {
         m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
@@ -53,6 +55,7 @@ public class LimelightSubsystem extends SubsystemBase {
         double currentTx = m_tx.getDouble(0.0);
         double currentTy = m_ty.getDouble(0.0);
         double currentArea = m_ta.getDouble(0.0);
+        double[] currentBotPose = m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0});
         
         // Apply simple filtering if we have a valid target
         if (hasValidTarget()) {
@@ -61,14 +64,20 @@ public class LimelightSubsystem extends SubsystemBase {
             m_lastTx = alpha * currentTx + (1 - alpha) * m_lastTx;
             m_lastTy = alpha * currentTy + (1 - alpha) * m_lastTy;
             m_lastTargetArea = alpha * currentArea + (1 - alpha) * m_lastTargetArea;
+            m_lastBotPose[0] = alpha * currentBotPose[0] + (1 - alpha) * m_lastBotPose[0];
+            m_lastBotPose[1] = alpha * currentBotPose[1] + (1 - alpha) * m_lastBotPose[1];
+            m_lastBotPose[2] = alpha * currentBotPose[2] + (1 - alpha) * m_lastBotPose[2];
         }
 
         // Update dashboard with basic vision info
         SmartDashboard.putBoolean("Limelight Has Target", hasValidTarget());
-        SmartDashboard.putNumber("Limelight Target X", getFilteredTargetX());
-        SmartDashboard.putNumber("Limelight Target Y", getFilteredTargetY());
+        SmartDashboard.putNumber("Limelight Target X", getFilteredTargetXAngle());
+        SmartDashboard.putNumber("Limelight Target Y", getFilteredTargetYAngle());
         SmartDashboard.putNumber("Limelight Target Area", getFilteredTargetArea());
         SmartDashboard.putNumber("AprilTag ID", getTargetID());
+        SmartDashboard.putNumber("Tag X", getFilteredTagX());
+        SmartDashboard.putNumber("Tag Y", getFilteredTagY());
+        SmartDashboard.putNumber("Tag Z", getFilteredTagZ());
     }
     
     public boolean hasValidTarget() {
@@ -79,7 +88,7 @@ public class LimelightSubsystem extends SubsystemBase {
      * Get the raw horizontal offset from the crosshair to the target
      * @return Horizontal offset in degrees (-27 to 27)
      */
-    public double getTargetX() {
+    public double getTargetXAngle() {
         return m_tx.getDouble(0.0);
     }
     
@@ -87,7 +96,7 @@ public class LimelightSubsystem extends SubsystemBase {
      * Get the filtered horizontal offset for more stable readings
      * @return Filtered horizontal offset in degrees
      */
-    public double getFilteredTargetX() {
+    public double getFilteredTargetXAngle() {
         return hasValidTarget() ? m_lastTx : 0.0;
     }
     
@@ -95,15 +104,39 @@ public class LimelightSubsystem extends SubsystemBase {
      * Get the raw vertical offset from the crosshair to the target
      * @return Vertical offset in degrees (-20.5 to 20.5)
      */
-    public double getTargetY() {
+    public double getTargetYAngle() {
         return m_ty.getDouble(0.0);
+    }
+
+    public double getTagX() {
+        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0})[0];
+    }
+
+    public double getFilteredTagX() {
+        return hasValidTarget()? m_lastBotPose[0] : 0.0;
+    }
+    
+    public double getTagY() {
+        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0})[1];
+    }
+    
+    public double getFilteredTagY() {
+        return hasValidTarget()? m_lastBotPose[1] : 0.0;
+    }
+
+    public double getTagZ() {
+        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0})[2];
+    }
+
+    public double getFilteredTagZ() {
+        return hasValidTarget()? m_lastBotPose[2] : 0.0;
     }
     
     /**
      * Get the filtered vertical offset for more stable readings
      * @return Filtered vertical offset in degrees
      */
-    public double getFilteredTargetY() {
+    public double getFilteredTargetYAngle() {
         return hasValidTarget() ? m_lastTy : 0.0;
     }
     

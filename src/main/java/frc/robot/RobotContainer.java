@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.Score;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.ScoreandStation;
+import frc.robot.commands.AlignToReefTxTyCommand;
 import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
@@ -114,7 +116,7 @@ public RobotContainer() {
     //Exit Zone timed
     //autoChooser.addOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.5, 1));
 
-    autoChooser.setDefaultOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.5, 1));
+    autoChooser.setDefaultOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.3, 2.2));
     
     SmartDashboard.putData("Autonomous Routine", autoChooser);
 
@@ -137,8 +139,11 @@ public RobotContainer() {
 
     operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.4));
     
-    operatorController.y().whileTrue(new ShootL1Command(intakeSub));
+   // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
 
+
+    operatorController.y().whileTrue(new AlignToReefTxTyCommand(drivetrain, limelight, 0.5, 0.5));
+    
     //reverse direction for intake with right trigger
     new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
         .whileTrue(new ReverseCommand(

@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     camera1 = CameraServer.startAutomaticCapture();
     camera2 = CameraServer.startAutomaticCapture();
     HttpCamera httpCamera = new HttpCamera("limelight", "http://10.91.27.200:5800");
+    httpCamera.setResolution(640, 480);
     CameraServer.addCamera(httpCamera);
   }
 
