@@ -19,6 +19,11 @@ public class LimelightSubsystem extends SubsystemBase {
     private NetworkTableEntry m_tx;   // Horizontal offset from crosshair to target (-27 to 27 degrees)
     private NetworkTableEntry m_ty;   // Vertical offset from crosshair to target (-20.5 to 20.5 degrees)
     private NetworkTableEntry m_ta;   // Target area (0% to 100% of image)
+
+    //Coordinate orrientation (bot centre is origin):
+    // X+ is Right
+    // Y+ is Down
+    // Z+ is Forward (camera direction)
     private NetworkTableEntry m_botpose; // Target pose in robot coordinates (when using AprilTags)
     private NetworkTableEntry m_pipeline; // Current pipeline
     private NetworkTableEntry m_tid;    // AprilTag ID
@@ -37,7 +42,7 @@ public class LimelightSubsystem extends SubsystemBase {
         m_tx = m_limelightTable.getEntry("tx");
         m_ty = m_limelightTable.getEntry("ty");
         m_ta = m_limelightTable.getEntry("ta");
-        m_botpose = m_limelightTable.getEntry("botpose");
+        m_botpose = m_limelightTable.getEntry("targetpose_robotspace");
         m_pipeline = m_limelightTable.getEntry("pipeline");
         m_tid = m_limelightTable.getEntry("tid");
         
@@ -45,7 +50,7 @@ public class LimelightSubsystem extends SubsystemBase {
         setPipeline(VisionConstants.APRILTAG_PIPELINE);
         
         // Enable vision processing
-        setLedMode(LedMode.ON);
+        setLedMode(LedMode.OFF);
         setCameraMode(CameraMode.VISION);
     }
     
@@ -75,6 +80,9 @@ public class LimelightSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Limelight Target Y", getFilteredTargetYAngle());
         SmartDashboard.putNumber("Limelight Target Area", getFilteredTargetArea());
         SmartDashboard.putNumber("AprilTag ID", getTargetID());
+        SmartDashboard.putNumber("Tag X Raw", getTagX());
+        SmartDashboard.putNumber("Tag Y Raw", getTagY());
+        SmartDashboard.putNumber("Tag Z Raw", getTagZ());
         SmartDashboard.putNumber("Tag X", getFilteredTagX());
         SmartDashboard.putNumber("Tag Y", getFilteredTagY());
         SmartDashboard.putNumber("Tag Z", getFilteredTagZ());

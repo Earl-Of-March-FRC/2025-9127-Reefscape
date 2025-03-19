@@ -19,21 +19,21 @@ import edu.wpi.first.math.util.Units;
  */
 public final class Constants {
 
-  public static class VisionConstant {
-    public static final double X_REEF_ALIGNMENT_P = 3.3;
-    public static final double Y_REEF_ALIGNMENT_P = 3.3;
-    public static final double Z_REEF_ALIGNMENT_P = 0.058;
+  // public static class VisionConstant {
+  //   public static final double X_REEF_ALIGNMENT_P = 0;
+  //   public static final double Y_REEF_ALIGNMENT_P = 0;
+  //   public static final double Z_REEF_ALIGNMENT_P = 0;
 
-    public static final double Z_SETPOINT_REEF_ALIGNMENT = 0;  // Rotation
-    public static final double Z_TOLERANCE_REEF_ALIGNMENT = 1;
-    public static final double X_SETPOINT_REEF_ALIGNMENT = -0.34;  // Vertical pose
-    public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.02;
-    public static final double Y_SETPOINT_REEF_ALIGNMENT = 0.16;  // Horizontal pose
-    public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.02;
+  //   public static final double Z_SETPOINT_REEF_ALIGNMENT = 0;  // Rotation
+  //   public static final double Z_TOLERANCE_REEF_ALIGNMENT = 1;
+  //   public static final double X_SETPOINT_REEF_ALIGNMENT = -0.34;  // Vertical pose
+  //   public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.02;
+  //   public static final double Y_SETPOINT_REEF_ALIGNMENT = 0.16;  // Horizontal pose
+  //   public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.02;
 
-    public static final double DONT_SEE_TAG_WAIT_TIME = 1;
-    public static final double POSE_VALIDATION_TIME = 0.3;
-  }
+  //   public static final double DONT_SEE_TAG_WAIT_TIME = 1;
+  //   public static final double POSE_VALIDATION_TIME = 0.3;
+  // }
   
   public static class VisionConstants {
     // Limelight pipeline indices
@@ -62,8 +62,10 @@ public final class Constants {
     public static final double ALIGN_D_ROT = 0.002;
     
     // Default offsets for reef alignment (adjust based on game piece handling)
+    //NOTE: this translation must be the same as the limelight 3D POI offset in hardware client for Tx values to be accurate
     public static final double DEFAULT_X_OFFSET = 0.75;  // 75cm from the reef (adjust as needed)
     public static final double DEFAULT_Y_OFFSET = 0.0;  // Centered laterally
+    public static final double DEFAULT_TX_OFFSET = 0; // Square to target
   }
 
   public static class OperatorConstants {

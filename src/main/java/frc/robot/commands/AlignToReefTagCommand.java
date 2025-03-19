@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.VisionConstant;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -44,11 +43,6 @@ public class AlignToReefTagCommand extends Command {
         m_yController = new PIDController(VisionConstants.ALIGN_P_Y, VisionConstants.ALIGN_I_Y, VisionConstants.ALIGN_D_Y);
         m_rotationController = new PIDController(VisionConstants.ALIGN_P_ROT, VisionConstants.ALIGN_I_ROT, VisionConstants.ALIGN_D_ROT);
         
-        // Set tolerances
-        m_xController.setTolerance(TAG_Y_TOLERANCE);
-        m_yController.setTolerance(TAG_X_TOLERANCE);
-        m_rotationController.setTolerance(TX_TOLERANCE);
-        
         // Require subsystems
         addRequirements(m_drive, m_limelight);
     }
@@ -63,9 +57,14 @@ public class AlignToReefTagCommand extends Command {
         m_yController.reset();
         m_rotationController.reset();
 
+        // Set tolerances
+        m_xController.setTolerance(TAG_Y_TOLERANCE);
+        m_yController.setTolerance(TAG_X_TOLERANCE);
+        m_rotationController.setTolerance(TX_TOLERANCE);
+
         // Set setpoints
-        m_xController.setSetpoint(VisionConstant.X_SETPOINT_REEF_ALIGNMENT);
-        m_yController.setSetpoint(VisionConstant.Y_SETPOINT_REEF_ALIGNMENT);
+        m_xController.setSetpoint(VisionConstants.DEFAULT_X_OFFSET);
+        m_yController.setSetpoint(VisionConstants.DEFAULT_Y_OFFSET);
         m_rotationController.setSetpoint(0);
     }
     
@@ -76,8 +75,12 @@ public class AlignToReefTagCommand extends Command {
         
         if (m_hasValidTarget) {
             // Get filtered tx and ty values for stability
+
+            //limelight coordinate space has different orientation from robot drive
+            //Z+ limelight = Y+ robot drive
+            //X+ limelight = X+ robot drive
             double currentTagX = m_limelight.getFilteredTagX();
-            double currentTagY = m_limelight.getFilteredTagY();
+            double currentTagY = m_limelight.getFilteredTagZ();
             double currentTx = m_limelight.getFilteredTargetXAngle();
             
             // Calculate motor outputs using PID controllers
@@ -87,17 +90,19 @@ public class AlignToReefTagCommand extends Command {
             double rotationSpeed = m_rotationController.calculate(currentTx);  // Rotation to center target
             //m_rotationController.calculate(gyroHeading, wantedHeading);
             
-            // Limit speeds for safety
-            xSpeed = MathUtil.clamp(xSpeed, -0.5, 0.5);
-            ySpeed = MathUtil.clamp(ySpeed, -0.5, 0.5);
-            rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
+            // Deemed not necessary
+            // // Limit speeds for safety
+            // xSpeed = MathUtil.clamp(xSpeed, -0.5, 0.5);
+            // ySpeed = MathUtil.clamp(ySpeed, -0.5, 0.5);
+            // rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
             
             // Drive the robot
             m_drive.driveRobotOriented(xSpeed, ySpeed, rotationSpeed);
             
             // Update dashboard
-            SmartDashboard.putNumber("TX Error", VisionConstant.X_SETPOINT_REEF_ALIGNMENT - currentTagX);
-            SmartDashboard.putNumber("TY Error", VisionConstant.Y_SETPOINT_REEF_ALIGNMENT - currentTagY);
+            SmartDashboard.putNumber("X Error", VisionConstants.DEFAULT_X_OFFSET - currentTagX);
+            SmartDashboard.putNumber("Y Error", VisionConstants.DEFAULT_Y_OFFSET - currentTagY);
+            SmartDashboard.putNumber("Tx Error", VisionConstants.DEFAULT_TX_OFFSET - currentTx);
             SmartDashboard.putBoolean("Alignment On Target", isAligned());
         } else {
             // No valid target found, stop the robot

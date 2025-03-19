@@ -226,6 +226,9 @@ public class Drivetrain extends SubsystemBase {
 
   // X and Y have been swapped as params due to Mechanum Drive class conceptions
   // Uses a square root curve rather than linear
+  //Drive orientation:
+  //X+ = drive right
+  //Y+ = drive forward
   public void drive(double xSpeed, double ySpeed, double zRotation) {
     if (fieldOriented) {
       mecanumDrive.driveCartesian(
@@ -261,6 +264,7 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  //For PID control
   public void driveRobotOriented(double xSpeed, double ySpeed, double zRotation) {
     mecanumDrive.driveCartesian(
         ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
