@@ -8,7 +8,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,16 +17,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AlignToReefTxTyCommand;
 import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.Score;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.ScoreandStation;
-import frc.robot.commands.AlignToReefTxTyCommand;
 import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.LedCommand;
 import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
-import frc.robot.commands.ShootL1Command;
 import frc.robot.subsystems.AlageRemoval;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -51,6 +50,8 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
+  private final LedCommand led = new LedCommand();
+
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
@@ -59,6 +60,7 @@ public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
+  
     // elevatorPositionIndex = 0;
     // elevatorCommands = new ElevatorPID[]{
     //   new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
