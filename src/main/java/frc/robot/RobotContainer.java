@@ -28,6 +28,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.commands.ShootL1Command;
+import frc.robot.subsystems.AlageRemoval;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -42,6 +43,7 @@ public class RobotContainer {
   private final LimelightSubsystem limelight = new LimelightSubsystem();
   private final XboxController driveController = new XboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final AlageRemoval alageRemoval = new AlageRemoval();
 
   private final Elevator elevator = new Elevator();
   private ElevatorPID[] elevatorCommands;
@@ -133,16 +135,6 @@ public RobotContainer() {
     
     //Toggle the drive mode (field or robot oriented) when B is pressed on the driver controller
     new Trigger(driveController::getBButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
-
-    //automatically intake with beam break sensor using button a
-    operatorController.a().whileTrue(new IntakeCommand(intakeSub));
-
-    operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.4));
-    
-   // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
-
-
-    operatorController.y().whileTrue(new AlignToReefTxTyCommand(drivetrain, limelight, 0.5, 0.5));
     
     //reverse direction for intake with right trigger
     new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
@@ -170,9 +162,19 @@ public RobotContainer() {
     
     operatorController.x().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator));
 
+    //automatically intake with beam break sensor using button a
+    operatorController.a().whileTrue(new IntakeCommand(intakeSub));
+
+    operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.4));
+    
+   // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
+
+    operatorController.y().whileTrue(new AlignToReefTxTyCommand(drivetrain, limelight, 0.5, 0.5));
     
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
+
+    operatorController.rightTrigger().onTrue(Commands.runOnce(() -> alageRemoval.togglePosition(), alageRemoval));
   }
 
   public Command getAutonomousCommand() {
