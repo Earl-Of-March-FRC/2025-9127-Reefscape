@@ -7,6 +7,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -162,7 +163,13 @@ public RobotContainer() {
     operatorController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
     operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
     
-    operatorController.x().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator));
+    operatorController.x().onTrue(Commands.parallel(
+      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator),
+      Commands.sequence(
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 2)),
+        Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
+      )
+    );
 
     //automatically intake with beam break sensor using button a
     operatorController.a().whileTrue(new IntakeCommand(intakeSub));
@@ -176,7 +183,17 @@ public RobotContainer() {
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
-    operatorController.rightTrigger().onTrue(Commands.runOnce(() -> algaeRemoval.togglePosition(), algaeRemoval));
+    //Raise eleator and lower servo to remove L3 algae
+    operatorController.leftTrigger().onTrue(Commands.parallel(
+      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator),
+      Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
+    );
+
+    //Raise eleator and lower servo to remove L3 algae
+    operatorController.rightTrigger().onTrue(Commands.parallel(
+      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator),
+      Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
+    );
   }
 
   public Command getAutonomousCommand() {

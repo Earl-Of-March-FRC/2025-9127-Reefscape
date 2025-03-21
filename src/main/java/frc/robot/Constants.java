@@ -118,6 +118,13 @@ public final class Constants {
     public static final double L3_POSITION = (47.625 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
     public static final double L4_POSITION = (72 - MANIPULATOR_BASE_OFF_GROUND_INCHES) + SETPOINT_OFFSET;
 
+    //TODO: calibrate these values
+
+    //Offset that allows the algae remover to grip the ball
+    public static final double ALGAE_OFFSET = 2;
+    public static final double L3_ALGAE_POSITION = L3_POSITION + ALGAE_OFFSET;
+    public static final double L2_ALGAE_POSITION = L2_POSITION + ALGAE_OFFSET;
+
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
 
@@ -160,7 +167,6 @@ public final class Constants {
     public static final double ROTATE_I = 0.0;
     public static final double ROTATE_D = 0.0;
 
-
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 4;
     public static final int BOTTOM_LEFT_ID = 2;
@@ -185,7 +191,6 @@ public final class Constants {
      //Angle of the gyro's "zero yaw" position relative to the front of the bot
      public static final double GYRO_ANGLE_OFFSET = 0;
   }
-
   public static class AlageRemovalConstants {
     public static final int SERVO_PORT = 5;
 
