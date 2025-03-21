@@ -38,11 +38,11 @@ public class LedCommand extends Command {
     if (elevator.getCurrSetpoint().equals("Intake") && intake.getLimit()==true){
       limelight.setLedMode(LedMode.ON);
     }
-    // else if(intake.getLimit()==false){
-    //   limelight.setLedMode(LedMode.OFF);
-    // }
-    else{
+    else if(intake.getLimit()==false){
       limelight.setLedMode(LedMode.OFF);
+    }
+    else{
+      limelight.setLedMode(LedMode.BLINK);
     }
   }
 
