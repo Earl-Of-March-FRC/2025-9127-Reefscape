@@ -27,7 +27,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LedCommand;
 import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
-import frc.robot.subsystems.AlageRemoval;
+import frc.robot.subsystems.AlgaeRemoval;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -42,7 +42,7 @@ public class RobotContainer {
   private final LimelightSubsystem limelight = new LimelightSubsystem();
   private final XboxController driveController = new XboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
-  private final AlageRemoval alageRemoval = new AlageRemoval();
+  private final AlgaeRemoval algaeRemoval = new AlgaeRemoval();
 
   private final Elevator elevator = new Elevator();
   private ElevatorPID[] elevatorCommands;
@@ -50,7 +50,7 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  private final LedCommand led = new LedCommand();
+  //private final LedCommand led = new LedCommand();
 
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
@@ -176,7 +176,7 @@ public RobotContainer() {
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
-    operatorController.rightTrigger().onTrue(Commands.runOnce(() -> alageRemoval.togglePosition(), alageRemoval));
+    operatorController.rightTrigger().onTrue(Commands.runOnce(() -> algaeRemoval.togglePosition(), algaeRemoval));
   }
 
   public Command getAutonomousCommand() {

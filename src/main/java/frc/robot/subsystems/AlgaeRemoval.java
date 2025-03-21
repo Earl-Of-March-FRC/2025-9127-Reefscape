@@ -8,12 +8,13 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlageRemovalConstants;
 
-public class AlageRemoval extends SubsystemBase {
+public class AlgaeRemoval extends SubsystemBase {
   private final Servo servo;
 
   /** Creates a new AlageRemoval. */
-  public AlageRemoval() {
+  public AlgaeRemoval() {
     servo = new Servo(AlageRemovalConstants.SERVO_PORT);
+    //servo.setBoundsMicroseconds(2400, 0, 1500, 0, 600);
   }
 
   public void setAngle(double angle) {
