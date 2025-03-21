@@ -13,14 +13,18 @@ import frc.robot.subsystems.LimelightSubsystem.LedMode;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class LedCommand extends Command {
 
-  LimelightSubsystem limelight = new LimelightSubsystem();
-  IntakeSubsystem intake = new IntakeSubsystem();
-  Elevator elevator = new Elevator();
+  private final LimelightSubsystem limelight;
+  private final IntakeSubsystem intake;
+  private final Elevator elevator;
 
   /** Creates a new LedCommand. */
-  public LedCommand() {
+  public LedCommand(LimelightSubsystem limelight, IntakeSubsystem intake, Elevator elevator) {
     // Use addRequirements() here to declare subsystem dependencies.
+    this.limelight = limelight;
+    this.intake = intake;
+    this.elevator = elevator;
 
+    addRequirements();
   }
 
   // Called when the command is initially scheduled.
@@ -32,11 +36,11 @@ public class LedCommand extends Command {
   public void execute() {
 
     if (elevator.getCurrSetpoint().equals("Intake") && intake.getLimit()==true){
-      limelight.setLedMode(LedMode.BLINK);
-    }
-    else if(intake.getLimit()==false){
       limelight.setLedMode(LedMode.ON);
     }
+    // else if(intake.getLimit()==false){
+    //   limelight.setLedMode(LedMode.OFF);
+    // }
     else{
       limelight.setLedMode(LedMode.OFF);
     }

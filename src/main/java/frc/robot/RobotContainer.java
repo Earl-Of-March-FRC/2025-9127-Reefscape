@@ -51,7 +51,7 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  //private final LedCommand led = new LedCommand();
+  private final LedCommand led = new LedCommand(limelight, intakeSub, elevator);
 
   private final CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
@@ -60,8 +60,8 @@ public class RobotContainer {
 public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    led.schedule();
 
-  
     // elevatorPositionIndex = 0;
     // elevatorCommands = new ElevatorPID[]{
     //   new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
