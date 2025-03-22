@@ -67,6 +67,8 @@ public class Drivetrain extends SubsystemBase {
   // Field oriented drive on by default
   private boolean fieldOriented = false;
 
+  private boolean slowMode = false;
+
   private RobotConfig robotConfig;
 
   /** Creates a new MecanumDrive. */
@@ -231,12 +233,12 @@ public class Drivetrain extends SubsystemBase {
   public void drive(double xSpeed, double ySpeed, double zRotation) {
     if (fieldOriented) {
       mecanumDrive.driveCartesian(
-          Math.signum(ySpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
+          Math.signum(ySpeed) * (slowMode? Constants.DrivetrainConstants.SLOW_SPEED_MULTIPLIER : Constants.DrivetrainConstants.SPEED_MULTIPLIER) *
               Math.sqrt(
                   Math.abs(
                       MathUtil.applyDeadband(ySpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
                       )),
-          Math.signum(xSpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
+          Math.signum(xSpeed) * (slowMode? Constants.DrivetrainConstants.SLOW_SPEED_MULTIPLIER : Constants.DrivetrainConstants.SPEED_MULTIPLIER) *
               Math.sqrt(
                   Math.abs(
                       MathUtil.applyDeadband(xSpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
@@ -248,12 +250,12 @@ public class Drivetrain extends SubsystemBase {
     } 
     else {
       mecanumDrive.driveCartesian(
-        Math.signum(ySpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
+        Math.signum(ySpeed) * (slowMode? Constants.DrivetrainConstants.SLOW_SPEED_MULTIPLIER : Constants.DrivetrainConstants.SPEED_MULTIPLIER) *
           Math.sqrt(
               Math.abs(
                   MathUtil.applyDeadband(ySpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
                   )),
-        Math.signum(xSpeed) * Constants.DrivetrainConstants.SPEED_MULTIPLIER *
+        Math.signum(xSpeed) * (slowMode? Constants.DrivetrainConstants.SLOW_SPEED_MULTIPLIER : Constants.DrivetrainConstants.SPEED_MULTIPLIER) *
             Math.sqrt(
                 Math.abs(
                     MathUtil.applyDeadband(xSpeed, Constants.DrivetrainConstants.DRIVE_DEADBAND)
@@ -305,7 +307,9 @@ public class Drivetrain extends SubsystemBase {
     return gyro.getAngleAdjustment();
   }
 
-
+  public void toggleSlowMode() {
+    slowMode = !slowMode;
+  }
 
   public void changeDriveMode() {
     fieldOriented = !fieldOriented;

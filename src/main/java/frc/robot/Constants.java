@@ -175,6 +175,7 @@ public final class Constants {
 
     //limits the max motor speed
     public static final double SPEED_MULTIPLIER = 0.9;
+    public static final double SLOW_SPEED_MULTIPLIER = 0.4;
     public static final double PID_SPEED_MULTIPLIER = 0.8;
 
     //Controller deadband

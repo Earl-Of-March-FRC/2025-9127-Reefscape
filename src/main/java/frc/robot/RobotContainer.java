@@ -8,6 +8,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.AlignToReefTag2Stage;
 import frc.robot.commands.AlignToReefTagCommand;
 import frc.robot.commands.AlignToReefTxTyCommand;
 import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
@@ -42,10 +45,12 @@ import frc.robot.subsystems.LimelightSubsystem.LedMode;
 
 public class RobotContainer {
 
+  NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+
   private final SendableChooser<Command> autoChooser;
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
-  private final LimelightSubsystem limelight = new LimelightSubsystem();
+  private final LimelightSubsystem limelight = new LimelightSubsystem(m_limelightTable);
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
   private final AlgaeRemoval algaeRemoval = new AlgaeRemoval();
@@ -54,7 +59,7 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  private final LEDsubsystem led = new LEDsubsystem(
+  private final LEDsubsystem led = new LEDsubsystem( m_limelightTable,
     () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) && intakeSub.getLimit() == false, //OFF supplier
     () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit()==true, //ON supplier
     () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) && intakeSub.getLimit() == true //BLINK supplier
@@ -185,7 +190,12 @@ public RobotContainer() {
 
     driveController.leftBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET, -VisionConstants.DEFAULT_TX_OFFSET));
     driveController.rightBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET, VisionConstants.DEFAULT_TX_OFFSET));
+
+    // driveController.leftTrigger().whileTrue(new AlignToReefTag2Stage(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
+    // driveController.rightTrigger().whileTrue(new AlignToReefTag2Stage(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
     
+    driveController.leftTrigger().onChange(Commands.runOnce(() -> drivetrain.toggleSlowMode(), drivetrain));
+
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 

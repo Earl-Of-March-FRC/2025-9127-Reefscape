@@ -30,7 +30,7 @@ public class ShootCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println(intakeWheels.getLimit());
+    System.out.println("Shooting");
     intakeWheels.intake(speed.getAsDouble()*Constants.IntakeConstants.SHOOT_MULTIPLIER);
   }
 

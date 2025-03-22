@@ -50,7 +50,7 @@ public class AlignToReefTag2Stage extends Command {
 
         //Store current angle adjustment,change angle adjustedment so that field oriented is relative to the tag (forward is towards the tag)
         originalGyroOffset = m_drive.getBotAngleAdjustment();
-        m_drive.setBotAngleAdjustment(-m_limelight.getFilteredTargetXAngle());
+        m_drive.setBotAngleAdjustment(m_limelight.getFilteredTargetXAngle());
         
         // Initialize PID controllers
         m_xController = new PIDController(VisionConstants.ALIGN_P_X, VisionConstants.ALIGN_I_X, VisionConstants.ALIGN_D_X);

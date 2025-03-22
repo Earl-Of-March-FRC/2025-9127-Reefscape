@@ -51,7 +51,7 @@ public class AlignToReefTagCommand extends Command {
 
         //Store current angle adjustment,change angle adjustedment so that field oriented is relative to the tag (forward is towards the tag)
         originalGyroOffset = m_drive.getBotAngleAdjustment();
-        m_drive.setBotAngleAdjustment(-m_limelight.getFilteredTargetXAngle());
+        m_drive.setBotAngleAdjustment(m_limelight.getFilteredTargetXAngle());
         
         // Initialize PID controllers
         m_xController = new PIDController(VisionConstants.ALIGN_P_X, VisionConstants.ALIGN_I_X, VisionConstants.ALIGN_D_X);
@@ -121,7 +121,7 @@ public class AlignToReefTagCommand extends Command {
             SmartDashboard.putBoolean("Alignment On Target", isAligned());
         } else {
             // No valid target found, stop the robot and turn until target is found
-            m_drive.drive(0.0, 0.0, -m_limelight.lastTxSign()*0.2);
+            m_drive.drive(0.0, 0.0, m_limelight.lastTxSign()*0.2);
             SmartDashboard.putBoolean("Alignment On Target", false);
         }
     }

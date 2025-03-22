@@ -16,9 +16,9 @@ public class LEDsubsystem extends SubsystemBase {
   private final BooleanSupplier OFF, ON, BLINK;
 
   /** Creates a new LEDsubsystem. */
-  public LEDsubsystem(BooleanSupplier OFF, BooleanSupplier ON, BooleanSupplier BLINK) {
+  public LEDsubsystem(NetworkTable limelight, BooleanSupplier OFF, BooleanSupplier ON, BooleanSupplier BLINK) {
     //Use limelight LEDS
-    m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+    m_limelightTable = limelight;
 
     this.OFF = OFF;
     this.ON = ON;

@@ -35,8 +35,8 @@ public class LimelightSubsystem extends SubsystemBase {
     private double[] m_lastBotPose = new double[] {0.0, 0.0, 0.0};
     private int lastTxSign = 0;
     
-    public LimelightSubsystem() {
-        m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+    public LimelightSubsystem(NetworkTable m_limelighTable) {
+        this.m_limelightTable = m_limelighTable;
         
         // Initialize NetworkTable entries
         m_tv = m_limelightTable.getEntry("tv");
