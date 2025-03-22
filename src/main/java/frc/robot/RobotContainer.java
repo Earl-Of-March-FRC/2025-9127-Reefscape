@@ -35,7 +35,9 @@ import frc.robot.subsystems.AlgaeRemoval;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDsubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.LimelightSubsystem.LedMode;
 
 
 public class RobotContainer {
@@ -49,21 +51,19 @@ public class RobotContainer {
   private final AlgaeRemoval algaeRemoval = new AlgaeRemoval();
 
   private final Elevator elevator = new Elevator();
-  private ElevatorPID[] elevatorCommands;
-  private int elevatorPositionIndex;
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  private final LedCommand led = new LedCommand(limelight, intakeSub, elevator);
-
-  private final CommandXboxController m_operatorController =
-      new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+  private final LEDsubsystem led = new LEDsubsystem(
+    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) && intakeSub.getLimit() == false, //OFF supplier
+    () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit()==true, //ON supplier
+    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) && intakeSub.getLimit() == true //BLINK supplier
+  );
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
-    led.schedule();
 
     // elevatorPositionIndex = 0;
     // elevatorCommands = new ElevatorPID[]{
