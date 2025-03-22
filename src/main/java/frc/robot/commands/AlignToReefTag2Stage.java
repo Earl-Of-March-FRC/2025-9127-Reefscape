@@ -11,7 +11,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 /**
  * Command to align the robot to a reef using tx/ty values from Limelight
  */
-public class AlignToReefTagCommand extends Command {
+public class AlignToReefTag2Stage extends Command {
     private final Drivetrain m_drive;
     private final LimelightSubsystem m_limelight;
     
@@ -22,6 +22,7 @@ public class AlignToReefTagCommand extends Command {
     
     // Flags for alignment completion
     private boolean m_hasValidTarget = false;
+    private boolean stage2 = false;
     
     // Tolerances
     private static final double TAG_X_TOLERANCE = 1.0;  // 1 degree tolerance
@@ -31,7 +32,6 @@ public class AlignToReefTagCommand extends Command {
     //Setpoints
     private final double xOffset;
     private final double yOffset;
-    private final double txOffset;
 
     private final double originalGyroOffset;
     
@@ -41,13 +41,12 @@ public class AlignToReefTagCommand extends Command {
      * @param driveSubsystem The robot's drive subsystem
      * @param limelightSubsystem The limelight subsystem
      */
-    public AlignToReefTagCommand(Drivetrain driveSubsystem, LimelightSubsystem limelightSubsystem, double xOffset, double yOffset, double txOffset) {
+    public AlignToReefTag2Stage(Drivetrain driveSubsystem, LimelightSubsystem limelightSubsystem, double xOffset, double yOffset) {
         m_drive = driveSubsystem;
         m_limelight = limelightSubsystem;
 
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.txOffset = txOffset;
 
         //Store current angle adjustment,change angle adjustedment so that field oriented is relative to the tag (forward is towards the tag)
         originalGyroOffset = m_drive.getBotAngleAdjustment();
@@ -77,16 +76,28 @@ public class AlignToReefTagCommand extends Command {
         m_yController.setTolerance(TAG_Y_TOLERANCE);
         m_rotationController.setTolerance(TX_TOLERANCE);
 
+        // Set setpoints to align with middle (stage one)
+        m_xController.setSetpoint(0);
+        m_yController.setSetpoint(VisionConstants.DEFAULT_Y_OFFSET);
+        m_rotationController.setSetpoint(0);
+    }
+
+    public void stage2() {
         // Set setpoints
         m_xController.setSetpoint(xOffset);
         m_yController.setSetpoint(yOffset);
-        m_rotationController.setSetpoint(txOffset);
+        
+        stage2 = true;
     }
     
     @Override
     public void execute() {
         // Check if we have a valid target
         m_hasValidTarget = m_limelight.hasValidTarget();
+        
+        if(isAligned() && !stage2){
+            stage2();
+        }
         
         if (m_hasValidTarget) {
             // Get filtered tx and ty values for stability
@@ -102,7 +113,7 @@ public class AlignToReefTagCommand extends Command {
             // Note: Signs may need to be adjusted based on your robot's coordinate system
             double xSpeed = -m_xController.calculate(currentTagX);  // Forward/back based on ty
             double ySpeed = -m_yController.calculate(currentTagY);  // Left/right based on tx
-            double rotationSpeed = -m_rotationController.calculate(currentTx);  // Rotation to center target
+            double rotationSpeed = stage2? 0.0 : -m_rotationController.calculate(currentTx);  // Rotation to center target
             //m_rotationController.calculate(gyroHeading, wantedHeading);
             
             // Deemed not necessary
@@ -144,7 +155,7 @@ public class AlignToReefTagCommand extends Command {
     @Override
     public boolean isFinished() {
         // Finish when aligned within tolerance
-        return m_hasValidTarget && isAligned();
+        return m_hasValidTarget && isAligned() && stage2;
     }
     
     /**
@@ -153,6 +164,6 @@ public class AlignToReefTagCommand extends Command {
     private boolean isAligned() {
         return m_xController.atSetpoint() && 
                m_yController.atSetpoint() && 
-               m_rotationController.atSetpoint();
+               (m_rotationController.atSetpoint() || stage2);
     }
 }

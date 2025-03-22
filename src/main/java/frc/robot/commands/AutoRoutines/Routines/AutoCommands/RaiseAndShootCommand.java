@@ -32,11 +32,7 @@ public class RaiseAndShootCommand extends ParallelCommandGroup {
         Commands.waitUntil(() -> MathUtil.isNear(setpoint, elevator.getPosition(), 1)),
         Commands.deadline(
           Commands.waitSeconds(2),
-          new ShootCommand(intake, () -> {
-            Timer timer = new Timer();
-            timer.start();
-            return 6*timer.get()/2; //Linearly go from 0 to 1 over 2 secconds
-          })
+          new ShootCommand(intake, () -> 0.5)
         )
       )
     );

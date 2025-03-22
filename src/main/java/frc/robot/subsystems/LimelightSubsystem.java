@@ -33,6 +33,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private double m_lastTy = 0.0;
     private double m_lastTargetArea = 0.0;
     private double[] m_lastBotPose = new double[] {0.0, 0.0, 0.0};
+    private int lastTxSign = 0;
     
     public LimelightSubsystem() {
         m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
@@ -74,6 +75,10 @@ public class LimelightSubsystem extends SubsystemBase {
             m_lastBotPose[2] = alpha * currentBotPose[2] + (1 - alpha) * m_lastBotPose[2];
         }
 
+        if (Math.signum(getTargetXAngle()) != 0) {
+            lastTxSign = (int) Math.signum(getTargetXAngle());
+        }
+
         // Update dashboard with basic vision info
         SmartDashboard.putBoolean("Limelight Has Target", hasValidTarget());
         SmartDashboard.putNumber("Limelight Target X", getFilteredTargetXAngle());
@@ -90,6 +95,11 @@ public class LimelightSubsystem extends SubsystemBase {
     
     public boolean hasValidTarget() {
         return m_tv.getDouble(0.0) > 0.5;
+    }
+
+    //return 1 if the most recent tx value was positive, -1 if it was negative values of exactly 0 will be ignored
+    public int lastTxSign(){
+        return lastTxSign;
     }
     
     /**

@@ -220,7 +220,6 @@ public class Drivetrain extends SubsystemBase {
         return false;
       },
     this);
-
   }
 
 
@@ -301,6 +300,12 @@ public class Drivetrain extends SubsystemBase {
   public void setBotAngleAdjustment(double botAngleAdjustment) {
     gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + botAngleAdjustment);
   }
+
+  public double getBotAngleAdjustment() {
+    return gyro.getAngleAdjustment();
+  }
+
+
 
   public void changeDriveMode() {
     fieldOriented = !fieldOriented;
