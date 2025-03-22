@@ -267,9 +267,19 @@ public class Drivetrain extends SubsystemBase {
   //For PID control
   public void driveRobotOriented(double xSpeed, double ySpeed, double zRotation) {
     mecanumDrive.driveCartesian(
-        ySpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
-        xSpeed*Constants.DrivetrainConstants.SPEED_MULTIPLIER,
-        zRotation*Constants.DrivetrainConstants.SPEED_MULTIPLIER
+        ySpeed*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
+        xSpeed*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
+        zRotation*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER
+      );
+  }
+
+  //For PID control
+  public void driveFieldOriented(double xSpeed, double ySpeed, double zRotation) {
+    mecanumDrive.driveCartesian(
+        ySpeed*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
+        xSpeed*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
+        zRotation*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
+        gyro.getRotation2d().unaryMinus()
       );
   }
 

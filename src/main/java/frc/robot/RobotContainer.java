@@ -18,10 +18,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.commands.AlignToReefTagCommand;
 import frc.robot.commands.AlignToReefTxTyCommand;
 import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.Score;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.ScoreandStation;
+import frc.robot.commands.AutoRoutines.Routines.ToReefScore.TimedScore;
 import frc.robot.commands.DriveFieldOriented;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
@@ -41,7 +44,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final LimelightSubsystem limelight = new LimelightSubsystem();
-  private final XboxController driveController = new XboxController(0);
+  private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
   private final AlgaeRemoval algaeRemoval = new AlgaeRemoval();
 
@@ -118,6 +121,8 @@ public RobotContainer() {
     autoChooser.addOption("SCORE L3 FROM LEFT AND INTAKE", new ScoreandStation(intakeSub, "To reef from left", elevator, ElevatorConstants.L3_POSITION, "Intake from left"));
     autoChooser.addOption("SCORE L3 FROM CENTRE AND INTAKE", new ScoreandStation(intakeSub, "To reef from centre", elevator, ElevatorConstants.L3_POSITION, "Intake from centre"));
 
+    autoChooser.addOption("CENTER SCORE L4 TIMED", new TimedScore(drivetrain, intakeSub, elevator, ElevatorConstants.L4_POSITION, 0.3, 2.2));
+
     //Exit Zone timed
     //autoChooser.addOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.5, 1));
 
@@ -134,10 +139,10 @@ public RobotContainer() {
     // Configure your button bindings here
   
     //Reset the gyro angle to 0 when A is pressed on the driver controller
-    new Trigger(driveController::getAButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
+    driveController.a().onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
     
-    //Toggle the drive mode (field or robot oriented) when B is pressed on the driver controller
-    new Trigger(driveController::getBButtonPressed).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
+    //Toggle the drive mode (f8j989ield or robot oriented) when B is pressed on the driver controller
+    driveController.b().onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
     
     //reverse direction for intake with right trigger
     new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
@@ -178,21 +183,24 @@ public RobotContainer() {
     
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
 
-    operatorController.y().whileTrue(new AlignToReefTxTyCommand(drivetrain, limelight, 0.5, 0.5));
+    driveController.leftBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET, -VisionConstants.DEFAULT_TX_OFFSET));
+    driveController.rightBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET, VisionConstants.DEFAULT_TX_OFFSET));
     
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
     //Raise eleator and lower servo to remove L3 algae
     operatorController.leftTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator),
-      Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
+      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
+      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
+    )
     );
 
     //Raise eleator and lower servo to remove L3 algae
     operatorController.rightTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator),
-      Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
+      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
+      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
+    )
     );
   }
 

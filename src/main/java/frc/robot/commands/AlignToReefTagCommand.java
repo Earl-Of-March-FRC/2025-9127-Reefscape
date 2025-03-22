@@ -27,6 +27,13 @@ public class AlignToReefTagCommand extends Command {
     private static final double TAG_X_TOLERANCE = 1.0;  // 1 degree tolerance
     private static final double TAG_Y_TOLERANCE = 1.0;  // 1 degree tolerance
     private static final double TX_TOLERANCE = 2.0; // 2 degrees
+
+    //Setpoints
+    private final double xOffset;
+    private final double yOffset;
+    private final double txOffset;
+
+    private final double fieldOrientedOffset;
     
     /**
      * Creates a new direct alignment command using tx/ty values
@@ -34,9 +41,15 @@ public class AlignToReefTagCommand extends Command {
      * @param driveSubsystem The robot's drive subsystem
      * @param limelightSubsystem The limelight subsystem
      */
-    public AlignToReefTagCommand(Drivetrain driveSubsystem, LimelightSubsystem limelightSubsystem) {
+    public AlignToReefTagCommand(Drivetrain driveSubsystem, LimelightSubsystem limelightSubsystem, double xOffset, double yOffset, double txOffset) {
         m_drive = driveSubsystem;
         m_limelight = limelightSubsystem;
+
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.txOffset = txOffset;
+
+        fieldOrientedOffset = -limelightSubsystem.getFilteredTargetXAngle();
         
         // Initialize PID controllers
         m_xController = new PIDController(VisionConstants.ALIGN_P_X, VisionConstants.ALIGN_I_X, VisionConstants.ALIGN_D_X);
@@ -58,14 +71,14 @@ public class AlignToReefTagCommand extends Command {
         m_rotationController.reset();
 
         // Set tolerances
-        m_xController.setTolerance(TAG_Y_TOLERANCE);
-        m_yController.setTolerance(TAG_X_TOLERANCE);
+        m_xController.setTolerance(TAG_X_TOLERANCE);
+        m_yController.setTolerance(TAG_Y_TOLERANCE);
         m_rotationController.setTolerance(TX_TOLERANCE);
 
         // Set setpoints
-        m_xController.setSetpoint(VisionConstants.DEFAULT_X_OFFSET);
-        m_yController.setSetpoint(VisionConstants.DEFAULT_Y_OFFSET);
-        m_rotationController.setSetpoint(0);
+        m_xController.setSetpoint(xOffset);
+        m_yController.setSetpoint(yOffset);
+        m_rotationController.setSetpoint(txOffset);
     }
     
     @Override
@@ -85,9 +98,9 @@ public class AlignToReefTagCommand extends Command {
             
             // Calculate motor outputs using PID controllers
             // Note: Signs may need to be adjusted based on your robot's coordinate system
-            double xSpeed = m_xController.calculate(currentTagX);  // Forward/back based on ty
-            double ySpeed = m_yController.calculate(currentTagY);  // Left/right based on tx
-            double rotationSpeed = m_rotationController.calculate(currentTx);  // Rotation to center target
+            double xSpeed = -m_xController.calculate(currentTagX);  // Forward/back based on ty
+            double ySpeed = -m_yController.calculate(currentTagY);  // Left/right based on tx
+            double rotationSpeed = -m_rotationController.calculate(currentTx);  // Rotation to center target
             //m_rotationController.calculate(gyroHeading, wantedHeading);
             
             // Deemed not necessary
@@ -97,7 +110,7 @@ public class AlignToReefTagCommand extends Command {
             // rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
             
             // Drive the robot
-            m_drive.driveRobotOriented(xSpeed, ySpeed, rotationSpeed);
+            m_drive.driveFieldOriented(xSpeed, ySpeed, rotationSpeed);
             
             // Update dashboard
             SmartDashboard.putNumber("X Error", VisionConstants.DEFAULT_X_OFFSET - currentTagX);

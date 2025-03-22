@@ -50,22 +50,22 @@ public final class Constants {
     // PID constants for alignment
     // These will need tuning on your actual robot
     public static final double ALIGN_P_X = 0.8;
-    public static final double ALIGN_I_X = 0.0;
-    public static final double ALIGN_D_X = 0.05;
+    public static final double ALIGN_I_X = 0.1;
+    public static final double ALIGN_D_X = 0.0;
     
     public static final double ALIGN_P_Y = 0.8;
-    public static final double ALIGN_I_Y = 0.0;
-    public static final double ALIGN_D_Y = 0.05;
+    public static final double ALIGN_I_Y = 0.1;
+    public static final double ALIGN_D_Y = 0.0;
     
-    public static final double ALIGN_P_ROT = 0.03;
+    public static final double ALIGN_P_ROT = 0.01;
     public static final double ALIGN_I_ROT = 0.0;
-    public static final double ALIGN_D_ROT = 0.002;
-    
+    public static final double ALIGN_D_ROT = 0.0;
+
     // Default offsets for reef alignment (adjust based on game piece handling)
     //NOTE: this translation must be the same as the limelight 3D POI offset in hardware client for Tx values to be accurate
-    public static final double DEFAULT_X_OFFSET = 0.75;  // 75cm from the reef (adjust as needed)
-    public static final double DEFAULT_Y_OFFSET = 0.0;  // Centered laterally
-    public static final double DEFAULT_TX_OFFSET = 0; // Square to target
+    public static final double DEFAULT_X_OFFSET = -0.1296561;  // 75cm from the reef (adjust as needed)
+    public static final double DEFAULT_Y_OFFSET = 0.7064591;  // Centered laterally
+    public static final double DEFAULT_TX_OFFSET = -17.30; // Square to target
   }
 
   public static class OperatorConstants {
@@ -174,7 +174,8 @@ public final class Constants {
     public static final int BOTTOM_RIGHT_ID = 1;
 
     //limits the max motor speed
-    public static final double SPEED_MULTIPLIER = 0.6;
+    public static final double SPEED_MULTIPLIER = 0.9;
+    public static final double PID_SPEED_MULTIPLIER = 0.8;
 
     //Controller deadband
     public static final double DRIVE_DEADBAND = 0.2;

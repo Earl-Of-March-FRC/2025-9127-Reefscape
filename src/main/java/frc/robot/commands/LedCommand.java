@@ -4,7 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -35,7 +37,7 @@ public class LedCommand extends Command {
   @Override
   public void execute() {
 
-    if (elevator.getCurrSetpoint().equals("Intake") && intake.getLimit()==true){
+    if (MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intake.getLimit()==true){
       limelight.setLedMode(LedMode.ON);
     }
     else if(intake.getLimit()==false){
