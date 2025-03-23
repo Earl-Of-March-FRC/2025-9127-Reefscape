@@ -60,9 +60,9 @@ public class RobotContainer {
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
   private final LEDsubsystem led = new LEDsubsystem( m_limelightTable,
-    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) && intakeSub.getLimit() == false, //OFF supplier
-    () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit()==true, //ON supplier
-    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) && intakeSub.getLimit() == true //BLINK supplier
+    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
+    () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
+    () -> false //BLINK supplier
   );
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -126,7 +126,7 @@ public RobotContainer() {
     autoChooser.addOption("SCORE L3 FROM LEFT AND INTAKE", new ScoreandStation(intakeSub, "To reef from left", elevator, ElevatorConstants.L3_POSITION, "Intake from left"));
     autoChooser.addOption("SCORE L3 FROM CENTRE AND INTAKE", new ScoreandStation(intakeSub, "To reef from centre", elevator, ElevatorConstants.L3_POSITION, "Intake from centre"));
 
-    autoChooser.addOption("CENTER SCORE L4 TIMED", new TimedScore(drivetrain, intakeSub, elevator, ElevatorConstants.L4_POSITION, 0.3, 2.2));
+    autoChooser.addOption("CENTER SCORE L4 TIMED", new TimedScore(drivetrain, intakeSub, elevator, ElevatorConstants.L4_POSITION, 0.15, 4.5));
 
     //Exit Zone timed
     //autoChooser.addOption("EXIT ZONE TIMED", new ExitZoneCommand(drivetrain, 0.5, 1));
@@ -184,7 +184,7 @@ public RobotContainer() {
     //automatically intake with beam break sensor using button a
     operatorController.a().whileTrue(new IntakeCommand(intakeSub));
 
-    operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.4));
+    operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.55));
     
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
 

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.ElevatorPID;
+import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -26,10 +27,10 @@ public class RaiseAndShootCommand extends ParallelCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       //Raise elevator
-      new InstantCommand(() -> new ElevatorPID(elevator, setpoint).schedule(), elevator),
+      new ElevatorPID(elevator, setpoint),
       Commands.sequence(
         //Once we are at the setpoint, shoot for 2 seconds
-        Commands.waitUntil(() -> MathUtil.isNear(setpoint, elevator.getPosition(), 1)),
+        Commands.waitSeconds(5),
         Commands.deadline(
           Commands.waitSeconds(2),
           new ShootCommand(intake, () -> 0.5)
