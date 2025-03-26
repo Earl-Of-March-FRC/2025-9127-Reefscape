@@ -94,8 +94,8 @@ public class AlignToReefTagCommand extends Command {
             //limelight coordinate space has different orientation from robot drive
             //Z+ limelight = Y+ robot drive
             //X+ limelight = X+ robot drive
-            double currentTagX = m_limelight.getFilteredTagX();
-            double currentTagY = m_limelight.getFilteredTagZ();
+            double currentTagX = m_limelight.getFilteredX();
+            double currentTagY = m_limelight.getFilteredZ();
             double currentTx = m_limelight.getFilteredTargetXAngle();
             
             // Calculate motor outputs using PID controllers

@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import java.util.Optional;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -32,7 +36,7 @@ public class LimelightSubsystem extends SubsystemBase {
     private double m_lastTx = 0.0;
     private double m_lastTy = 0.0;
     private double m_lastTargetArea = 0.0;
-    private double[] m_lastBotPose = new double[] {0.0, 0.0, 0.0};
+    private double[] m_lastBotPose = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     private int lastTxSign = 0;
     
     public LimelightSubsystem(NetworkTable m_limelighTable) {
@@ -43,7 +47,7 @@ public class LimelightSubsystem extends SubsystemBase {
         m_tx = m_limelightTable.getEntry("tx");
         m_ty = m_limelightTable.getEntry("ty");
         m_ta = m_limelightTable.getEntry("ta");
-        m_botpose = m_limelightTable.getEntry("targetpose_robotspace");
+        m_botpose = m_limelightTable.getEntry("botpose");
         m_pipeline = m_limelightTable.getEntry("pipeline");
         m_tid = m_limelightTable.getEntry("tid");
         
@@ -61,7 +65,7 @@ public class LimelightSubsystem extends SubsystemBase {
         double currentTx = m_tx.getDouble(0.0);
         double currentTy = m_ty.getDouble(0.0);
         double currentArea = m_ta.getDouble(0.0);
-        double[] currentBotPose = m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0});
+        double[] currentBotPose = m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
         
         // Apply simple filtering if we have a valid target
         if (hasValidTarget()) {
@@ -73,6 +77,9 @@ public class LimelightSubsystem extends SubsystemBase {
             m_lastBotPose[0] = alpha * currentBotPose[0] + (1 - alpha) * m_lastBotPose[0];
             m_lastBotPose[1] = alpha * currentBotPose[1] + (1 - alpha) * m_lastBotPose[1];
             m_lastBotPose[2] = alpha * currentBotPose[2] + (1 - alpha) * m_lastBotPose[2];
+            // m_lastBotPose[3] = alpha * currentBotPose[3] + (1 - alpha) * m_lastBotPose[3];
+            // m_lastBotPose[4] = alpha * currentBotPose[4] + (1 - alpha) * m_lastBotPose[4];
+            // m_lastBotPose[5] = alpha * currentBotPose[5] + (1 - alpha) * m_lastBotPose[5];
         }
 
         if (Math.signum(getTargetXAngle()) != 0) {
@@ -85,17 +92,34 @@ public class LimelightSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Limelight Target Y", getFilteredTargetYAngle());
         SmartDashboard.putNumber("Limelight Target Area", getFilteredTargetArea());
         SmartDashboard.putNumber("AprilTag ID", getTargetID());
-        SmartDashboard.putNumber("Tag X Raw", getTagX());
-        SmartDashboard.putNumber("Tag Y Raw", getTagY());
-        SmartDashboard.putNumber("Tag Z Raw", getTagZ());
-        SmartDashboard.putNumber("Tag X", getFilteredTagX());
-        SmartDashboard.putNumber("Tag Y", getFilteredTagY());
-        SmartDashboard.putNumber("Tag Z", getFilteredTagZ());
+        SmartDashboard.putNumber("Tag X Raw", getX());
+        SmartDashboard.putNumber("Tag Y Raw", getY());
+        SmartDashboard.putNumber("Tag Z Raw", getZ());
+        SmartDashboard.putNumber("Tag X", getFilteredX());
+        SmartDashboard.putNumber("Tag Y", getFilteredY());
+        SmartDashboard.putNumber("Tag Z", getFilteredZ());
+    }
+
+
+    public double getBotHeading() {
+        return m_botpose.getDoubleArray(new Double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0})[5];
+    }
+
+    public double getFilteredBotHeading() {
+        return hasValidTarget()? m_lastBotPose[5] : 0.0;
+    }
+
+    public Pose2d getBotPose() {
+        return new Pose2d(getX(), getY(), Rotation2d.fromDegrees(getBotHeading()));
+    }
+
+    public Optional<Pose2d> getFilteredBotPose() {
+        return hasValidTarget()? Optional.of(new Pose2d(getFilteredX(), getFilteredY(), Rotation2d.fromDegrees(getFilteredBotHeading()))) : Optional.empty();
     }
     
     public boolean hasValidTarget() {
         return m_tv.getDouble(0.0) > 0.5;
-    }
+    };
 
     //return 1 if the most recent tx value was positive, -1 if it was negative values of exactly 0 will be ignored
     public int lastTxSign(){
@@ -126,27 +150,27 @@ public class LimelightSubsystem extends SubsystemBase {
         return m_ty.getDouble(0.0);
     }
 
-    public double getTagX() {
-        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0})[0];
+    public double getX() {
+        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0})[0];
     }
 
-    public double getFilteredTagX() {
+    public double getFilteredX() {
         return hasValidTarget()? m_lastBotPose[0] : 0.0;
     }
     
-    public double getTagY() {
-        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0})[1];
+    public double getY() {
+        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0})[1];
     }
     
-    public double getFilteredTagY() {
+    public double getFilteredY() {
         return hasValidTarget()? m_lastBotPose[1] : 0.0;
     }
 
-    public double getTagZ() {
-        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0})[2];
+    public double getZ() {
+        return m_botpose.getDoubleArray(new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0})[2];
     }
 
-    public double getFilteredTagZ() {
+    public double getFilteredZ() {
         return hasValidTarget()? m_lastBotPose[2] : 0.0;
     }
     

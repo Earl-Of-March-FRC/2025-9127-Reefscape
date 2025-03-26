@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
 
@@ -25,10 +27,12 @@ import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
-import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -37,6 +41,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 
 public class Drivetrain extends SubsystemBase {
   private MecanumDrive mecanumDrive;
@@ -58,11 +63,13 @@ public class Drivetrain extends SubsystemBase {
 
   private AHRS gyro;
 
-  private MecanumDriveOdometry driveOdometry;
+  private MecanumDrivePoseEstimator poseEstimator;
   private MecanumDriveKinematics driveKinematics;
   private MecanumDriveWheelPositions drivePositions;
   private Pose2d drivePose;
   private Field2d field;
+
+  private Supplier<Optional<Pose2d>> limelightRobotPoseSupplier;
 
   // Field oriented drive on by default
   private boolean fieldOriented = false;
@@ -72,9 +79,11 @@ public class Drivetrain extends SubsystemBase {
   private RobotConfig robotConfig;
 
   /** Creates a new MecanumDrive. */
-  public Drivetrain() {
+  public Drivetrain(Supplier<Optional<Pose2d>> limelightRobotPose) {
+    this.limelightRobotPoseSupplier = limelightRobotPose;
+
     field = new Field2d();
-    // SmartDashboard.putData("Field", field);
+    SmartDashboard.putData("Field", field);
 
     topLeft = new SparkMax(Constants.DrivetrainConstants.TOP_LEFT_ID, MotorType.kBrushless);
     bottomLeft = new SparkMax(Constants.DrivetrainConstants.BOTTOM_LEFT_ID, MotorType.kBrushless);
@@ -166,7 +175,7 @@ public class Drivetrain extends SubsystemBase {
     // relative to the field
     gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET);
 
-    driveOdometry = new MecanumDriveOdometry(
+    poseEstimator = new MecanumDrivePoseEstimator(
         new MecanumDriveKinematics(
             Constants.DrivetrainConstants.TOP_LEFT_POS,
             Constants.DrivetrainConstants.TOP_RIGHT_POS,
@@ -177,7 +186,8 @@ public class Drivetrain extends SubsystemBase {
             topLeftEncoder.getPosition(),
             topRightEncoder.getPosition(),
             bottomLeftEncoder.getPosition(),
-            bottomRightEncoder.getPosition()));
+            bottomRightEncoder.getPosition()),
+            new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
 
     driveKinematics = new MecanumDriveKinematics(
       Constants.DrivetrainConstants.TOP_LEFT_POS,
@@ -193,12 +203,6 @@ public class Drivetrain extends SubsystemBase {
       bottomRightEncoder.getPosition()
     );
 
-    driveOdometry = new MecanumDriveOdometry(
-      driveKinematics,
-      gyro.getRotation2d(),
-      drivePositions
-    );
-
     try {
       robotConfig = RobotConfig.fromGUISettings();
     } catch (IOException | ParseException e) {
@@ -206,7 +210,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     AutoBuilder.configure(
-      ()->getDrivePose(), 
+      ()->getDrivePose(),
       pose->resetDrivePose(pose),
       ()->getChassisSpeeds(),
       (speeds,feedforwards)->drive(speeds),
@@ -316,7 +320,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetDrivePose(Pose2d pose) {
-    driveOdometry.resetPosition(gyro.getRotation2d(), drivePositions, pose); 
+    poseEstimator.resetPosition(gyro.getRotation2d(), drivePositions, pose); 
   }
 
   // Getting robot-relative chassis speeds
@@ -333,23 +337,40 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Optional<Pose2d> limelightPose = limelightRobotPoseSupplier.get();
+
+    if(limelightPose.isPresent()){
+      // In your periodic function:
+      LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+      if (limelightMeasurement.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+          poseEstimator.addVisionMeasurement(
+              limelightMeasurement.pose,
+              limelightMeasurement.timestampSeconds
+        );
+      }
+    }
     // This method will be called once per scheduler run
-    drivePose = driveOdometry.update(gyro.getRotation2d(),
+    poseEstimator.update(gyro.getRotation2d(),
         new MecanumDriveWheelPositions(
             topLeftEncoder.getPosition(),
             topRightEncoder.getPosition(),
             bottomLeftEncoder.getPosition(),
             bottomRightEncoder.getPosition()));
 
+    drivePose = poseEstimator.getEstimatedPosition();
+
     field.setRobotPose(drivePose);
-    // SmartDashboard.putData("Field", field);
+
+
+    SmartDashboard.putData("Field", field);
 
     SmartDashboard.putBoolean("Field Oriented", fieldOriented);
   }
 
   @Override
   public void simulationPeriodic() {
-    drivePose = driveOdometry.update(gyro.getRotation2d(),
+    drivePose = poseEstimator.update(gyro.getRotation2d(),
         new MecanumDriveWheelPositions(
             topLeftEncoderSim.getPosition(),
             topRightEncoderSim.getPosition(),

@@ -49,8 +49,8 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrain = new Drivetrain();
   private final LimelightSubsystem limelight = new LimelightSubsystem(m_limelightTable);
+  private final Drivetrain drivetrain = new Drivetrain(() -> limelight.getFilteredBotPose());
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
   private final AlgaeRemoval algaeRemoval = new AlgaeRemoval();
