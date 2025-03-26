@@ -67,6 +67,17 @@ public final class Constants {
     public static final double DEFAULT_Y_OFFSET = 0.7064591;  // Centered laterally
     public static final double DEFAULT_TX_OFFSET = -17.30; // Square to target
   }
+  public final class AutoConstants {
+
+    public static final double AUTO_SHOOT_SPEED = 0.55; 
+    public static final double AUTO_SHOOT_DURATION = 1.0; 
+
+    public static final double AUTO_BACKUP_SPEED = -0.3; 
+    public static final double AUTO_BACKUP_DURATION = 0.75;
+
+    public static final double ALIGNMENT_TIMEOUT_SECONDS = 3.0;
+    public static final double INTAKE_TIMEOUT_SECONDS = 2.0;
+}
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
