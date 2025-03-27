@@ -16,6 +16,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -25,7 +26,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.DrivetrainConstants;
 
 public class Drivetrain extends SubsystemBase {
   private MecanumDrive mecanumDrive;
@@ -65,7 +66,6 @@ public class Drivetrain extends SubsystemBase {
 
   private MecanumDrivePoseEstimator poseEstimator;
   private MecanumDriveKinematics driveKinematics;
-  private MecanumDriveWheelPositions drivePositions;
   private Pose2d drivePose;
   private Field2d field;
 
@@ -118,7 +118,8 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configTopLeft.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0);
+        .pid(0.0, 0.0, 0.0)
+        .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     configBottomLeft
         .smartCurrentLimit(40)
@@ -129,7 +130,8 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configBottomLeft.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0);
+        .pid(0.0, 0.0, 0.0)
+        .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     configTopRight
         .smartCurrentLimit(40)
@@ -140,7 +142,8 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configTopRight.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0);
+        .pid(0.0, 0.0, 0.0)
+        .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     configBottomRight
         .smartCurrentLimit(40)
@@ -151,7 +154,8 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configBottomRight.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0);
+        .pid(0.0, 0.0, 0.0)
+        .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     topLeft.configure(configTopLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     bottomLeft.configure(configBottomLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -196,13 +200,6 @@ public class Drivetrain extends SubsystemBase {
       Constants.DrivetrainConstants.BOTTOM_RIGHT_POS
     );
 
-    drivePositions = new MecanumDriveWheelPositions(
-      topLeftEncoder.getPosition(), 
-      topRightEncoder.getPosition(),
-      bottomLeftEncoder.getPosition(),
-      bottomRightEncoder.getPosition()
-    );
-
     try {
       robotConfig = RobotConfig.fromGUISettings();
     } catch (IOException | ParseException e) {
@@ -227,7 +224,6 @@ public class Drivetrain extends SubsystemBase {
       },
     this);
   }
-
 
   // X and Y have been swapped as params due to Mechanum Drive class conceptions
   // Uses a square root curve rather than linear
@@ -290,7 +286,13 @@ public class Drivetrain extends SubsystemBase {
 
   // Robot-relative drive using chassis speeds
   public void drive(ChassisSpeeds speeds) {
-    mecanumDrive.driveCartesian(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+    MecanumDriveWheelSpeeds wheelSpeeds = driveKinematics.toWheelSpeeds(speeds);
+    wheelSpeeds.desaturate(DrivetrainConstants.MAX_SPEED_MPS);
+    
+    topLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond , ControlType.kVelocity);
+    bottomLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
+    topRight.getClosedLoopController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
+    bottomRight.getClosedLoopController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
   }
   
   public Pose2d getDrivePose() {
@@ -320,9 +322,18 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void resetDrivePose(Pose2d pose) {
-    poseEstimator.resetPosition(gyro.getRotation2d(), drivePositions, pose); 
+    poseEstimator.resetPosition(gyro.getRotation2d(), getWheelPositions(), pose); 
   }
-
+    
+public MecanumDriveWheelPositions getWheelPositions() {
+  return new MecanumDriveWheelPositions(
+    topLeftEncoder.getPosition(),
+    topRightEncoder.getPosition(),
+    bottomLeftEncoder.getPosition(),
+    bottomRightEncoder.getPosition()
+  );
+}
+    
   // Getting robot-relative chassis speeds
   public ChassisSpeeds getChassisSpeeds() {
     return driveKinematics.toChassisSpeeds(

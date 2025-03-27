@@ -178,6 +178,10 @@ public final class Constants {
     public static final double ROTATE_I = 0.0;
     public static final double ROTATE_D = 0.0;
 
+    //Feedfoward gain for velocity control
+    //473 is the NEO Kv, as supplied by the manufacturer
+    public static final double VELOCITY_Kf = 1.0/473.0;
+
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 4;
     public static final int BOTTOM_LEFT_ID = 2;
@@ -192,17 +196,19 @@ public final class Constants {
     //Controller deadband
     public static final double DRIVE_DEADBAND = 0.2;
     public static final double TURN_DEADBAND = 0.1;
+    
+    //Conversion from encoder RPM to wheel m/s
+    public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
+    public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
-    public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
-
+    public static final double SIM_MAX_VELOCITY = 5676;
+    //Max wheel speed in metres per second, uses the above mentioned NEO free speed, our wheel of course have load on them so we reduce the speed by 20%
+    //TODO: calibrate this value further
+    public static final double MAX_SPEED_MPS = (5676 * RPM_TO_MPS_CONVERSION / GEAR_RATIO) * 0.8;
  
-     //Conversion from encoder RPM to wheel m/s
-     public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
-     public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
- 
-     //Angle of the gyro's "zero yaw" position relative to the front of the bot
-     public static final double GYRO_ANGLE_OFFSET = 0;
+    //Angle of the gyro's "zero yaw" position relative to the front of the bot
+    public static final double GYRO_ANGLE_OFFSET = 0;
   }
   public static class AlageRemovalConstants {
     public static final int SERVO_PORT = 5;
