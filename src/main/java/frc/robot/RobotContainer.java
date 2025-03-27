@@ -189,6 +189,8 @@ public RobotContainer() {
     
     driveController.leftTrigger().onChange(Commands.runOnce(() -> drivetrain.toggleSlowMode(), drivetrain));
 
+    driveController.rightTrigger().whileTrue(Commands.run(() -> drivetrain.setVelocity(1), drivetrain));
+
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 

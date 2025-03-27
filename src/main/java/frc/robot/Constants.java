@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.ClosedLoopSlot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -77,6 +79,8 @@ public final class Constants {
 
     public static final double ALIGNMENT_TIMEOUT_SECONDS = 3.0;
     public static final double INTAKE_TIMEOUT_SECONDS = 2.0;
+    public static final Pose2d LEFT_STATION_POSE = null;
+    public static final Pose2d RIGHT_STATION_POSE = null;
 }
 
   public static class OperatorConstants {
@@ -153,6 +157,31 @@ public final class Constants {
   
   public static class DrivetrainConstants {
 
+    //TODO: calibrate these values
+    // Driving Parameters - Note that these are not the maximum capable speeds of
+    // the robot, rather the allowed maximum speeds
+    public static final double kMaxSpeedMetersPerSecond = 4; //Max net robot translational speed
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxAccelerationMetersPerSecondSquaredPathfinding = 1;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
+
+    public static final PathConstraints kPathfindingConstraints = new PathConstraints(kMaxSpeedMetersPerSecond,
+        kMaxAccelerationMetersPerSecondSquaredPathfinding, kMaxAngularSpeedRadiansPerSecond,
+        kMaxAngularAccelerationRadiansPerSecondSquared);
+
+    //TODO: calibrate these values
+    public static final double TRACK_WIDTH = 0.53; //Distance between the wheels in metres
+    public static final double WHEEL_BASE = 0.53; //Distance between the front and back wheels in metres
+
+    public static final double CHASSIS_WIDTH = Units.inchesToMeters(26.5); //Chassis width in metres
+    public static final double CHASSIS_LENGTH = Units.inchesToMeters(32.31); //Chassis length in metres
+
+    public static final double BUMPER_WIDTH = Units.inchesToMeters(4); //Bumper width in metres
+
+    public static final double ROBOT_WIDTH = CHASSIS_WIDTH + BUMPER_WIDTH; //Chassis width in metres +bumpers
+    public static final double ROBOT_LENGTH = CHASSIS_LENGTH + BUMPER_WIDTH; //Chassis length in metres + bumpers
+
     //Relative to the centre in metres, used for kinematics and odometry0,\
     public static final Translation2d TOP_LEFT_POS = new Translation2d(0.26, 0.279);
     public static final Translation2d BOTTOM_LEFT_POS = new Translation2d(0.26, -0.279);
@@ -161,7 +190,7 @@ public final class Constants {
 
     //Gearbox ratio
     public static final double GEAR_RATIO = 10.71; 
-
+    
     //Motor controller automatically converts to revolutions
     public static final int COUNTS_PER_REV = 42;
     public static final double WHEEL_DIAMETER_INCHES = 6;
@@ -178,9 +207,22 @@ public final class Constants {
     public static final double ROTATE_I = 0.0;
     public static final double ROTATE_D = 0.0;
 
+    public static final double PATHPLANNER_TRANSLATE_P = 0.1;
+    public static final double PATHPLANNER_TRANSLATE_I = 0.0;
+    public static final double PATHPLANNER_TRANSLATE_D = 0.0;
+
+    public static final double PATHPLANNER_ROTATE_P = 0.1;
+    public static final double PATHPLANNER_ROTATE_I = 0.0;
+    public static final double PATHPLANNER_ROTATE_D = 0.0;
+
+    public static final double VELOCITY_KP = 0.0;
+    public static final double VELOCITY_KI = 0.0;
+    public static final double VELOCITY_KD = 0.0;
+
+
     //Feedfoward gain for velocity control
     //473 is the NEO Kv, as supplied by the manufacturer
-    public static final double VELOCITY_Kf = 1.0/473.0;
+    public static final double VELOCITY_Kf = 0.072;
 
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 4;

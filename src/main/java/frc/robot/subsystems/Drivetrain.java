@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import java.io.IOException;
+import java.lang.annotation.Target;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -14,6 +16,9 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.sim.SparkRelativeEncoderSim;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -26,22 +31,30 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DrivetrainConstants;
 
 public class Drivetrain extends SubsystemBase {
@@ -66,21 +79,22 @@ public class Drivetrain extends SubsystemBase {
 
   private MecanumDrivePoseEstimator poseEstimator;
   private MecanumDriveKinematics driveKinematics;
-  private Pose2d drivePose;
   private Field2d field;
+  private AprilTagFieldLayout fieldLayout;
 
   private Supplier<Optional<Pose2d>> limelightRobotPoseSupplier;
 
   // Field oriented drive on by default
   private boolean fieldOriented = false;
-
   private boolean slowMode = false;
-
   private RobotConfig robotConfig;
+
 
   /** Creates a new MecanumDrive. */
   public Drivetrain(Supplier<Optional<Pose2d>> limelightRobotPose) {
     this.limelightRobotPoseSupplier = limelightRobotPose;
+
+    fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
@@ -118,7 +132,7 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configTopLeft.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0)
+        .pid(DrivetrainConstants.VELOCITY_KP, DrivetrainConstants.VELOCITY_KI, DrivetrainConstants.VELOCITY_KD)
         .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     configBottomLeft
@@ -130,7 +144,7 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configBottomLeft.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0)
+        .pid(DrivetrainConstants.VELOCITY_KP, DrivetrainConstants.VELOCITY_KI, DrivetrainConstants.VELOCITY_KD)
         .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     configTopRight
@@ -142,7 +156,7 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configTopRight.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0)
+        .pid(DrivetrainConstants.VELOCITY_KP, DrivetrainConstants.VELOCITY_KI, DrivetrainConstants.VELOCITY_KD)
         .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     configBottomRight
@@ -154,7 +168,7 @@ public class Drivetrain extends SubsystemBase {
         .velocityConversionFactor(Constants.DrivetrainConstants.RPM_TO_MPS_CONVERSION);
     configBottomRight.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pid(0.0, 0.0, 0.0)
+        .pid(DrivetrainConstants.VELOCITY_KP, DrivetrainConstants.VELOCITY_KI, DrivetrainConstants.VELOCITY_KD)
         .velocityFF(DrivetrainConstants.VELOCITY_Kf);
 
     topLeft.configure(configTopLeft, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -284,11 +298,24 @@ public class Drivetrain extends SubsystemBase {
       );
   }
 
+  public void setVelocity(double velMPS){
+    topLeft.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
+    bottomLeft.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
+    topRight.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
+    bottomRight.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
+
+    SmartDashboard.putNumber("Velocity setpoint", velMPS);
+    SmartDashboard.putNumber("Top Left Velocity", topLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("Top Right Velocity", topRightEncoder.getVelocity());
+    SmartDashboard.putNumber("Bottom Left Velocity", bottomLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("Bottom Right Velocity", bottomRightEncoder.getVelocity());
+  }
+
   // Robot-relative drive using chassis speeds
   public void drive(ChassisSpeeds speeds) {
     MecanumDriveWheelSpeeds wheelSpeeds = driveKinematics.toWheelSpeeds(speeds);
     wheelSpeeds.desaturate(DrivetrainConstants.MAX_SPEED_MPS);
-    
+
     topLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond , ControlType.kVelocity);
     bottomLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
     topRight.getClosedLoopController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
@@ -296,7 +323,7 @@ public class Drivetrain extends SubsystemBase {
   }
   
   public Pose2d getDrivePose() {
-    return drivePose;
+    return poseEstimator.getEstimatedPosition();
   }
 
   public void resetGyro() {
@@ -346,6 +373,77 @@ public MecanumDriveWheelPositions getWheelPositions() {
     );
   }
 
+  //Id ranges from 1-6, regardeless of alliance (this is due to allianceIdOffset).
+  /* Field layout:
+   *                  Blue              Red
+   *               |  3/\4              4/\3   |
+   * Driver Station| 2|  |5            5|  |2  | Driver station
+   *               |  1\/6              6\/1   | 
+   */
+  /*Current assumptions:
+  Robot heading is 0 when robot is facing towards the red wall
+  April tag heading is mesured CCW
+  */
+  //TODO handle edge cases (ex: optionals don't exist)
+  public Command moveToTagCommand(int tagID) {
+    Pose2d startingPose = getDrivePose();
+    Pose2d targetPose = new Pose2d();
+
+    //Blue by default
+    int allianceIdOffset = 16;
+    if (DriverStation.getAlliance().isPresent()) {
+      allianceIdOffset = DriverStation.getAlliance().get() == Alliance.Blue ? 16 : 5;
+    }
+
+    //Get the pose of the tag if it is present
+    Optional<Pose3d> targetPose3D = fieldLayout.getTagPose(allianceIdOffset + tagID);
+    if (targetPose3D.isPresent()) {
+      targetPose = targetPose3D.get().toPose2d();
+    }
+    else {
+      System.out.println("Tag not found");
+      return null;
+    }
+
+    //Transform April tag Pose2D into the desired robot Pose2D
+    targetPose = new Pose2d(
+      targetPose.getTranslation()
+        .plus(new Translation2d(
+          Math.cos(targetPose.getRotation().getRadians()),
+          Math.sin(targetPose.getRotation().getRadians()))
+        ).times(DrivetrainConstants.ROBOT_LENGTH/2.0),
+      targetPose.getRotation().plus(Rotation2d.fromDegrees(180))
+    );
+
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(startingPose, targetPose);
+    PathPlannerPath path = new PathPlannerPath(waypoints, DrivetrainConstants.kPathfindingConstraints, null,
+        new GoalEndState(0, targetPose.getRotation()));
+    path.preventFlipping = true;
+
+    
+    //TODO: decide which method is better for compiling the path, ensure that obstacles are avoided
+    return AutoBuilder.pathfindToPose(targetPose, DrivetrainConstants.kPathfindingConstraints, 0);
+    //return AutoBuilder.followPath(path);
+  }
+
+  public Command moveToLeftStationCommand() {
+    return AutoBuilder.pathfindToPose(AutoConstants.LEFT_STATION_POSE, DrivetrainConstants.kPathfindingConstraints, 0);
+  }
+
+  public Command moveToRightStationCommand() {
+    return AutoBuilder.pathfindToPose(AutoConstants.RIGHT_STATION_POSE, DrivetrainConstants.kPathfindingConstraints, 0);
+  }
+
+  public Command moveToNearestStationCommandCommand() {
+    //go to the station that is closest to the robot, this does not take into account obstacles
+    if (getDrivePose().getTranslation().minus(AutoConstants.LEFT_STATION_POSE.getTranslation()).getNorm() >
+        getDrivePose().getTranslation().minus(AutoConstants.RIGHT_STATION_POSE.getTranslation()).getNorm()) {
+      return moveToRightStationCommand();
+    } else {
+      return moveToLeftStationCommand();
+    }
+  }
+
   @Override
   public void periodic() {
     Optional<Pose2d> limelightPose = limelightRobotPoseSupplier.get();
@@ -369,7 +467,7 @@ public MecanumDriveWheelPositions getWheelPositions() {
             bottomLeftEncoder.getPosition(),
             bottomRightEncoder.getPosition()));
 
-    drivePose = poseEstimator.getEstimatedPosition();
+    Pose2d drivePose = poseEstimator.getEstimatedPosition();
 
     field.setRobotPose(drivePose);
 
@@ -381,7 +479,7 @@ public MecanumDriveWheelPositions getWheelPositions() {
 
   @Override
   public void simulationPeriodic() {
-    drivePose = poseEstimator.update(gyro.getRotation2d(),
+    Pose2d drivePose = poseEstimator.update(gyro.getRotation2d(),
         new MecanumDriveWheelPositions(
             topLeftEncoderSim.getPosition(),
             topRightEncoderSim.getPosition(),
