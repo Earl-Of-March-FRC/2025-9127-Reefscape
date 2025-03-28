@@ -215,14 +215,14 @@ public final class Constants {
     public static final double PATHPLANNER_ROTATE_I = 0.0;
     public static final double PATHPLANNER_ROTATE_D = 0.0;
 
-    public static final double VELOCITY_KP = 0.0;
+    public static final double VELOCITY_KP = 0.07;
     public static final double VELOCITY_KI = 0.0;
     public static final double VELOCITY_KD = 0.0;
-
-
+    
     //Feedfoward gain for velocity control
     //473 is the NEO Kv, as supplied by the manufacturer
-    public static final double VELOCITY_Kf = 0.072;
+    //0.072
+    public static final double VELOCITY_Kf = 0.08;
 
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 4;

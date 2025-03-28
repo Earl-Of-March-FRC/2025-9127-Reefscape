@@ -25,6 +25,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -69,6 +70,11 @@ public class Drivetrain extends SubsystemBase {
   private RelativeEncoder bottomLeftEncoder;
   private RelativeEncoder topRightEncoder;
   private RelativeEncoder bottomRightEncoder;
+
+  private SparkClosedLoopController topLeftController;
+  private SparkClosedLoopController topRightController;
+  private SparkClosedLoopController bottomLeftController;
+  private SparkClosedLoopController bottomRightController;
 
   private SparkRelativeEncoderSim topLeftEncoderSim;
   private SparkRelativeEncoderSim bottomLeftEncoderSim;
@@ -176,6 +182,11 @@ public class Drivetrain extends SubsystemBase {
     topRight.configure(configTopRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     bottomRight.configure(configBottomRight, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    topLeftController = topLeft.getClosedLoopController();
+    topRightController = topRight.getClosedLoopController();
+    bottomLeftController = bottomLeft.getClosedLoopController();
+    bottomRightController =bottomRight.getClosedLoopController();
+
     // Simulation
     topLeftEncoderSim = new SparkRelativeEncoderSim(topLeft);
     topLeftEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
@@ -186,7 +197,23 @@ public class Drivetrain extends SubsystemBase {
     bottomRightEncoderSim = new SparkRelativeEncoderSim(bottomRight);
     bottomRightEncoderSim.setPositionConversionFactor(Constants.DrivetrainConstants.COUNTS_TO_METERS_CONVERSION);
 
-    mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight);
+    mecanumDrive = new MecanumDrive(topLeft, bottomLeft, topRight, bottomRight){
+      @Override
+      public void driveCartesian(double xSpeed, double ySpeed, double zRotation) {
+          if (!isSafetyEnabled()) {
+            setSafetyEnabled(true);
+          }
+          super.driveCartesian(xSpeed, ySpeed, zRotation);
+      }
+
+      @Override
+      public void driveCartesian(double xSpeed, double ySpeed, double zRotation, Rotation2d gyroAngle) {
+          if (!isSafetyEnabled()) {
+            setSafetyEnabled(true);
+          }
+          super.driveCartesian(xSpeed, ySpeed, zRotation, gyroAngle);
+      }
+    };
 
     gyro = new AHRS(NavXComType.kMXP_SPI);
     // angle adjustement relative to the front of the bot, + the angle of the bot
@@ -299,6 +326,11 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void setVelocity(double velMPS){
+
+    if (mecanumDrive.isSafetyEnabled()) {
+      mecanumDrive.setSafetyEnabled(false); 
+    }
+
     topLeft.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
     bottomLeft.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
     topRight.getClosedLoopController().setReference(velMPS, ControlType.kVelocity);
@@ -447,6 +479,16 @@ public MecanumDriveWheelPositions getWheelPositions() {
   @Override
   public void periodic() {
     Optional<Pose2d> limelightPose = limelightRobotPoseSupplier.get();
+
+    SmartDashboard.putNumber("Top Left Velocity", topLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("Top Right Velocity", topRightEncoder.getVelocity());
+    SmartDashboard.putNumber("Bottom Left Velocity", bottomLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("Bottom Right Velocity", bottomRightEncoder.getVelocity());
+
+    SmartDashboard.putNumber("Top Left Output", topLeft.getAppliedOutput());
+    SmartDashboard.putNumber("Top Right Output", topRight.getAppliedOutput());
+    SmartDashboard.putNumber("Bottom Left Output", bottomLeft.getAppliedOutput());
+    SmartDashboard.putNumber("Bottom Right Output", bottomRight.getAppliedOutput());
 
     if(limelightPose.isPresent()){
       // In your periodic function:
