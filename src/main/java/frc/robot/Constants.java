@@ -74,6 +74,8 @@ public final class Constants {
   }
   public static class ElevatorConstants{
 
+    public static final double SLOW_MODE_MULTIPLIER = 0.5;
+
     public static final double MANUAL_SPEED_MULTIPLIER = 0.3;
     public static final double MANUAL_OFFSET = 0.5;
 
@@ -124,6 +126,12 @@ public final class Constants {
     public static final double ALGAE_OFFSET = 2;
     public static final double L3_ALGAE_POSITION = L3_POSITION + ALGAE_OFFSET;
     public static final double L2_ALGAE_POSITION = L2_POSITION + ALGAE_OFFSET;
+
+    //Travel distance needed by the elevator (upwards) to remove algae
+    public static final double ALGAE_TRAVEL_DISTANCE = 2;
+
+    //Tolerance for elevator position that needs to be achieved before servo can be activated
+    public static final double TOLERANCE = 2;
 
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
@@ -193,11 +201,15 @@ public final class Constants {
      //Angle of the gyro's "zero yaw" position relative to the front of the bot
      public static final double GYRO_ANGLE_OFFSET = 0;
   }
-  public static class AlageRemovalConstants {
+  public static class AlgaeRemovalConstants {
     public static final int SERVO_PORT = 5;
 
     //TODO: calibrate these values based on servo orientation (0-1)
     public static final double UP_POSITION = 1;
     public static final double DOWN_POSITION = 0.5;
+    
+    public static final double TOLERANCE = 0.1;
+
+    public static final double STAGE_1_WAIT_TIME = 2;
   }
 }

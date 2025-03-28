@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AlgaeRemovalConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.VisionConstants;
@@ -176,7 +178,7 @@ public RobotContainer() {
     operatorController.x().onTrue(Commands.parallel(
       new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator),
       Commands.sequence(
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 2)),
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
       )
     );
@@ -200,13 +202,26 @@ public RobotContainer() {
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
     //Raise eleator and lower servo to remove L3 algae
-    operatorController.leftTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
-      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
-    )
+    operatorController.leftTrigger().onTrue(
+      Commands.sequence(
+        new InstantCommand(()-> elevator.setSlowMode(true)),
+        Commands.deadline(
+          Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.L2_ALGAE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+          new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator),
+          Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval)
+          // Commands.run(() -> 
+          //   {
+          //     if(!MathUtil.isNear(algaeRemoval.getPosition(),AlgaeRemovalConstants.DOWN_POSITION,AlgaeRemovalConstants.TOLERANCE))
+          //       algaeRemoval.downPosition();
+          //   },
+          //   algaeRemoval)
+        ),
+        new InstantCommand(()-> elevator.setSlowMode(false)),
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION+ElevatorConstants.ALGAE_TRAVEL_DISTANCE).schedule(), elevator)
+      )
     );
 
-    //Raise eleator and lower servo to remove L3 algae
+    //Raise elevator and lower servo to remove L3 algae
     operatorController.rightTrigger().onTrue(Commands.parallel(
       new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
       //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
