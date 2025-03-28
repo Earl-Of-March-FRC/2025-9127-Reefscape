@@ -127,8 +127,6 @@ public final class Constants {
     public static final double L3_ALGAE_POSITION = L3_POSITION + ALGAE_OFFSET;
     public static final double L2_ALGAE_POSITION = L2_POSITION + ALGAE_OFFSET;
 
-    //Travel distance needed by the elevator (upwards) to remove algae
-    public static final double ALGAE_TRAVEL_DISTANCE = 2;
 
     //Tolerance for elevator position that needs to be achieved before servo can be activated
     public static final double TOLERANCE = 2;
@@ -208,8 +206,6 @@ public final class Constants {
     public static final double UP_POSITION = 1;
     public static final double DOWN_POSITION = 0.5;
     
-    public static final double TOLERANCE = 0.1;
 
-    public static final double STAGE_1_WAIT_TIME = 2;
   }
 }
