@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.spark.ClosedLoopSlot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -67,6 +69,19 @@ public final class Constants {
     public static final double DEFAULT_Y_OFFSET = 0.7064591;  // Centered laterally
     public static final double DEFAULT_TX_OFFSET = -17.30; // Square to target
   }
+  public final class AutoConstants {
+
+    public static final double AUTO_SHOOT_SPEED = 0.55; 
+    public static final double AUTO_SHOOT_DURATION = 1.0; 
+
+    public static final double AUTO_BACKUP_SPEED = -0.3; 
+    public static final double AUTO_BACKUP_DURATION = 0.75;
+
+    public static final double ALIGNMENT_TIMEOUT_SECONDS = 3.0;
+    public static final double INTAKE_TIMEOUT_SECONDS = 2.0;
+    public static final Pose2d LEFT_STATION_POSE = null;
+    public static final Pose2d RIGHT_STATION_POSE = null;
+}
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -148,6 +163,31 @@ public final class Constants {
   
   public static class DrivetrainConstants {
 
+    //TODO: calibrate these values
+    // Driving Parameters - Note that these are not the maximum capable speeds of
+    // the robot, rather the allowed maximum speeds
+    public static final double kMaxSpeedMetersPerSecond = 4; //Max net robot translational speed
+    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxAccelerationMetersPerSecondSquaredPathfinding = 1;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+    public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
+
+    public static final PathConstraints kPathfindingConstraints = new PathConstraints(kMaxSpeedMetersPerSecond,
+        kMaxAccelerationMetersPerSecondSquaredPathfinding, kMaxAngularSpeedRadiansPerSecond,
+        kMaxAngularAccelerationRadiansPerSecondSquared);
+
+    //TODO: calibrate these values
+    public static final double TRACK_WIDTH = 0.53; //Distance between the wheels in metres
+    public static final double WHEEL_BASE = 0.53; //Distance between the front and back wheels in metres
+
+    public static final double CHASSIS_WIDTH = Units.inchesToMeters(26.5); //Chassis width in metres
+    public static final double CHASSIS_LENGTH = Units.inchesToMeters(32.31); //Chassis length in metres
+
+    public static final double BUMPER_WIDTH = Units.inchesToMeters(4); //Bumper width in metres
+
+    public static final double ROBOT_WIDTH = CHASSIS_WIDTH + BUMPER_WIDTH; //Chassis width in metres +bumpers
+    public static final double ROBOT_LENGTH = CHASSIS_LENGTH + BUMPER_WIDTH; //Chassis length in metres + bumpers
+
     //Relative to the centre in metres, used for kinematics and odometry0,\
     public static final Translation2d TOP_LEFT_POS = new Translation2d(0.26, 0.279);
     public static final Translation2d BOTTOM_LEFT_POS = new Translation2d(0.26, -0.279);
@@ -156,7 +196,7 @@ public final class Constants {
 
     //Gearbox ratio
     public static final double GEAR_RATIO = 10.71; 
-
+    
     //Motor controller automatically converts to revolutions
     public static final int COUNTS_PER_REV = 42;
     public static final double WHEEL_DIAMETER_INCHES = 6;
@@ -173,6 +213,23 @@ public final class Constants {
     public static final double ROTATE_I = 0.0;
     public static final double ROTATE_D = 0.0;
 
+    public static final double PATHPLANNER_TRANSLATE_P = 0.03;
+    public static final double PATHPLANNER_TRANSLATE_I = 0.0;
+    public static final double PATHPLANNER_TRANSLATE_D = 0.0;
+
+    public static final double PATHPLANNER_ROTATE_P = 0.1;
+    public static final double PATHPLANNER_ROTATE_I = 0.0;
+    public static final double PATHPLANNER_ROTATE_D = 0.0;
+
+    public static final double VELOCITY_KP = 0.07;
+    public static final double VELOCITY_KI = 0.0;
+    public static final double VELOCITY_KD = 0.0;
+    
+    //Feedfoward gain for velocity control
+    //473 is the NEO Kv, as supplied by the manufacturer
+    //0.072
+    public static final double VELOCITY_Kf = 0.08;
+
     //MOTOR ID'S
     public static final int TOP_LEFT_ID = 4;
     public static final int BOTTOM_LEFT_ID = 2;
@@ -187,17 +244,19 @@ public final class Constants {
     //Controller deadband
     public static final double DRIVE_DEADBAND = 0.2;
     public static final double TURN_DEADBAND = 0.1;
+    
+    //Conversion from encoder RPM to wheel m/s
+    public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
+    public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
 
     //"Empirical free speed" of a neo motor in RPM, from the manufacturer
-    public static final double SIM_MAX_VELOCITY = COUNTS_PER_REV*5676;
-
+    public static final double SIM_MAX_VELOCITY = 5676;
+    //Max wheel speed in metres per second, uses the above mentioned NEO free speed, our wheel of course have load on them so we reduce the speed by 20%
+    //TODO: calibrate this value further
+    public static final double MAX_SPEED_MPS = (5676 * RPM_TO_MPS_CONVERSION / GEAR_RATIO) * 0.8;
  
-     //Conversion from encoder RPM to wheel m/s
-     public static final double RPM_TO_IPS_CONVERSION = WHEEL_DIAMETER_INCHES/60;
-     public static final double RPM_TO_MPS_CONVERSION = RPM_TO_IPS_CONVERSION/39.37;
- 
-     //Angle of the gyro's "zero yaw" position relative to the front of the bot
-     public static final double GYRO_ANGLE_OFFSET = 0;
+    //Angle of the gyro's "zero yaw" position relative to the front of the bot
+    public static final double GYRO_ANGLE_OFFSET = 0;
   }
   public static class AlgaeRemovalConstants {
     public static final int SERVO_PORT = 5;

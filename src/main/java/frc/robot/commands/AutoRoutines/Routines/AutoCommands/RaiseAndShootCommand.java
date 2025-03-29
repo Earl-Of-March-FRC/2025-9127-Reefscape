@@ -4,15 +4,9 @@
 
 package frc.robot.commands.AutoRoutines.Routines.AutoCommands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.ElevatorPID;
-import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -30,7 +24,7 @@ public class RaiseAndShootCommand extends ParallelCommandGroup {
       new ElevatorPID(elevator, setpoint),
       Commands.sequence(
         //Once we are at the setpoint, shoot for 2 seconds
-        Commands.waitSeconds(5),
+        Commands.waitSeconds(2),
         Commands.deadline(
           Commands.waitSeconds(2),
           new ShootCommand(intake, () -> 0.5)
