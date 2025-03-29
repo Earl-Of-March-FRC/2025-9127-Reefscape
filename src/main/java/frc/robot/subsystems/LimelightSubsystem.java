@@ -47,7 +47,7 @@ public class LimelightSubsystem extends SubsystemBase {
         m_tx = m_limelightTable.getEntry("tx");
         m_ty = m_limelightTable.getEntry("ty");
         m_ta = m_limelightTable.getEntry("ta");
-        m_botpose = m_limelightTable.getEntry("botpose");
+        m_botpose = m_limelightTable.getEntry("botpose_wpilibblue");
         m_pipeline = m_limelightTable.getEntry("pipeline");
         m_tid = m_limelightTable.getEntry("tid");
         
