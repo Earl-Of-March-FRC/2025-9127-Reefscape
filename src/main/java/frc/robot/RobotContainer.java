@@ -14,8 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AlgaeRemovalConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToReefTagCommand;
@@ -168,10 +170,11 @@ public RobotContainer() {
     operatorController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
     operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
     
+    //Drop the elevator to the intake position and lower the servo to remove algae
     operatorController.x().onTrue(Commands.parallel(
       new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator),
       Commands.sequence(
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 2)),
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
       )
     );
@@ -196,18 +199,34 @@ public RobotContainer() {
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
-    //Raise eleator and lower servo to remove L3 algae
-    operatorController.leftTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
-      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
-    )
+    //Raise elevator and lower servo to remove L3 algae
+    operatorController.leftTrigger().onTrue(
+      Commands.sequence(
+        //Lower the servo motor
+        Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
+        //Slowly raise the elevator to the setpoint
+        Commands.runOnce(()-> elevator.setSlowMode(true)),
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator),
+        //Wait until the elevator is at the setpoint
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.L2_ALGAE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        //Reset the speed of the elevator
+        Commands.runOnce(()-> elevator.setSlowMode(false))
+      )
     );
 
-    //Raise eleator and lower servo to remove L3 algae
-    operatorController.rightTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
-      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
-    )
+    //Raise elevator and lower servo to remove L3 algae
+    operatorController.rightTrigger().onTrue(
+      Commands.sequence(
+        //Lower the servo motor
+        Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
+        //Slowly raise the elevator to the setpoint
+        Commands.runOnce(()-> elevator.setSlowMode(true)),
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator),
+        //Wait until the elevator is at the setpoint
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.L3_ALGAE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        //Reset the speed of the elevator
+        Commands.runOnce(()-> elevator.setSlowMode(false))
+      )
     );
   }
 

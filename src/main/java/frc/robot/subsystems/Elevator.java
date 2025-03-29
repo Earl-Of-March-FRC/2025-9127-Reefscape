@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -33,6 +34,8 @@ public class Elevator extends SubsystemBase {
   private final DigitalInput lowLimitSwitch;
   private final DigitalInput highLimitSwitch;
   private final SparkClosedLoopController controller;
+
+  private boolean slowModeEnabled = false;
 
   private final double[] setpoints = {
     ElevatorConstants.INTAKE_POSITION,
@@ -129,21 +132,30 @@ public class Elevator extends SubsystemBase {
 
   }
 
+
   public void setSpeed(double speed) {
     elevatorLeader.set(speed*ElevatorConstants.MANUAL_SPEED_MULTIPLIER);
   }
 
   public void setPosition(double position){
 
+    double adjustedPosition = position;
     //position = MathUtil.clamp(position, ElevatorConstants.INTAKE_POSITION, ElevatorConstants.L4_POSITION);
 
+    if (slowModeEnabled){
+      // Apply the slow mode multiplier to the position
+      adjustedPosition = getPosition() + (position - getPosition()) * ElevatorConstants.SLOW_MODE_MULTIPLIER;
+    }
+
     //Use the appropriate controller based on direction (up or down)
-    if (getPosition() <= position) {
-      controller.setReference(position, ControlType.kPosition, ElevatorConstants.PID_SLOT_UP);
+    if (getPosition() <= adjustedPosition) {
+      controller.setReference(adjustedPosition, ControlType.kPosition, ElevatorConstants.PID_SLOT_UP);
     }
     else {
-      controller.setReference(position, ControlType.kPosition, ElevatorConstants.PID_SLOT_DOWN);
+      controller.setReference(adjustedPosition, ControlType.kPosition, ElevatorConstants.PID_SLOT_DOWN);
     }
+
+  
   }
 
   public double getPosition(){
@@ -153,6 +165,10 @@ public class Elevator extends SubsystemBase {
 
   public void setEncoderPosition(double position){
     encoder.setPosition(position);
+  }
+
+  public void setSlowMode(boolean slowModeEnabled){
+    this.slowModeEnabled = slowModeEnabled;
   }
 
   public void resetIAccum() {
