@@ -510,16 +510,24 @@ public MecanumDriveWheelPositions getWheelPositions() {
     SmartDashboard.putNumber("Bottom Left Output", bottomLeft.getAppliedOutput());
     SmartDashboard.putNumber("Bottom Right Output", bottomRight.getAppliedOutput());
 
-    if(limelightPose.isPresent()){
-      // In your periodic function:
-      LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      if (limelightMeasurement.tagCount >= 1) {  // Only trust measurement if we see multiple tags
-          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-          poseEstimator.addVisionMeasurement(
-              limelightMeasurement.pose,
-              limelightMeasurement.timestampSeconds
-        );
-      }
+    
+    // In your periodic function:
+    LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("left");
+    if (limelightMeasurement1.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        poseEstimator.addVisionMeasurement(
+            limelightMeasurement1.pose,
+            limelightMeasurement1.timestampSeconds
+      );
+    }
+
+    LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("right");
+    if (limelightMeasurement2.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        poseEstimator.addVisionMeasurement(
+            limelightMeasurement2.pose,
+            limelightMeasurement2.timestampSeconds
+      );
     }
 
     // This method will be called once per scheduler run
