@@ -207,11 +207,11 @@ public final class Constants {
     public static final double ROTATE_I = 0.0;
     public static final double ROTATE_D = 0.0;
 
-    public static final double PATHPLANNER_TRANSLATE_P = 0.1;
+    public static final double PATHPLANNER_TRANSLATE_P = 0.5;
     public static final double PATHPLANNER_TRANSLATE_I = 0.0;
     public static final double PATHPLANNER_TRANSLATE_D = 0.0;
 
-    public static final double PATHPLANNER_ROTATE_P = 0.1;
+    public static final double PATHPLANNER_ROTATE_P = 0.9;
     public static final double PATHPLANNER_ROTATE_I = 0.0;
     public static final double PATHPLANNER_ROTATE_D = 0.0;
 

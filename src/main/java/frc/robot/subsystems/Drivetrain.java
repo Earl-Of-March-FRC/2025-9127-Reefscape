@@ -88,6 +88,8 @@ public class Drivetrain extends SubsystemBase {
   private Field2d field;
   private AprilTagFieldLayout fieldLayout;
 
+  private Pose2d drivePose;
+
   private Supplier<Optional<Pose2d>> limelightRobotPoseSupplier;
 
   // Field oriented drive on by default
@@ -218,7 +220,9 @@ public class Drivetrain extends SubsystemBase {
     gyro = new AHRS(NavXComType.kMXP_SPI);
     // angle adjustement relative to the front of the bot, + the angle of the bot
     // relative to the field
-    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET);
+    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+
+
 
     poseEstimator = new MecanumDrivePoseEstimator(
         new MecanumDriveKinematics(
@@ -345,8 +349,20 @@ public class Drivetrain extends SubsystemBase {
 
   // Robot-relative drive using chassis speeds
   public void drive(ChassisSpeeds speeds) {
+
+    if (mecanumDrive.isSafetyEnabled()) {
+      mecanumDrive.setSafetyEnabled(false); 
+    }
+    
+    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vxMetersPerSecond, -speeds.omegaRadiansPerSecond);
+
     MecanumDriveWheelSpeeds wheelSpeeds = driveKinematics.toWheelSpeeds(speeds);
     wheelSpeeds.desaturate(DrivetrainConstants.MAX_SPEED_MPS);
+
+    
+    if (mecanumDrive.isSafetyEnabled()) {
+      mecanumDrive.setSafetyEnabled(false); 
+    }
 
     topLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond , ControlType.kVelocity);
     bottomLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
@@ -501,15 +517,16 @@ public MecanumDriveWheelPositions getWheelPositions() {
         );
       }
     }
+
     // This method will be called once per scheduler run
-    poseEstimator.update(gyro.getRotation2d(),
+    drivePose = poseEstimator.update(gyro.getRotation2d(),
+        //Rotation2d.fromDegrees(drivePose.getRotation().getDegrees() + gyro.getRate() * 0.02),
         new MecanumDriveWheelPositions(
             topLeftEncoder.getPosition(),
             topRightEncoder.getPosition(),
             bottomLeftEncoder.getPosition(),
             bottomRightEncoder.getPosition()));
 
-    Pose2d drivePose = poseEstimator.getEstimatedPosition();
 
     field.setRobotPose(drivePose);
 
