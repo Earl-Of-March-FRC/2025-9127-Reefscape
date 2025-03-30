@@ -39,8 +39,8 @@ import frc.robot.subsystems.LimelightSubsystem;
 
 public class RobotContainer {
 
-  NetworkTable m_limelightTableLeft = NetworkTableInstance.getDefault().getTable("left");
-  // NetworkTable m_limelightTableRight = NetworkTableInstance.getDefault().getTable("limelight-right");
+  NetworkTable m_limelightTableLeft = NetworkTableInstance.getDefault().getTable("limelight-left");
+  NetworkTable m_limelightTableRight = NetworkTableInstance.getDefault().getTable("limelight-right");
 
   private final SendableChooser<Command> autoChooser;
   // The robot's subsystems and commands are defined here...
@@ -54,12 +54,12 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  // private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
-  //   m_limelightTableRight,
-  //   () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
-  //   () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
-  //   () -> false //BLINK supplier
-  // );
+  private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
+    m_limelightTableRight,
+    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
+    () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
+    () -> false //BLINK supplier
+  );
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 public RobotContainer() {

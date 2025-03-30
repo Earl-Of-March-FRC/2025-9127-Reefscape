@@ -513,18 +513,18 @@ public MecanumDriveWheelPositions getWheelPositions() {
     SmartDashboard.putNumber("Bottom Right Output", bottomRight.getAppliedOutput());
 
     
-    //In your periodic function:
-    // LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
-    // if (limelightMeasurement1.tagCount >= 1) {  // Only trust measurement if we see multiple tags
-    //     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-    //     poseEstimator.addVisionMeasurement(
-    //         limelightMeasurement1.pose,
-    //         limelightMeasurement1.timestampSeconds
-    //   );
-    // }
+    // In your periodic function:
+    LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+  if (limelightMeasurement1 != null && limelightMeasurement1.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        poseEstimator.addVisionMeasurement(
+            limelightMeasurement1.pose,
+            limelightMeasurement1.timestampSeconds
+      );
+    }
 
-    LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("left");
-    if (limelightMeasurement2.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+    LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    if (limelightMeasurement2 != null && limelightMeasurement2.tagCount >= 1) {  // Only trust measurement if we see multiple tags
         poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
         poseEstimator.addVisionMeasurement(
             limelightMeasurement2.pose,
