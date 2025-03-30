@@ -40,7 +40,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 public class RobotContainer {
 
   NetworkTable m_limelightTableLeft = NetworkTableInstance.getDefault().getTable("left");
-  NetworkTable m_limelightTableRight = NetworkTableInstance.getDefault().getTable("right");
+  // NetworkTable m_limelightTableRight = NetworkTableInstance.getDefault().getTable("limelight-right");
 
   private final SendableChooser<Command> autoChooser;
   // The robot's subsystems and commands are defined here...
@@ -54,12 +54,12 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
-    m_limelightTableRight,
-    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
-    () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
-    () -> false //BLINK supplier
-  );
+  // private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
+  //   m_limelightTableRight,
+  //   () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
+  //   () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
+  //   () -> false //BLINK supplier
+  // );
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
 public RobotContainer() {
@@ -199,18 +199,20 @@ public RobotContainer() {
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
-    //Raise elevator and lower servo to remove L3 algae
+    //Raise elevator and lower servo to remove L2 algae
     operatorController.leftTrigger().onTrue(
       Commands.sequence(
         //Lower the servo motor
         Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
         //Slowly raise the elevator to the setpoint
-        Commands.runOnce(()-> elevator.setSlowMode(true)),
-        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator),
+        // Commands.runOnce(()-> elevator.setSlowMode(true)),
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
+        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
         //Wait until the elevator is at the setpoint
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.L2_ALGAE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         //Reset the speed of the elevator
-        Commands.runOnce(()-> elevator.setSlowMode(false))
+        // Commands.runOnce(()-> elevator.setSlowMode(false))
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
       )
     );
 
@@ -220,12 +222,14 @@ public RobotContainer() {
         //Lower the servo motor
         Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
         //Slowly raise the elevator to the setpoint
-        Commands.runOnce(()-> elevator.setSlowMode(true)),
-        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator),
+        // Commands.runOnce(()-> elevator.setSlowMode(true)),
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
+        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
         //Wait until the elevator is at the setpoint
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.L3_ALGAE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         //Reset the speed of the elevator
-        Commands.runOnce(()-> elevator.setSlowMode(false))
+        // Commands.runOnce(()-> elevator.setSlowMode(false))
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
       )
     );
   }

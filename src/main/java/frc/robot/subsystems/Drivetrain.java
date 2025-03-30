@@ -220,7 +220,9 @@ public class Drivetrain extends SubsystemBase {
     gyro = new AHRS(NavXComType.kMXP_SPI);
     // angle adjustement relative to the front of the bot, + the angle of the bot
     // relative to the field
-    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + 
+    (LimelightHelpers.getBotPose2d("limelight-left").getRotation().getDegrees()+ 
+    LimelightHelpers.getBotPose2d("limelight-right").getRotation().getDegrees())/2.0);
 
 
 
@@ -511,17 +513,17 @@ public MecanumDriveWheelPositions getWheelPositions() {
     SmartDashboard.putNumber("Bottom Right Output", bottomRight.getAppliedOutput());
 
     
-    // In your periodic function:
-    LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("left");
-    if (limelightMeasurement1.tagCount >= 1) {  // Only trust measurement if we see multiple tags
-        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-        poseEstimator.addVisionMeasurement(
-            limelightMeasurement1.pose,
-            limelightMeasurement1.timestampSeconds
-      );
-    }
+    //In your periodic function:
+    // LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    // if (limelightMeasurement1.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+    //     poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+    //     poseEstimator.addVisionMeasurement(
+    //         limelightMeasurement1.pose,
+    //         limelightMeasurement1.timestampSeconds
+    //   );
+    // }
 
-    LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("right");
+    LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("left");
     if (limelightMeasurement2.tagCount >= 1) {  // Only trust measurement if we see multiple tags
         poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
         poseEstimator.addVisionMeasurement(

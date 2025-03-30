@@ -15,6 +15,7 @@ public class AlgaeRemoval extends SubsystemBase {
   public AlgaeRemoval() {
     servo = new Servo(AlgaeRemovalConstants.SERVO_PORT);
     //servo.setBoundsMicroseconds(2400, 0, 1500, 0, 600);
+    downPosition();
   }
 
   public double getPosition() {

@@ -142,9 +142,12 @@ public final class Constants {
     public static final double L3_ALGAE_POSITION = L3_POSITION + ALGAE_OFFSET;
     public static final double L2_ALGAE_POSITION = L2_POSITION + ALGAE_OFFSET;
 
+    //Postion that allows algae removal to fall out
+    public static final double ALGAE_RELEASE_POSITION = 0;
+
 
     //Tolerance for elevator position that needs to be achieved before servo can be activated
-    public static final double TOLERANCE = 2;
+    public static final double TOLERANCE = 1;
 
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
@@ -183,7 +186,7 @@ public final class Constants {
     public static final double CHASSIS_WIDTH = Units.inchesToMeters(26.5); //Chassis width in metres
     public static final double CHASSIS_LENGTH = Units.inchesToMeters(32.31); //Chassis length in metres
 
-    public static final double BUMPER_WIDTH = Units.inchesToMeters(4); //Bumper width in metres
+    public static final double BUMPER_WIDTH = Units.inchesToMeters(3.5); //Bumper width in metres
 
     public static final double ROBOT_WIDTH = CHASSIS_WIDTH + BUMPER_WIDTH; //Chassis width in metres +bumpers
     public static final double ROBOT_LENGTH = CHASSIS_LENGTH + BUMPER_WIDTH; //Chassis length in metres + bumpers
