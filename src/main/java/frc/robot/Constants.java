@@ -67,7 +67,7 @@ public final class Constants {
     public static final double DEFAULT_Y_OFFSET = 0.0;  // Centered laterally
     public static final double DEFAULT_TX_OFFSET = 0; // Square to target
   }
-
+  
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;

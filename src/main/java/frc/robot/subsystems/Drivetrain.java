@@ -26,6 +26,7 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.math.kinematics.MecanumDriveOdometry;
@@ -56,7 +57,7 @@ public class Drivetrain extends SubsystemBase {
   private SparkRelativeEncoderSim topRightEncoderSim;
   private SparkRelativeEncoderSim bottomRightEncoderSim;
 
-  private AHRS gyro;
+  public static AHRS gyro;
 
   private MecanumDriveOdometry driveOdometry;
   private MecanumDriveKinematics driveKinematics;
@@ -326,6 +327,10 @@ public class Drivetrain extends SubsystemBase {
     // SmartDashboard.putData("Field", field);
 
     SmartDashboard.putBoolean("Field Oriented", fieldOriented);
+  }
+
+  public Rotation2d getRotation2d() {
+    return gyro.getRotation2d();
   }
 
   @Override
