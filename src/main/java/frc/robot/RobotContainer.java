@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,10 +23,13 @@ import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.Score;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.ScoreandStation;
 import frc.robot.commands.DriveFieldOriented;
+import frc.robot.commands.DrivetoTagRewrite;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ReverseCommand;
 import frc.robot.commands.ShootCommand;
+import frc.robot.subsystems.AprilTagVision;
+import frc.robot.subsystems.AprilTagVision.CameraConfig;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -37,6 +42,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final XboxController driveController = new XboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
+  private final AprilTagVision vision;
 
   private final Elevator elevator = new Elevator();
   private ElevatorPID[] elevatorCommands;
@@ -52,6 +58,12 @@ public RobotContainer() {
 
     autoChooser = AutoBuilder.buildAutoChooser();
 
+    vision =
+            new AprilTagVision(
+                new CameraConfig[] {
+                  new CameraConfig(
+                      "limelight-right", new Transform3d(0.35, 0, 0.175, new Rotation3d(0, 15, 0)), 0.08)
+                });
     // elevatorPositionIndex = 0;
     // elevatorCommands = new ElevatorPID[]{
     //   new ElevatorPID(elevator, Constants.ElevatorConstants.INTAKE_POSITION),
@@ -134,6 +146,7 @@ public RobotContainer() {
 
     operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.4));
     
+    operatorController.rightTrigger().whileTrue(new DrivetoTagRewrite(drivetrain, vision, "limelight-right",1.5));
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
     
     //reverse direction for intake with right trigger
@@ -165,6 +178,8 @@ public RobotContainer() {
     
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
+
+
   }
 
   public Command getAutonomousCommand() {

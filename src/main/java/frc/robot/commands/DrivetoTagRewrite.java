@@ -31,6 +31,7 @@ public class DrivetoTagRewrite extends Command {
     private boolean targetVisible = false;
 
     public DrivetoTagRewrite(Drivetrain drivetrain, AprilTagVision vision, String limelightName, double desiredDistanceMeters) {
+        System.out.println("Starting...");
         this.drivetrain = drivetrain;
         this.vision = vision;
         this.limelightName = limelightName;
