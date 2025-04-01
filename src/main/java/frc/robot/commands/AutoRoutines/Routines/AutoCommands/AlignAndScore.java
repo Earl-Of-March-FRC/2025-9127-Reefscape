@@ -27,8 +27,7 @@ public class AlignAndScore extends SequentialCommandGroup {
                 drivetrain,
                 limelight,
                 VisionConstants.DEFAULT_X_OFFSET,
-                VisionConstants.DEFAULT_Y_OFFSET,
-                VisionConstants.DEFAULT_TX_OFFSET
+                VisionConstants.DEFAULT_Y_OFFSET
             ).withTimeout(AutoConstants.ALIGNMENT_TIMEOUT_SECONDS), // Add timeout
             
             new RaiseAndShootCommand(intakeSubsystem, elevator, ElevatorConstants.L4_POSITION), // Raise and shoot
