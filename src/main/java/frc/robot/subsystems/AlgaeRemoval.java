@@ -14,7 +14,8 @@ public class AlgaeRemoval extends SubsystemBase {
   /** Creates a new AlageRemoval. */
   public AlgaeRemoval() {
     servo = new Servo(AlgaeRemovalConstants.SERVO_PORT);
-    //servo.setBoundsMicroseconds(2400, 0, 1500, 0, 600);
+    //HS 3-22 HD servo specs
+    servo.setBoundsMicroseconds(2100, 5, 1500, 5, 900);
     upPosition();
   }
 
@@ -27,15 +28,15 @@ public class AlgaeRemoval extends SubsystemBase {
   }
 
   public void setPosition(double position) {
-    servo.setPosition(position);
+    servo.set(position);
   }
 
   public void upPosition() {
-    servo.setPosition(AlgaeRemovalConstants.UP_POSITION);
+    servo.set(AlgaeRemovalConstants.UP_POSITION);
   }
 
   public void downPosition() {
-    servo.setPosition(AlgaeRemovalConstants.DOWN_POSITION);
+    servo.set(AlgaeRemovalConstants.DOWN_POSITION);
   }
 
   public void togglePosition() {

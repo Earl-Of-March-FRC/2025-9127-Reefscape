@@ -217,14 +217,26 @@ public class Drivetrain extends SubsystemBase {
       }
     };
 
+    //angle adjustemnt of bot relative to the field
+    double initialFieldAdjustement = 0;
+    boolean leftHasTarget = LimelightHelpers.getTargetCount("limelight-left") >= 1;
+    boolean rightHasTarget = LimelightHelpers.getTargetCount("limelight-left") >= 1;
+
+    if(leftHasTarget && rightHasTarget) {
+      initialFieldAdjustement = 
+      (LimelightHelpers.getBotPose2d("limelight-left").getRotation().getDegrees() + 
+      LimelightHelpers.getBotPose2d("limelight-right").getRotation().getDegrees())/2.0;
+    }
+    else if(leftHasTarget) {
+      initialFieldAdjustement = LimelightHelpers.getBotPose2d("limelight-left").getRotation().getDegrees();
+    }
+    else if(rightHasTarget) {
+      initialFieldAdjustement = LimelightHelpers.getBotPose2d("limelight-right").getRotation().getDegrees();
+    }
+    
     gyro = new AHRS(NavXComType.kMXP_SPI);
-    // angle adjustement relative to the front of the bot, + the angle of the bot
-    // relative to the field
-    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + 
-    (LimelightHelpers.getBotPose2d("limelight-left").getRotation().getDegrees()+ 
-    LimelightHelpers.getBotPose2d("limelight-right").getRotation().getDegrees())/2.0);
-
-
+    //add the adjustement of the gyro to the bot, and the adjustement of the bot to the field, and set the
+    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + initialFieldAdjustement);
 
     poseEstimator = new MecanumDrivePoseEstimator(
         new MecanumDriveKinematics(
@@ -327,7 +339,7 @@ public class Drivetrain extends SubsystemBase {
         ySpeed*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
         xSpeed*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
         zRotation*Constants.DrivetrainConstants.PID_SPEED_MULTIPLIER,
-        gyro.getRotation2d().unaryMinus()
+        gyro.getRotation2d().unaryMinus() 
       );
   }
 

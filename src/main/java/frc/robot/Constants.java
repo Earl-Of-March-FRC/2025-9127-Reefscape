@@ -143,11 +143,11 @@ public final class Constants {
     public static final double L2_ALGAE_POSITION = 27 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
 
     //Postion that allows algae removal to fall out
-    public static final double ALGAE_RELEASE_POSITION = 0;
+    public static final double ALGAE_RELEASE_POSITION = 7;
 
 
     //Tolerance for elevator position that needs to be achieved before servo can be activated
-    public static final double TOLERANCE = 1;
+    public static final double TOLERANCE = 4.0;
 
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
