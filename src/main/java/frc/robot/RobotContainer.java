@@ -23,6 +23,7 @@ import frc.robot.commands.AutoRoutines.Routines.TimedRoutines.ExitZoneCommand;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.Score;
 import frc.robot.commands.AutoRoutines.Routines.ToReefScore.ScoreandStation;
 import frc.robot.commands.DriveFieldOriented;
+import frc.robot.commands.DrivetoTag;
 import frc.robot.commands.DrivetoTagRewrite;
 import frc.robot.commands.ElevatorPID;
 import frc.robot.commands.IntakeCommand;
@@ -148,7 +149,8 @@ public RobotContainer() {
     
     operatorController.rightTrigger().whileTrue(new DrivetoTagRewrite(drivetrain, vision, "limelight-right",1.5));
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
-    
+   operatorController.leftTrigger().whileTrue(new DrivetoTag(drivetrain, vision, "limelight-right",1));
+
     //reverse direction for intake with right trigger
     new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
         .whileTrue(new ReverseCommand(

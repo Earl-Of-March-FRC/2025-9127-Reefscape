@@ -29,6 +29,7 @@ public class DrivetoTag extends Command {
     Optional<Double> tagAngle = vision.getTagHorizontalAngle(cameraName);
 
     if (longitudinalDistance.isEmpty() || lateralDistance.isEmpty() || tagAngle.isEmpty()) {
+      System.out.println("NOTAG");
       drivetrain.drive(0, 0, 0); // Stop if can't see the tag
       return;
     }

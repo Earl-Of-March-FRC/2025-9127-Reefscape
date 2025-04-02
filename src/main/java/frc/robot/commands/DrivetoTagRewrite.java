@@ -65,6 +65,7 @@ public class DrivetoTagRewrite extends Command {
 
     @Override
     public void execute() {
+        System.out.println("DriveToAprilTag Executing...");
         // Get the latest data from the vision subsystem
         Optional<Double> optAngle = vision.getTagHorizontalAngle(limelightName);
         Optional<Double> optLat = vision.getLateralDistance(limelightName);
@@ -95,6 +96,7 @@ public class DrivetoTagRewrite extends Command {
             Logger.recordOutput("DriveToTag/LongitudinalSpeed", longitudinalSpeed);
 
         } else {
+            System.out.println("DriveToAprilTag: Target not visible");
             targetVisible = false;
             drivetrain.drive(0, 0, 0);
             Logger.recordOutput("DriveToTag/TargetVisible", false);
@@ -104,6 +106,7 @@ public class DrivetoTagRewrite extends Command {
 
     @Override
     public boolean isFinished() {
+        System.out.println("IsFinished");
         // Command finishes if the target is visible AND all controllers are within tolerance
         return targetVisible &&
                rotationController.atSetpoint() &&
@@ -113,6 +116,7 @@ public class DrivetoTagRewrite extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        System.out.println("ENDED");
         drivetrain.drive(0, 0, 0); // Stop
         System.out.println("DriveToAprilTag Ended. Interrupted: " + interrupted);
         Logger.recordOutput("DriveToTag/TargetVisible", false);

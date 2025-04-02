@@ -201,7 +201,7 @@ public class AprilTagVision extends SubsystemBase {
    */
   private LimelightHelpers.RawFiducial getTargetInfo(String cameraName) {
     LimelightHelpers.RawFiducial[] fiducials = LimelightHelpers.getRawFiducials(cameraName);
-
+    System.out.println("getTargetInfo(" + cameraName + "): Found " + fiducials.length + " raw fiducials."); // DEBUG
     for (LimelightHelpers.RawFiducial fiducial : fiducials) {
       for (int tagId : FieldConstants.tagIds) {
         if (fiducial.id == tagId) {
@@ -224,6 +224,7 @@ public class AprilTagVision extends SubsystemBase {
     // First check if the specific tag is visible
     LimelightHelpers.RawFiducial targetInfo = getTargetInfo(cameraName);
     if (targetInfo == null) {
+      System.out.println("getLongitudinalDistance: getTargetInfo returned null"); // DEBUG
       return Optional.empty();
     }
 
@@ -302,6 +303,7 @@ public class AprilTagVision extends SubsystemBase {
 
   public Optional<Integer> getTagId(String cameraName) {
     double targetId = LimelightHelpers.getFiducialID(cameraName);
+    System.out.println("getTagId: Raw ID from LimelightHelpers = " + targetId); // DEBUG
     if ((int) targetId == -1) {
       return Optional.empty();
     }
