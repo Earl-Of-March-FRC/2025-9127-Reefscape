@@ -137,8 +137,8 @@ public final class Constants {
 
     //Offset that allows the algae remover to grip the ball
     public static final double ALGAE_OFFSET = 2;
-    public static final double L3_ALGAE_POSITION = L3_POSITION + ALGAE_OFFSET;
-    public static final double L2_ALGAE_POSITION = L2_POSITION + ALGAE_OFFSET;
+    public static final double L3_ALGAE_POSITION = 41.5 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
+    public static final double L2_ALGAE_POSITION = 27 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
 
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
