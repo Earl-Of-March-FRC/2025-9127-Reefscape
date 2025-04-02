@@ -15,7 +15,7 @@ public class AlgaeRemoval extends SubsystemBase {
   public AlgaeRemoval() {
     servo = new Servo(AlgaeRemovalConstants.SERVO_PORT);
     //servo.setBoundsMicroseconds(2400, 0, 1500, 0, 600);
-    downPosition();
+    upPosition();
   }
 
   public double getPosition() {
@@ -40,8 +40,10 @@ public class AlgaeRemoval extends SubsystemBase {
 
   public void togglePosition() {
     if (servo.getPosition() == AlgaeRemovalConstants.UP_POSITION) {
+      System.out.println("UP POS");
       downPosition();
     } else {
+      System.out.println("DOWN POS");
       upPosition();
     }
   }

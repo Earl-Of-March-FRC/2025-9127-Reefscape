@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -198,6 +199,7 @@ public RobotContainer() {
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
+    driveController.x().onTrue(Commands.runOnce(()-> algaeRemoval.togglePosition(), algaeRemoval));
     //Raise elevator and lower servo to remove L2 algae
     operatorController.leftTrigger().onTrue(
       Commands.sequence(
@@ -205,10 +207,10 @@ public RobotContainer() {
         Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
         //Slowly raise the elevator to the setpoint
         // Commands.runOnce(()-> elevator.setSlowMode(true)),
-        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
+        //new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
         // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
         //Wait until the elevator is at the setpoint
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        //Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         //Reset the speed of the elevator
         // Commands.runOnce(()-> elevator.setSlowMode(false))
         new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
@@ -222,10 +224,10 @@ public RobotContainer() {
         Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
         //Slowly raise the elevator to the setpoint
         // Commands.runOnce(()-> elevator.setSlowMode(true)),
-        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
+        //new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
         // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
         //Wait until the elevator is at the setpoint
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        //Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         //Reset the speed of the elevator
         // Commands.runOnce(()-> elevator.setSlowMode(false))
         new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)

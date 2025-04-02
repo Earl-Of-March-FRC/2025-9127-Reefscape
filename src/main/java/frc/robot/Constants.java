@@ -262,11 +262,11 @@ public final class Constants {
     public static final double GYRO_ANGLE_OFFSET = 0;
   }
   public static class AlgaeRemovalConstants {
-    public static final int SERVO_PORT = 5;
+    public static final int SERVO_PORT = 1;
 
     //TODO: calibrate these values based on servo orientation (0-1)
     public static final double UP_POSITION = 1;
-    public static final double DOWN_POSITION = 0.5;
+    public static final double DOWN_POSITION = 0.3;
     
 
   }
