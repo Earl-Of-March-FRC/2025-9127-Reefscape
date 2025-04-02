@@ -220,7 +220,9 @@ public class Drivetrain extends SubsystemBase {
     gyro = new AHRS(NavXComType.kMXP_SPI);
     // angle adjustement relative to the front of the bot, + the angle of the bot
     // relative to the field
-    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + LimelightHelpers.getBotPose2d("limelight").getRotation().getDegrees());
+    gyro.setAngleAdjustment(Constants.DrivetrainConstants.GYRO_ANGLE_OFFSET + 
+    (LimelightHelpers.getBotPose2d("limelight-left").getRotation().getDegrees()+ 
+    LimelightHelpers.getBotPose2d("limelight-right").getRotation().getDegrees())/2.0);
 
 
 
@@ -348,26 +350,30 @@ public class Drivetrain extends SubsystemBase {
   }
 
   // Robot-relative drive using chassis speeds
+  // public void drive(ChassisSpeeds speeds) {
+
+  //   if (mecanumDrive.isSafetyEnabled()) {
+  //     mecanumDrive.setSafetyEnabled(false); 
+  //   }
+    
+  //   speeds = new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vxMetersPerSecond, -speeds.omegaRadiansPerSecond);
+
+  //   MecanumDriveWheelSpeeds wheelSpeeds = driveKinematics.toWheelSpeeds(speeds);
+  //   wheelSpeeds.desaturate(DrivetrainConstants.MAX_SPEED_MPS);
+
+    
+  //   if (mecanumDrive.isSafetyEnabled()) {
+  //     mecanumDrive.setSafetyEnabled(false); 
+  //   }
+
+  //   topLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond , ControlType.kVelocity);
+  //   bottomLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
+  //   topRight.getClosedLoopController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
+  //   bottomRight.getClosedLoopController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+  // }
+
   public void drive(ChassisSpeeds speeds) {
-
-    if (mecanumDrive.isSafetyEnabled()) {
-      mecanumDrive.setSafetyEnabled(false); 
-    }
-    
-    speeds = new ChassisSpeeds(speeds.vxMetersPerSecond, speeds.vxMetersPerSecond, -speeds.omegaRadiansPerSecond);
-
-    MecanumDriveWheelSpeeds wheelSpeeds = driveKinematics.toWheelSpeeds(speeds);
-    wheelSpeeds.desaturate(DrivetrainConstants.MAX_SPEED_MPS);
-
-    
-    if (mecanumDrive.isSafetyEnabled()) {
-      mecanumDrive.setSafetyEnabled(false); 
-    }
-
-    topLeft.getClosedLoopController().setReference(wheelSpeeds.frontLeftMetersPerSecond , ControlType.kVelocity);
-    bottomLeft.getClosedLoopController().setReference(wheelSpeeds.rearLeftMetersPerSecond, ControlType.kVelocity);
-    topRight.getClosedLoopController().setReference(wheelSpeeds.frontRightMetersPerSecond, ControlType.kVelocity);
-    bottomRight.getClosedLoopController().setReference(wheelSpeeds.rearRightMetersPerSecond, ControlType.kVelocity);
+    mecanumDrive.driveCartesian(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, -speeds.omegaRadiansPerSecond);
   }
   
   public Pose2d getDrivePose() {
@@ -459,7 +465,7 @@ public MecanumDriveWheelPositions getWheelPositions() {
         .plus(new Translation2d(
           Math.cos(targetPose.getRotation().getRadians()),
           Math.sin(targetPose.getRotation().getRadians()))
-        ).times(DrivetrainConstants.ROBOT_LENGTH/2.0),
+        ).times(0.5),
       targetPose.getRotation().plus(Rotation2d.fromDegrees(180))
     );
 
@@ -506,16 +512,24 @@ public MecanumDriveWheelPositions getWheelPositions() {
     SmartDashboard.putNumber("Bottom Left Output", bottomLeft.getAppliedOutput());
     SmartDashboard.putNumber("Bottom Right Output", bottomRight.getAppliedOutput());
 
-    if(limelightPose.isPresent()){
-      // In your periodic function:
-      LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      if (limelightMeasurement.tagCount >= 1) {  // Only trust measurement if we see multiple tags
-          poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-          poseEstimator.addVisionMeasurement(
-              limelightMeasurement.pose,
-              limelightMeasurement.timestampSeconds
-        );
-      }
+    
+    // In your periodic function:
+    LimelightHelpers.PoseEstimate limelightMeasurement1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-left");
+  if (limelightMeasurement1 != null && limelightMeasurement1.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        poseEstimator.addVisionMeasurement(
+            limelightMeasurement1.pose,
+            limelightMeasurement1.timestampSeconds
+      );
+    }
+
+    LimelightHelpers.PoseEstimate limelightMeasurement2 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-right");
+    if (limelightMeasurement2 != null && limelightMeasurement2.tagCount >= 1) {  // Only trust measurement if we see multiple tags
+        poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        poseEstimator.addVisionMeasurement(
+            limelightMeasurement2.pose,
+            limelightMeasurement2.timestampSeconds
+      );
     }
 
     // This method will be called once per scheduler run

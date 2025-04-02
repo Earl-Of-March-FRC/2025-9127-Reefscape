@@ -9,13 +9,16 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AlgaeRemovalConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToReefTagCommand;
@@ -37,11 +40,12 @@ import frc.robot.subsystems.LimelightSubsystem;
 
 public class RobotContainer {
 
-  NetworkTable m_limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTable m_limelightTableLeft = NetworkTableInstance.getDefault().getTable("limelight-left");
+  NetworkTable m_limelightTableRight = NetworkTableInstance.getDefault().getTable("limelight-right");
 
   private final SendableChooser<Command> autoChooser;
   // The robot's subsystems and commands are defined here...
-  private final LimelightSubsystem limelight = new LimelightSubsystem(m_limelightTable);
+  private final LimelightSubsystem limelight = new LimelightSubsystem(m_limelightTableLeft);
   private final Drivetrain drivetrain = new Drivetrain(() -> limelight.getFilteredBotPose());
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -51,7 +55,8 @@ public class RobotContainer {
 
   private final IntakeSubsystem intakeSub = new IntakeSubsystem();
 
-  private final LEDsubsystem led = new LEDsubsystem( m_limelightTable,
+  private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
+    m_limelightTableRight,
     () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
     () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
     () -> false //BLINK supplier
@@ -166,10 +171,11 @@ public RobotContainer() {
     operatorController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
     operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
     
+    //Drop the elevator to the intake position and lower the servo to remove algae
     operatorController.x().onTrue(Commands.parallel(
       new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator),
       Commands.sequence(
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 2)),
+        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
         Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
       )
     );
@@ -180,9 +186,8 @@ public RobotContainer() {
     operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.55));
     
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
-
-    driveController.leftBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET, -VisionConstants.DEFAULT_TX_OFFSET));
-    driveController.rightBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET, VisionConstants.DEFAULT_TX_OFFSET));
+    driveController.leftBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
+    driveController.rightBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
 
     // driveController.leftTrigger().whileTrue(new AlignToReefTag2Stage(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
     // driveController.rightTrigger().whileTrue(new AlignToReefTag2Stage(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
@@ -194,18 +199,39 @@ public RobotContainer() {
     operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
     operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
-    //Raise eleator and lower servo to remove L3 algae
-    operatorController.leftTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
-      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
-    )
+    driveController.x().onTrue(Commands.runOnce(()-> algaeRemoval.togglePosition(), algaeRemoval));
+    //Raise elevator and lower servo to remove L2 algae
+    operatorController.leftTrigger().onTrue(
+      Commands.sequence(
+        //Lower the servo motor
+        Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
+        //Slowly raise the elevator to the setpoint
+        // Commands.runOnce(()-> elevator.setSlowMode(true)),
+        //new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
+        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
+        //Wait until the elevator is at the setpoint
+        //Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        //Reset the speed of the elevator
+        // Commands.runOnce(()-> elevator.setSlowMode(false))
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
+      )
     );
 
-    //Raise eleator and lower servo to remove L3 algae
-    operatorController.rightTrigger().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
-      //Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval))
-    )
+    //Raise elevator and lower servo to remove L3 algae
+    operatorController.rightTrigger().onTrue(
+      Commands.sequence(
+        //Lower the servo motor
+        Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
+        //Slowly raise the elevator to the setpoint
+        // Commands.runOnce(()-> elevator.setSlowMode(true)),
+        //new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
+        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
+        //Wait until the elevator is at the setpoint
+        //Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
+        //Reset the speed of the elevator
+        // Commands.runOnce(()-> elevator.setSlowMode(false))
+        new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
+      )
     );
   }
 

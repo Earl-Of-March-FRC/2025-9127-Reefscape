@@ -6,15 +6,20 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AlageRemovalConstants;
+import frc.robot.Constants.AlgaeRemovalConstants;
 
 public class AlgaeRemoval extends SubsystemBase {
   private final Servo servo;
 
   /** Creates a new AlageRemoval. */
   public AlgaeRemoval() {
-    servo = new Servo(AlageRemovalConstants.SERVO_PORT);
+    servo = new Servo(AlgaeRemovalConstants.SERVO_PORT);
     //servo.setBoundsMicroseconds(2400, 0, 1500, 0, 600);
+    upPosition();
+  }
+
+  public double getPosition() {
+    return servo.getPosition();
   }
 
   public void setAngle(double angle) {
@@ -26,17 +31,19 @@ public class AlgaeRemoval extends SubsystemBase {
   }
 
   public void upPosition() {
-    servo.setPosition(AlageRemovalConstants.UP_POSITION);
+    servo.setPosition(AlgaeRemovalConstants.UP_POSITION);
   }
 
   public void downPosition() {
-    servo.setPosition(AlageRemovalConstants.DOWN_POSITION);
+    servo.setPosition(AlgaeRemovalConstants.DOWN_POSITION);
   }
 
   public void togglePosition() {
-    if (servo.getPosition() == AlageRemovalConstants.UP_POSITION) {
+    if (servo.getPosition() == AlgaeRemovalConstants.UP_POSITION) {
+      System.out.println("UP POS");
       downPosition();
     } else {
+      System.out.println("DOWN POS");
       upPosition();
     }
   }

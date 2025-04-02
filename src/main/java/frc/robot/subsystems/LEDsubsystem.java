@@ -12,13 +12,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDsubsystem extends SubsystemBase {
 
-  private final NetworkTable m_limelightTable;
+  private final NetworkTable m_limelightTable1;
+  private final NetworkTable m_limelightTable2;
   private final BooleanSupplier OFF, ON, BLINK;
 
   /** Creates a new LEDsubsystem. */
-  public LEDsubsystem(NetworkTable limelight, BooleanSupplier OFF, BooleanSupplier ON, BooleanSupplier BLINK) {
+  public LEDsubsystem(NetworkTable limelight1, NetworkTable limelight2, BooleanSupplier OFF, BooleanSupplier ON, BooleanSupplier BLINK) {
     //Use limelight LEDS
-    m_limelightTable = limelight;
+    m_limelightTable1 = limelight1;
+    m_limelightTable2 = limelight2;
 
     this.OFF = OFF;
     this.ON = ON;
@@ -40,7 +42,8 @@ public class LEDsubsystem extends SubsystemBase {
   }
   
   public void setLedMode(LedMode mode) {
-    m_limelightTable.getEntry("ledMode").setNumber(mode.getValue());
+    m_limelightTable1.getEntry("ledMode").setNumber(mode.getValue());
+    m_limelightTable2.getEntry("ledMode").setNumber(mode.getValue());
   }
 
   public enum LedMode {

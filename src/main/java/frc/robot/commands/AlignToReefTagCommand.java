@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,9 +33,8 @@ public class AlignToReefTagCommand extends Command {
     //Setpoints
     private final double xOffset;
     private final double yOffset;
-    private final double txOffset;
 
-    private final double originalGyroOffset;
+    private final double desiredBotHeading;
     
     /**
      * Creates a new direct alignment command using tx/ty values
@@ -41,17 +42,24 @@ public class AlignToReefTagCommand extends Command {
      * @param driveSubsystem The robot's drive subsystem
      * @param limelightSubsystem The limelight subsystem
      */
-    public AlignToReefTagCommand(Drivetrain driveSubsystem, LimelightSubsystem limelightSubsystem, double xOffset, double yOffset, double txOffset) {
+    public AlignToReefTagCommand(Drivetrain driveSubsystem, LimelightSubsystem limelightSubsystem, double xOffset, double yOffset) {
         m_drive = driveSubsystem;
         m_limelight = limelightSubsystem;
 
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.txOffset = txOffset;
+
+        AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+
+        desiredBotHeading = fieldLayout.getTagPose(m_limelight.getTargetID()).isPresent()? 
+                            fieldLayout.getTagPose(m_limelight.getTargetID()).get().toPose2d().getRotation().getDegrees() + 180:
+                            0;
+
+
 
         //Store current angle adjustment,change angle adjustedment so that field oriented is relative to the tag (forward is towards the tag)
-        originalGyroOffset = m_drive.getBotAngleAdjustment();
-        m_drive.setBotAngleAdjustment(m_limelight.getFilteredTargetXAngle());
+        // originalGyroOffset = m_drive.getBotAngleAdjustment();
+        // m_drive.setBotAngleAdjustment(m_limelight.getFilteredTargetXAngle());
         
         // Initialize PID controllers
         m_xController = new PIDController(VisionConstants.ALIGN_P_X, VisionConstants.ALIGN_I_X, VisionConstants.ALIGN_D_X);
@@ -80,7 +88,7 @@ public class AlignToReefTagCommand extends Command {
         // Set setpoints
         m_xController.setSetpoint(xOffset);
         m_yController.setSetpoint(yOffset);
-        m_rotationController.setSetpoint(txOffset);
+        m_rotationController.setSetpoint(desiredBotHeading);
     }
     
     @Override
@@ -96,7 +104,7 @@ public class AlignToReefTagCommand extends Command {
             //X+ limelight = X+ robot drive
             double currentTagX = m_limelight.getFilteredX();
             double currentTagY = m_limelight.getFilteredZ();
-            double currentTx = m_limelight.getFilteredTargetXAngle();
+            double currentTx = m_drive.getDrivePose().getRotation().getDegrees();
             
             // Calculate motor outputs using PID controllers
             // Note: Signs may need to be adjusted based on your robot's coordinate system
@@ -112,7 +120,7 @@ public class AlignToReefTagCommand extends Command {
             // rotationSpeed = MathUtil.clamp(rotationSpeed, -0.5, 0.5);
             
             // Drive the robot
-            m_drive.driveFieldOriented(xSpeed, ySpeed, rotationSpeed);
+            m_drive.driveRobotOriented(xSpeed, ySpeed, rotationSpeed);
             
             // Update dashboard
             SmartDashboard.putNumber("X Error", VisionConstants.DEFAULT_X_OFFSET - currentTagX);
@@ -121,7 +129,7 @@ public class AlignToReefTagCommand extends Command {
             SmartDashboard.putBoolean("Alignment On Target", isAligned());
         } else {
             // No valid target found, stop the robot and turn until target is found
-            m_drive.drive(0.0, 0.0, m_limelight.lastTxSign()*0.2);
+            //m_drive.drive(0.0, 0.0, m_limelight.lastTxSign()*0.2);
             SmartDashboard.putBoolean("Alignment On Target", false);
         }
     }
@@ -132,7 +140,7 @@ public class AlignToReefTagCommand extends Command {
         m_drive.drive(0.0, 0.0, 0.0);
         
         // Reset the angle adjustement
-        m_drive.setBotAngleAdjustment(originalGyroOffset);
+        // m_drive.setBotAngleAdjustment(originalGyroOffset);
 
         if (interrupted) {
             System.out.println("TX/TY alignment interrupted");

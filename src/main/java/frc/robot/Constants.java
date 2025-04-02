@@ -89,6 +89,8 @@ public final class Constants {
   }
   public static class ElevatorConstants{
 
+    public static final double SLOW_MODE_MULTIPLIER = 0.5;
+
     public static final double MANUAL_SPEED_MULTIPLIER = 0.3;
     public static final double MANUAL_OFFSET = 0.5;
 
@@ -140,6 +142,13 @@ public final class Constants {
     public static final double L3_ALGAE_POSITION = 41.5 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
     public static final double L2_ALGAE_POSITION = 27 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
 
+    //Postion that allows algae removal to fall out
+    public static final double ALGAE_RELEASE_POSITION = 0;
+
+
+    //Tolerance for elevator position that needs to be achieved before servo can be activated
+    public static final double TOLERANCE = 1;
+
     public static final int LOW_LIMIT_CHANNEL = 2;
     public static final int HIGH_LIMIT_CHANNEL = 3;
 
@@ -177,7 +186,7 @@ public final class Constants {
     public static final double CHASSIS_WIDTH = Units.inchesToMeters(26.5); //Chassis width in metres
     public static final double CHASSIS_LENGTH = Units.inchesToMeters(32.31); //Chassis length in metres
 
-    public static final double BUMPER_WIDTH = Units.inchesToMeters(4); //Bumper width in metres
+    public static final double BUMPER_WIDTH = Units.inchesToMeters(3.5); //Bumper width in metres
 
     public static final double ROBOT_WIDTH = CHASSIS_WIDTH + BUMPER_WIDTH; //Chassis width in metres +bumpers
     public static final double ROBOT_LENGTH = CHASSIS_LENGTH + BUMPER_WIDTH; //Chassis length in metres + bumpers
@@ -207,11 +216,11 @@ public final class Constants {
     public static final double ROTATE_I = 0.0;
     public static final double ROTATE_D = 0.0;
 
-    public static final double PATHPLANNER_TRANSLATE_P = 0.5;
+    public static final double PATHPLANNER_TRANSLATE_P = 0.03;
     public static final double PATHPLANNER_TRANSLATE_I = 0.0;
     public static final double PATHPLANNER_TRANSLATE_D = 0.0;
 
-    public static final double PATHPLANNER_ROTATE_P = 0.9;
+    public static final double PATHPLANNER_ROTATE_P = 0.1;
     public static final double PATHPLANNER_ROTATE_I = 0.0;
     public static final double PATHPLANNER_ROTATE_D = 0.0;
 
@@ -252,11 +261,13 @@ public final class Constants {
     //Angle of the gyro's "zero yaw" position relative to the front of the bot
     public static final double GYRO_ANGLE_OFFSET = 0;
   }
-  public static class AlageRemovalConstants {
-    public static final int SERVO_PORT = 5;
+  public static class AlgaeRemovalConstants {
+    public static final int SERVO_PORT = 1;
 
     //TODO: calibrate these values based on servo orientation (0-1)
     public static final double UP_POSITION = 1;
-    public static final double DOWN_POSITION = 0.5;
+    public static final double DOWN_POSITION = 0.3;
+    
+
   }
 }
