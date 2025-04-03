@@ -32,19 +32,21 @@ public class AlgaeRemoval extends SubsystemBase {
   }
 
   public void upPosition() {
-    servo.set(AlgaeRemovalConstants.UP_POSITION);
+    // servo.set(AlgaeRemovalConstants.UP_POSITION);
+    servo.setAngle(180);
   }
 
   public void downPosition() {
-    servo.set(AlgaeRemovalConstants.DOWN_POSITION);
+    // servo.set(AlgaeRemovalConstants.DOWN_POSITION);
+    servo.setAngle(0.2*180.0);
   }
 
   public void togglePosition() {
     if (servo.getPosition() == AlgaeRemovalConstants.UP_POSITION) {
-      System.out.println("UP POS");
+      System.out.println("DOWN POS");
       downPosition();
     } else {
-      System.out.println("DOWN POS");
+      System.out.println("UP POS");
       upPosition();
     }
   }

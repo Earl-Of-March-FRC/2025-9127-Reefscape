@@ -173,10 +173,10 @@ public RobotContainer() {
     
     //Drop the elevator to the intake position and lower the servo to remove algae
     operatorController.x().onTrue(Commands.parallel(
-      new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION).schedule(), elevator),
+      new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION),
       Commands.sequence(
-        Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
-        Commands.runOnce(() -> System.out.println("fjdshfjdslfd")),
+        Commands.waitSeconds(1),
+        Commands.runOnce(() -> System.out.println("not jdshfjdslfd")),
         Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
       )
     );
@@ -207,21 +207,11 @@ public RobotContainer() {
         //Lower the servo motor
         Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
         Commands.deadline(
-          Commands.waitSeconds(2),
+          Commands.waitSeconds(0.1),
           new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION)),
-        //Slowly raise the elevator to the setpoint
-        // Commands.runOnce(()-> elevator.setSlowMode(true)),
-        // new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
-        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
-        // Commands.waitSeconds(1),
+        //Allow the driver to align under tha algae
         Commands.waitUntil(() -> driveController.leftTrigger().getAsBoolean()),
-        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
-        //Wait until the elevator is at the setpoint
-        //Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
-        //Reset the speed of the elevator
-        // Commands.runOnce(()-> elevator.setSlowMode(false))
-        // new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION).schedule(), elevator)
-          new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION))
+        new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION)
       )
     );
 
@@ -230,22 +220,9 @@ public RobotContainer() {
       Commands.sequence(
         //Lower the servo motor
         Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
-        // new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
         Commands.deadline(
-          Commands.waitSeconds(2),
+          Commands.waitSeconds(0.5),
           new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION)),
-        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
-        // Commands.waitSeconds(1),
-        //Slowly raise the elevator to the setpoint
-        // Commands.runOnce(()-> elevator.setSlowMode(true)),
-        //new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION).schedule(), elevator),
-        // new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION),
-        //Wait until the elevator is at the setpoint
-        //Commands.waitUntil(() -> MathUtil.isNear(ElevatorConstants.ALGAE_RELEASE_POSITION, elevator.getPosition(), ElevatorConstants.TOLERANCE)),
-        //Reset the speed of the elevator
-        // Commands.runOnce(()-> elevator.setSlowMode(false))
-        // new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION).schedule(), elevator)
-        Commands.runOnce(() -> System.out.println("fhkhfds")),
         new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION)
       )
     );
