@@ -139,11 +139,11 @@ public final class Constants {
 
     //Offset that allows the algae remover to grip the ball
     public static final double ALGAE_OFFSET = 2;
-    public static final double L3_ALGAE_POSITION = 41.5 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
-    public static final double L2_ALGAE_POSITION = 27 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
+    public static final double L3_ALGAE_POSITION = 42.5 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
+    public static final double L2_ALGAE_POSITION = 28 - MANIPULATOR_BASE_OFF_GROUND_INCHES;
 
     //Postion that allows algae removal to fall out
-    public static final double ALGAE_RELEASE_POSITION = 7;
+    public static final double ALGAE_RELEASE_POSITION = 6;
 
 
     //Tolerance for elevator position that needs to be achieved before servo can be activated
@@ -264,9 +264,9 @@ public final class Constants {
   public static class AlgaeRemovalConstants {
     public static final int SERVO_PORT = 1;
 
-    //TODO: calibrate these values based on servo orientation (0-1)
-    public static final double UP_POSITION = 1;
-    public static final double DOWN_POSITION = 0.3;
+    //TODO: calibrate these values based on servo orientation (0-180)
+    public static final double UP_ANGLE = 180.0;
+    public static final double DOWN_ANGLE = 0.0;
     
 
   }

@@ -324,6 +324,10 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  public void driveTest(double xSpeed, double ySpeed, double zRotation){
+    mecanumDrive.driveCartesian(xSpeed, ySpeed, zRotation);
+  }
+
   //For PID control
   public void driveRobotOriented(double xSpeed, double ySpeed, double zRotation) {
     mecanumDrive.driveCartesian(
@@ -523,6 +527,16 @@ public MecanumDriveWheelPositions getWheelPositions() {
     SmartDashboard.putNumber("Top Right Output", topRight.getAppliedOutput());
     SmartDashboard.putNumber("Bottom Left Output", bottomLeft.getAppliedOutput());
     SmartDashboard.putNumber("Bottom Right Output", bottomRight.getAppliedOutput());
+
+    SmartDashboard.putNumber("Top Left Current", topLeft.getOutputCurrent());
+    SmartDashboard.putNumber("Top Right Current", topRight.getOutputCurrent());
+    SmartDashboard.putNumber("Bottom Left Current", bottomLeft.getOutputCurrent());
+    SmartDashboard.putNumber("Bottom Right Current", bottomRight.getOutputCurrent());
+
+    SmartDashboard.putNumber("Top Left Bus Voltage", topLeft.getBusVoltage());
+    SmartDashboard.putNumber("Top Right Bus Voltage", topRight.getBusVoltage());
+    SmartDashboard.putNumber("Bottom Left Bus Voltage", bottomLeft.getBusVoltage());
+    SmartDashboard.putNumber("Bottom Right Bus Voltage", bottomRight.getBusVoltage());
 
     
     // In your periodic function:

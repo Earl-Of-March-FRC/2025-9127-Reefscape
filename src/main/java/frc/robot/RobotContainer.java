@@ -58,7 +58,7 @@ public class RobotContainer {
   private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
     m_limelightTableRight,
     () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
-    () -> MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
+    () -> false, //MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
     () -> false //BLINK supplier
   );
 

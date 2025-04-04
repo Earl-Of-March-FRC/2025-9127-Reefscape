@@ -105,6 +105,8 @@ public class Elevator extends SubsystemBase {
 
     
     controller = elevatorLeader.getClosedLoopController();
+    
+    controller.setReference(getPosition(), ControlType.kPosition);
   }
 
   @Override

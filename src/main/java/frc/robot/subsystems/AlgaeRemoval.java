@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AlgaeRemovalConstants;
 
@@ -32,17 +33,15 @@ public class AlgaeRemoval extends SubsystemBase {
   }
 
   public void upPosition() {
-    // servo.set(AlgaeRemovalConstants.UP_POSITION);
-    servo.setAngle(180);
+    servo.setAngle(AlgaeRemovalConstants.UP_ANGLE);
   }
 
   public void downPosition() {
-    // servo.set(AlgaeRemovalConstants.DOWN_POSITION);
-    servo.setAngle(0.2*180.0);
+    servo.setAngle(AlgaeRemovalConstants.DOWN_ANGLE);
   }
 
   public void togglePosition() {
-    if (servo.getPosition() == AlgaeRemovalConstants.UP_POSITION) {
+    if (servo.getAngle() == AlgaeRemovalConstants.UP_ANGLE) {
       System.out.println("DOWN POS");
       downPosition();
     } else {
@@ -54,5 +53,6 @@ public class AlgaeRemoval extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // SmartDashboard.putNumber("Servo PWM pulse", servo.getPulseTimeMicroseconds());  
   }
 }
