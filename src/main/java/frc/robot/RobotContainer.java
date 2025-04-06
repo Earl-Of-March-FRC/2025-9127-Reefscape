@@ -57,8 +57,8 @@ public class RobotContainer {
 
   private final LEDsubsystem led = new LEDsubsystem( m_limelightTableLeft,
     m_limelightTableRight,
-    () -> !(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
-    () -> false, //MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
+    () -> false,//!(MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1)) || intakeSub.getLimit() == false, //OFF supplier
+    () -> true, //MathUtil.isNear(ElevatorConstants.INTAKE_POSITION, elevator.getPosition(), 1) && intakeSub.getLimit() == true, //ON supplier
     () -> false //BLINK supplier
   );
 
@@ -146,7 +146,19 @@ public RobotContainer() {
     
     //Toggle the drive mode (f8j989ield or robot oriented) when B is pressed on the driver controller
     driveController.b().onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
-    
+
+    driveController.povLeft().whileTrue(new DriveFieldOriented(
+      drivetrain,
+      () -> -0.3,
+      () -> 0.2, 
+      () -> 0 ));
+
+    driveController.povRight().whileTrue(new DriveFieldOriented(
+      drivetrain,
+      () -> 0.3, 
+      () -> 0.2, 
+      () -> 0 ));
+
     //reverse direction for intake with right trigger
     new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
         .whileTrue(new ReverseCommand(
