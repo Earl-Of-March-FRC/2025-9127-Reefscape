@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,13 +16,15 @@ public class DriveFieldOriented extends Command {
   private DoubleSupplier xSpeed;
   private DoubleSupplier ySpeed;
   private DoubleSupplier zRotation;
+  private BooleanSupplier stop;
 
   /** Creates a new Drive. */
-  public DriveFieldOriented(Drivetrain drivetrain, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation) {
+  public DriveFieldOriented(Drivetrain drivetrain, DoubleSupplier xSpeed, DoubleSupplier ySpeed, DoubleSupplier zRotation, BooleanSupplier stop) {
     this.drivetrain = drivetrain;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
     this.zRotation = zRotation;
+    this.stop = stop;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
@@ -47,6 +50,6 @@ public class DriveFieldOriented extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return stop.getAsBoolean();
   }
 }

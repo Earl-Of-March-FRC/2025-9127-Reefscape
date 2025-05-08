@@ -240,7 +240,7 @@ public final class Constants {
     public static final int BOTTOM_RIGHT_ID = 1;
 
     //limits the max motor speed
-    public static final double SPEED_MULTIPLIER = 0.9;
+    public static final double SPEED_MULTIPLIER = 0.3;
     public static final double SLOW_SPEED_MULTIPLIER = 0.4;
     public static final double PID_SPEED_MULTIPLIER = 0.8;
 

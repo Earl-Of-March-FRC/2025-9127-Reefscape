@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AlgaeRemovalConstants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToReefTagCommand;
@@ -81,7 +82,8 @@ public RobotContainer() {
       drivetrain,
       () -> (driveController.getLeftX()), //X translation
       () -> -(driveController.getLeftY()), //Y translation
-      () -> (driveController.getRightX()) //Z rotation
+      () -> (driveController.getRightX()), //Z rotation
+      () -> (elevator.getPosition() >= ElevatorConstants.TOLERANCE) //stop condition (safety)
       ));
     configureBindings();
 
@@ -142,29 +144,29 @@ public RobotContainer() {
     // Configure your button bindings here
   
     //Reset the gyro angle to 0 when A is pressed on the driver controller
-    driveController.a().onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
+    driveController.button(7).onTrue(Commands.runOnce(() -> drivetrain.resetGyro(), drivetrain));
     
-    //Toggle the drive mode (f8j989ield or robot oriented) when B is pressed on the driver controller
-    driveController.b().onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
+    //Toggle the drive mode (field or robot oriented) when B is pressed on the driver controller
+    driveController.button(8).onTrue(Commands.runOnce(() -> drivetrain.changeDriveMode(), drivetrain));
 
-    driveController.povLeft().whileTrue(new DriveFieldOriented(
-      drivetrain,
-      () -> -0.3,
-      () -> 0.2, 
-      () -> 0 ));
+    // driveController.povLeft().whileTrue(new DriveFieldOriented(
+    //   drivetrain,
+    //   () -> -0.3,
+    //   () -> 0.2, 
+    //   () -> 0 ));
 
-    driveController.povRight().whileTrue(new DriveFieldOriented(
-      drivetrain,
-      () -> 0.3, 
-      () -> 0.2, 
-      () -> 0 ));
+    // driveController.povRight().whileTrue(new DriveFieldOriented(
+    //   drivetrain,
+    //   () -> 0.3, 
+    //   () -> 0.2, 
+    //   () -> 0 ));
 
-    //reverse direction for intake with right trigger
-    new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
-        .whileTrue(new ReverseCommand(
-            intakeSub,
-            () -> operatorController.getRightY()
-        ));
+    // //reverse direction for intake with right stick
+    // new Trigger(() -> Math.abs(operatorController.getRightY()) > 0.1)
+    //     .whileTrue(new ReverseCommand(
+    //         intakeSub,
+    //         () -> operatorController.getRightY()
+    //     ));
 
     // operatorController.leftBumper().onTrue(new InstantCommand(()->{
     //   elevatorPositionIndex = (elevatorPositionIndex + 1) % elevatorCommands.length;
@@ -178,25 +180,26 @@ public RobotContainer() {
     // }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
     // );
 
-    operatorController.povDown().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_POSITION).schedule(), elevator));
-    operatorController.povUp().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L4_POSITION).schedule(), elevator));
-    operatorController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
-    operatorController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
+    driveController.povDown().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_POSITION).schedule(), elevator));
+    driveController.povUp().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L4_POSITION).schedule(), elevator));
+    driveController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
+    driveController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
     
     //Drop the elevator to the intake position and lower the servo to remove algae
-    operatorController.x().onTrue(Commands.parallel(
-      new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION),
-      Commands.sequence(
-        Commands.waitSeconds(1),
-        Commands.runOnce(() -> System.out.println("not jdshfjdslfd")),
-        Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
+    driveController.x().onTrue(Commands.parallel(
+      new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION)
+      // ,
+      // Commands.sequence(
+      //   Commands.waitSeconds(1),
+      //   Commands.runOnce(() -> System.out.println("not jdshfjdslfd")),
+      //   Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
       )
     );
 
     //automatically intake with beam break sensor using button a
-    operatorController.a().whileTrue(new IntakeCommand(intakeSub));
+    driveController.a().whileTrue(new IntakeCommand(intakeSub));
 
-    operatorController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.55));
+    driveController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.55));
     
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
     //driveController.leftBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
@@ -205,39 +208,40 @@ public RobotContainer() {
     // driveController.leftTrigger().whileTrue(new AlignToReefTag2Stage(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
     // driveController.rightTrigger().whileTrue(new AlignToReefTag2Stage(drivetrain, limelight, VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
     
-    driveController.leftTrigger().onChange(Commands.runOnce(() -> drivetrain.toggleSlowMode(), drivetrain));
+    // driveController.leftTrigger().onChange(Commands.runOnce(() -> drivetrain.toggleSlowMode(), drivetrain));
 
     //driveController.rightTrigger().whileTrue(drivetrain.moveToTagCommand(5));
 
-    operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
-    operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
+    //Manual elevator control
+    // operatorController.rightBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()+ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
+    // operatorController.leftBumper().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, elevator.getPosition()-ElevatorConstants.MANUAL_OFFSET).schedule(), elevator));
 
-    driveController.x().onTrue(Commands.runOnce(()-> algaeRemoval.togglePosition(), algaeRemoval));
-    //Raise elevator and lower servo to remove L2 algae
-    operatorController.leftTrigger().onTrue(
-      Commands.sequence(
-        //Lower the servo motor
-        Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
-        Commands.deadline(
-          Commands.waitSeconds(0.1),
-          new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION)),
-        //Allow the driver to align under tha algae
-        Commands.waitUntil(() -> driveController.leftTrigger().getAsBoolean()),
-        new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION)
-      )
-    );
+    // driveController.x().onTrue(Commands.runOnce(()-> algaeRemoval.togglePosition(), algaeRemoval));
+    // //Raise elevator and lower servo to remove L2 algae
+    // operatorController.leftTrigger().onTrue(
+    //   Commands.sequence(
+    //     //Lower the servo motor
+    //     Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
+    //     Commands.deadline(
+    //       Commands.waitSeconds(0.1),
+    //       new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION)),
+    //     //Allow the driver to align under tha algae
+    //     Commands.waitUntil(() -> driveController.leftTrigger().getAsBoolean()),
+    //     new ElevatorPID(elevator, ElevatorConstants.L2_ALGAE_POSITION)
+    //   )
+    // );
 
-    //Raise elevator and lower servo to remove L3 algae
-    operatorController.rightTrigger().onTrue(
-      Commands.sequence(
-        //Lower the servo motor
-        Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
-        Commands.deadline(
-          Commands.waitSeconds(0.5),
-          new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION)),
-        new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION)
-      )
-    );
+    // //Raise elevator and lower servo to remove L3 algae
+    // operatorController.rightTrigger().onTrue(
+    //   Commands.sequence(
+    //     //Lower the servo motor
+    //     Commands.runOnce(() -> algaeRemoval.downPosition(), algaeRemoval),
+    //     Commands.deadline(
+    //       Commands.waitSeconds(0.5),
+    //       new ElevatorPID(elevator, ElevatorConstants.ALGAE_RELEASE_POSITION)),
+    //     new ElevatorPID(elevator, ElevatorConstants.L3_ALGAE_POSITION)
+    //   )
+    // );
   }
 
   public Command getAutonomousCommand() {
