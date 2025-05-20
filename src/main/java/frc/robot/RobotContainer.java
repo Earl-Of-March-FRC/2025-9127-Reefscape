@@ -49,7 +49,7 @@ public class RobotContainer {
   private final LimelightSubsystem limelight = new LimelightSubsystem(m_limelightTableLeft);
   private final Drivetrain drivetrain = new Drivetrain(() -> limelight.getFilteredBotPose());
   private final CommandXboxController driveController = new CommandXboxController(0);
-  private final CommandXboxController operatorController = new CommandXboxController(1);
+  //private final CommandXboxController operatorController = new CommandXboxController(1);
   private final AlgaeRemoval algaeRemoval = new AlgaeRemoval();
 
   private final Elevator elevator = new Elevator();
@@ -180,26 +180,26 @@ public RobotContainer() {
     // }, elevator).until(() -> operatorController.getRightTriggerAxis() > 0.1 || operatorController.getLeftTriggerAxis() > 0.1 )
     // );
 
-    driveController.povDown().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_POSITION).schedule(), elevator));
-    driveController.povUp().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L4_POSITION).schedule(), elevator));
-    driveController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
-    driveController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
+    // driveController.povDown().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L2_POSITION).schedule(), elevator));
+    // driveController.povUp().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L4_POSITION).schedule(), elevator));
+    // driveController.povLeft().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L1_POSITION).schedule(), elevator));
+    // driveController.povRight().onTrue(new InstantCommand(() -> new ElevatorPID(elevator, ElevatorConstants.L3_POSITION).schedule(), elevator));
     
     //Drop the elevator to the intake position and lower the servo to remove algae
-    driveController.x().onTrue(Commands.parallel(
-      new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION)
-      // ,
-      // Commands.sequence(
-      //   Commands.waitSeconds(1),
-      //   Commands.runOnce(() -> System.out.println("not jdshfjdslfd")),
-      //   Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
-      )
-    );
+    // driveController.x().onTrue(Commands.parallel(
+    //   new ElevatorPID(elevator, ElevatorConstants.INTAKE_POSITION)
+    //   // ,
+    //   // Commands.sequence(
+    //   //   Commands.waitSeconds(1),
+    //   //   Commands.runOnce(() -> System.out.println("not jdshfjdslfd")),
+    //   //   Commands.runOnce(() -> algaeRemoval.upPosition(), algaeRemoval))
+    //   )
+    // );
 
     //automatically intake with beam break sensor using button a
-    driveController.a().whileTrue(new IntakeCommand(intakeSub));
+    // driveController.a().whileTrue(new IntakeCommand(intakeSub));
 
-    driveController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.55));
+    // driveController.b().whileTrue(new ShootCommand(intakeSub, () -> 0.55));
     
    // operatorController.y().whileTrue(new ShootL1Command(intakeSub));
     //driveController.leftBumper().whileTrue(new AlignToReefTagCommand(drivetrain, limelight, -VisionConstants.DEFAULT_X_OFFSET, VisionConstants.DEFAULT_Y_OFFSET));
